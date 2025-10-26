@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 public class User 
 {
-  [Required]
   [Key]
+  [Required]
   public required string UserId { get; set; }
   [Required]
   [MaxLength(50)]
