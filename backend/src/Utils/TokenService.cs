@@ -24,7 +24,7 @@ public class TokenService
       new Claim(ClaimTypes.Role, details.Role)
     };
 
-    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSettings["SecretKey"]));
+    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSettings["SecretKey"]!));
 
     var Creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 

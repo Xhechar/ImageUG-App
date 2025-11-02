@@ -28,7 +28,7 @@ public class PaymentService
 
     if(Response.IsSuccessStatusCode) {
       var json = await Response.Content.ReadAsStringAsync();
-      return JsonSerializer.Deserialize<TokenResponseDto>(json).AccessToken;
+      return JsonSerializer.Deserialize<TokenResponseDto>(json)!.access_token!;
     }
 
     return "";

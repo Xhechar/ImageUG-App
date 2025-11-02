@@ -1,5 +1,5 @@
 
 public class TokenResponseDto
 {
-  public string? AccessToken { get; set; }
+  public string? access_token { get; set; }
 }

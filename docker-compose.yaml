@@ -1,0 +1,29 @@
+
+---
+version: '3.8'
+services:
+  frontend:
+    build: ./frontend
+    container_name: imageuri_frontend
+    depends_on:
+      - backernd
+    ports:
+      -80:80
+  backernd:
+    build: ./backernd
+    container_name: imageuri_backend
+    depends_on:
+      - database
+    ports:
+      -5024:5024
+    environment:
+      - ConnectionStrings__DefaultConnection=dburi
+  database:
+    image: mcr.microsoft.com/sqlserver
+    container_name: imageuri_database
+    ports:
+      -1433:1433
+    volumes:
+      -imageuri: /var/data
+volumes:
+  imageuri:
