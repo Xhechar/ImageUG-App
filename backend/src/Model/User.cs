@@ -26,4 +26,5 @@ public class User
 
   public ICollection<ImageUrl> ImageUrls { get; set; } = new List<ImageUrl>();
   public ICollection<Subscription> Subscriptions { get; set; } = new List<Subscription>();
+  public ICollection<PaymentData> PaymentDatas { get; set; } = new List<PaymentData>();
 }

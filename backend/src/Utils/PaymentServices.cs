@@ -2,7 +2,6 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 public class PaymentService
 {
@@ -18,7 +17,7 @@ public class PaymentService
   async Task<string> GetAccessToken()
   {
     var PaymentSettings = this.configuration.GetSection("PaymentSettings");
-    string Url = PaymentSettings["Env"] == "Production" ? "" : "";
+    string Url = PaymentSettings["Env"] == "Production" ? "https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials" : "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials";
 
     var Key = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{PaymentSettings["ConsumerKey"]}:{PaymentSettings["ConsumerSecret"]}"));
 

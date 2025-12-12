@@ -47,6 +47,7 @@ builder.Services.AddAuthentication(options =>
     }
   };
 });
+builder.Services.AddHttpClient<PaymentService>();
 builder.Services.AddAuthorization();
 builder.Services.AddCors(options =>
 {

@@ -1,1 +1,4 @@
-ap
+Migrations
+obj/
+bin/
+.vscode/

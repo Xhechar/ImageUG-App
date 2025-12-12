@@ -1,5 +1,6 @@
 
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 public class ImageUrl 
 {
@@ -13,6 +14,6 @@ public class ImageUrl
   [Required]
   public required DateTime CreatedAt { get; set; } = DateTime.UtcNow;
   public DateTime? UpdatedAt { get; set; }
-
+  [ForeignKey("UserId")]
   public User? User { get; set; }
 }
