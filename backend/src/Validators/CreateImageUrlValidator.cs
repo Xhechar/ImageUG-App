@@ -9,8 +9,5 @@ public class CreateImageUrlValidator: AbstractValidator<CreateImageUrlDto>
       .NotEmpty().WithMessage("URL is required.")
       .Must(url => Uri.IsWellFormedUriString(url, UriKind.Absolute))
       .WithMessage("A valid URL is required.");
-
-    RuleFor(x => x.UserId)
-      .NotEmpty().WithMessage("UserId is required.");
   }
 }

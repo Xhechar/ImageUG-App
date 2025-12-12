@@ -1,4 +1,5 @@
 
+using ImageURLGenerator.Model;
 using Microsoft.EntityFrameworkCore;
 
 public class DataContext: DbContext 
@@ -9,4 +10,5 @@ public class DataContext: DbContext
   public DbSet<ImageUrl> ImageUrl => Set<ImageUrl>();
   public DbSet<Subscription> Subscription => Set<Subscription>();
   public DbSet<PaymentData> PaymentData => Set<PaymentData>();
+  public DbSet<Recovery> Recovery => Set<Recovery>();
 }

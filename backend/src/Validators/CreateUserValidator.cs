@@ -10,6 +10,10 @@ public class CreateUserValidator : AbstractValidator<CreateUserDto>
       .MinimumLength(3).WithMessage("Username must be at least 3 characters long.")
       .MaximumLength(20).WithMessage("Username must not exceed 20 characters.");
 
+    RuleFor(x => x.PhoneNumber)
+      .NotEmpty().WithMessage("Phone number is required.")
+      .Length(10, 13).WithMessage("Phone number must be between 10 and 13 characters long.");
+
     RuleFor(x => x.Email)
       .NotEmpty().WithMessage("Email is required.")
       .EmailAddress().WithMessage("A valid email is required.");

@@ -13,7 +13,7 @@ public class TokenService
     this.Config = Config;
   }
 
-  string GenerateToken(TokenDetails details) 
+  public string GenerateToken(TokenDetails details) 
   {
 
     var JwtSettings = this.Config.GetSection("JwtSettings");
