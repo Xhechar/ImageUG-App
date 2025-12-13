@@ -14,7 +14,7 @@ public class PaymentService
     this.configuration = configuration;
   }
 
-  async Task<string> GetAccessToken()
+  public async Task<string> GetAccessToken()
   {
     var PaymentSettings = this.configuration.GetSection("PaymentSettings");
     string Url = PaymentSettings["Env"] == "Production" ? "https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials" : "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials";

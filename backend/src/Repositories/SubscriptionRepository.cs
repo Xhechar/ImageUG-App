@@ -3,29 +3,152 @@ using Microsoft.EntityFrameworkCore;
 
 public class SubscriptionRepository : ISubscriptionRepository
 {
-  private readonly DbContext _context;
-  public SubscriptionRepository(DataContext context)
+  private readonly DataContext _context;
+  private readonly HttpClient _http;
+  private readonly PaymentService _paymentService;
+  private readonly IConfiguration _configuration;
+  public SubscriptionRepository(DataContext context, HttpClient http, PaymentService paymentService, IConfiguration configuration)
   {
     _context = context;
+    _http = http;
+    _paymentService = paymentService;
+    _configuration = configuration;
   }
 
-  public Task<RepositoryResult<Subscription>> SendStkPush(string UserId, StkPushDto pushDto) 
+  public async Task<RepositoryResult<Subscription>> SendStkPush(string UserId, StkPushDto pushDto) 
   {
-    throw new NotImplementedException();
+    var PaymentSettings = _configuration.GetSection("PaymentSettings");
+    
+    var user = await _context.User.FirstOrDefaultAsync(u => u.UserId == UserId);
+
+    if (user == null) {
+      return RepositoryResponse<Subscription>.Failure("CLIENT ERROR", "your profile details not found, cannot complete payment.");
+    }
+
+    string accessToken = await _paymentService.GetAccessToken();
+
+    if (string.IsNullOrEmpty(accessToken)) {
+      return RepositoryResponse<Subscription>.Failure("SERVER ERROR", "unable to authenticate payment request, try again later.");
+    }
+
+    var Timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+    var BusinessShortCode = PaymentSettings["BusinessShortCode"];
+    var Password = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"{BusinessShortCode}{PaymentSettings["Passkey"]}{Timestamp}"));
+    var CallBackUrl = PaymentSettings["CallBackUrl"];
+    var stkPushRequest = new STKPushData
+    {
+      BusinessShortCode = BusinessShortCode!,
+      Password = Password,
+      Timestamp = Timestamp,
+      TransactionType = "CustomerPayBillOnline",
+      Amount = pushDto.Amount,
+      PartyA = user.PhoneNumber,
+      PartyB = BusinessShortCode!,
+      PhoneNumber = user.PhoneNumber,
+      CallBackURL = CallBackUrl!,
+      AccountReference = "Imagen_Subscription",
+      TransactionDesc = "Subscription Payment"
+    };
+
+    _http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+
+    var response = await _http.PostAsJsonAsync(
+      PaymentSettings["Env"] == "Production" ? "https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest" : "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest",
+      stkPushRequest
+    );
+
+    if (!response.IsSuccessStatusCode) {
+      return RepositoryResponse<Subscription>.Failure("SERVER ERROR", "unable to initiate payment request, try again later.");
+    }
+
+    var json = await response.Content.ReadAsStringAsync();
+    var stkResponse = System.Text.Json.JsonSerializer.Deserialize<STKPushResponseDto>(json);
+
+    if (stkResponse == null) {
+      return RepositoryResponse<Subscription>.Failure("SERVER ERROR", "invalid response from payment gateway, try again later.");
+    }
+
+    if (stkResponse.ResponseCode != "0") {
+      return RepositoryResponse<Subscription>.Failure("CLIENT ERROR", $"payment request failed: {stkResponse.ResponseDescription}");
+    }
+
+    var paymentData = new PaymentData
+    {
+      PaymentDataId = Guid.NewGuid().ToString(),
+      UserId = UserId,
+      Amount = pushDto.Amount,
+      DurationInDays = pushDto.DurationInDays,
+      MerchantRequestId = stkResponse.MerchantRequestId!,
+      CheckoutRequestId = stkResponse.CheckoutRequestId!,
+      ResponseDescription = stkResponse.ResponseDescription!,
+      IsSuccessful = true,
+      CreatedAt = DateTime.UtcNow
+    };
+
+    await _context.PaymentData.AddAsync(paymentData);
+    if (await _context.SaveChangesAsync() > 0) {
+      return RepositoryResponse<Subscription>.Success("payment initiated successfully! complete the payment on your phone.");
+    }
+
+    return RepositoryResponse<Subscription>.Failure("SERVER ERROR", "unable to record payment data, try again later.");
   }
 
-  public async Task<RepositoryResult<Subscription>> UpdateSubscription(UpdateSubscriptionDto dto)
+  public async Task<RepositoryResult<Subscription>> GetUserSubscriptions(string UserId)
   {
-    throw new NotImplementedException();
+    
+    var userExists = await _context.User.FirstOrDefaultAsync(u => u.UserId == UserId);
+
+    if (userExists == null) {
+      return RepositoryResponse<Subscription>.Failure("CLIENT ERROR", "your profile details not found.");
+    }
+
+    var subscriptions = await _context.Subscription
+      .Where(s => s.UserId == UserId)
+      .Include(s => s.User)
+      .ToListAsync();
+
+      if (subscriptions.Count == 0 || subscriptions == null) {
+        return RepositoryResponse<Subscription>.Failure("CLIENT ERROR", "no subscriptions found for your profile.");
+      }
+
+    return RepositoryResponse<Subscription>.Success("subscriptions retrieved successfully!", DataList: subscriptions.ToArray());
   }
 
-  public Task<RepositoryResult<Subscription>> GetUserSubscriptions(string UserId)
+  public async Task SafaricomCallback(object callbackDto)
   {
-    throw new NotImplementedException();
-  }
+    
+    var json = System.Text.Json.JsonSerializer.Serialize(callbackDto);
+    var SafaricomResponseBody = System.Text.Json.JsonSerializer.Deserialize<SafaricomCallbackDto>(json);
 
-  public Task<RepositoryResult<Subscription>> SafaricomCallback(object callbackDto)
-  {
-    throw new NotImplementedException();
+    if (SafaricomResponseBody == null) {
+      System.Console.WriteLine("Invalid Safaricom callback data received.");
+    }
+
+    if (SafaricomResponseBody!.Body!.stkCallback!.ResultCode != 0) {
+      System.Console.WriteLine($"Payment failed with ResultCode: {SafaricomResponseBody.Body.stkCallback.ResultCode}, ResultDesc: {SafaricomResponseBody.Body.stkCallback.ResultDesc}");
+    }
+
+    var PaymentDataExists = await _context.PaymentData.FirstOrDefaultAsync(p => p.MerchantRequestId == SafaricomResponseBody.Body!.stkCallback!.MerchantRequestID  && p.CheckoutRequestId == SafaricomResponseBody.Body!.stkCallback!.CheckoutRequestID);
+
+    var amountItem = SafaricomResponseBody?.Body?.stkCallback?.CallbackMetadata?.Item?.FirstOrDefault(i => i.Name == "Amount");
+    var receiptItem = SafaricomResponseBody?.Body?.stkCallback?.CallbackMetadata?.Item?.FirstOrDefault(i => i.Name == "MpesaReceiptNumber");
+    
+    var subscriptionData = new Subscription 
+    {
+      SubscriptionId = Guid.NewGuid().ToString(),
+      UserId = PaymentDataExists!.UserId,
+      Price = amountItem?.Value != null ? float.Parse(amountItem.Value.ToString()!) : 0,
+      ReferenceId = receiptItem?.Value?.ToString() ?? "",
+      StartDate = DateTime.UtcNow,
+      DurationInDays = PaymentDataExists.DurationInDays,
+      IsActive = true
+    };
+
+    await _context.Subscription.AddAsync(subscriptionData);
+    if (await _context.SaveChangesAsync() > 0) {
+      Console.WriteLine("Subscription created successfully from Safaricom callback.");
+    }
+
+    Console.WriteLine("Failed to create subscription from Safaricom callback.");
   }
 }

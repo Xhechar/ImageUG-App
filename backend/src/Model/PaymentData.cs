@@ -13,6 +13,8 @@ public class PaymentData
   [Required]
   public required float Amount { get; set; }
   [Required]
+  public required int DurationInDays { get; set; }
+  [Required]
   public required string MerchantRequestId { get; set; }
   [Required]
   public required string CheckoutRequestId { get; set; }

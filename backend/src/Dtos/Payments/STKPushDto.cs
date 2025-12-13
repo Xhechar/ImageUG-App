@@ -1,5 +1,6 @@
 
 public class StkPushDto
 {
-  public required decimal Amount { get; set; }
+  public required int Amount { get; set; }
+  public required int DurationInDays { get; set; }
 }
