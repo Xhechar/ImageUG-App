@@ -4,10 +4,10 @@ using Microsoft.EntityFrameworkCore;
 public class SubscriptionRepository : ISubscriptionRepository
 {
   private readonly DataContext _context;
-  private readonly HttpClient _http;
-  private readonly PaymentService _paymentService;
+  private readonly  HttpClient _http;
+  private readonly IPaymentService _paymentService;
   private readonly IConfiguration _configuration;
-  public SubscriptionRepository(DataContext context, HttpClient http, PaymentService paymentService, IConfiguration configuration)
+  public SubscriptionRepository(DataContext context, HttpClient http, IPaymentService paymentService, IConfiguration configuration)
   {
     _context = context;
     _http = http;

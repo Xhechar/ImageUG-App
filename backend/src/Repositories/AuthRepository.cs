@@ -4,10 +4,10 @@ using Microsoft.EntityFrameworkCore;
 public class AuthRepository : IAuthRepository
 {
   private readonly DataContext _context;
-  private readonly TokenService _tokenService;
-  private readonly EmailService _emailService;
+  private readonly ITokenService _tokenService;
+  private readonly IEmailService _emailService;
 
-  public AuthRepository(DataContext context, TokenService tokenService, EmailService emailService)
+  public AuthRepository(DataContext context, ITokenService tokenService, IEmailService emailService)
   {
     _context = context;
     _tokenService = tokenService;

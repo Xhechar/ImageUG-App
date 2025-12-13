@@ -3,7 +3,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
-public class PaymentService
+public class PaymentService : IPaymentService
 {
   private readonly HttpClient http;
   private readonly IConfiguration configuration;

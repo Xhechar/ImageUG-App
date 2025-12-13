@@ -4,7 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-public class TokenService 
+public class TokenService : ITokenService
 {
   private readonly IConfiguration Config;
 
