@@ -5,4 +5,6 @@ public interface IImageUrlRepository
   Task<RepositoryResult<ImageUrl>> UpdateImageUrl(string ImageUrl, UpdateImageUrlDto ImageUrlDto);
   Task<RepositoryResult<ImageUrl>> GetUserImages(string UserId);
   Task<RepositoryResult<ImageUrl>> DeleteImage(string UserId, string ImageUrlId);
+  Task<RepositoryResult<ImageUrl>> TogglePublishedImageStatus(string UserId, string ImageUrlId);
+  Task<RepositoryResult<ImageUrl>> GetPublishedImages();
 }

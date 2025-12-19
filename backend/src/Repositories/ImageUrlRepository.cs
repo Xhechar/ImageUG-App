@@ -1,13 +1,16 @@
 
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 public class ImageUrlRepository : IImageUrlRepository
 {
   private readonly DataContext _context;
+  private readonly IHubContext<BackendHub> _hubContext;
 
-  public ImageUrlRepository(DataContext context)
+  public ImageUrlRepository(DataContext context, IHubContext<BackendHub> hubContext)
   {
     _context = context;
+    _hubContext = hubContext;
   }
 
   public async Task<RepositoryResult<ImageUrl>> CreateImageUrl(string UserId, CreateImageUrlDto createImageUrlDto)
@@ -32,7 +35,8 @@ public class ImageUrlRepository : IImageUrlRepository
         ImageUrlId = Guid.NewGuid().ToString(),
         UserId = UserId,
         Url = createImageUrlDto.Url,
-        CreatedAt = DateTime.UtcNow
+        CreatedAt = DateTime.UtcNow,
+        Description = createImageUrlDto.Description
       };
 
       await _context.ImageUrl.AddAsync(createImageURL);
@@ -42,6 +46,8 @@ public class ImageUrlRepository : IImageUrlRepository
         userExists.FreeTrialCount += 1;
         _context.User.Update(userExists);
         await _context.SaveChangesAsync();
+
+        await _hubContext.Clients.User(UserId).SendAsync("user-updated", userExists);
 
         return RepositoryResponse<ImageUrl>.Success("image url generated successfully!");
       }
@@ -61,13 +67,15 @@ public class ImageUrlRepository : IImageUrlRepository
       ImageUrlId = Guid.NewGuid().ToString(),
       UserId = UserId,
       Url = createImageUrlDto.Url,
-      CreatedAt = DateTime.UtcNow
+      CreatedAt = DateTime.UtcNow,
+      Description = createImageUrlDto.Description
     };
 
     await _context.ImageUrl.AddAsync(newImageUrl);
 
     if(await _context.SaveChangesAsync() > 0)
     {
+      await _hubContext.Clients.User(UserId).SendAsync("image-url-created", newImageUrl);
       return RepositoryResponse<ImageUrl>.Success("image url generated successfully!");
     }
     else
@@ -87,11 +95,17 @@ public class ImageUrlRepository : IImageUrlRepository
     }
 
     imageExists.Url = updateImageUrlDto.Url ?? imageExists.Url;
+    imageExists.Description = updateImageUrlDto.Description ?? imageExists.Description;
     imageExists.UpdatedAt = DateTime.UtcNow;
     _context.ImageUrl.Update(imageExists);
 
     if(await _context.SaveChangesAsync() > 0)
     {
+      await _hubContext.Clients.User(imageExists.UserId).SendAsync("image-url-updated", imageExists);
+      if(imageExists.IsPublished)
+      {
+        await _hubContext.Clients.All.SendAsync("published-image-updated", imageExists);
+      }
       return RepositoryResponse<ImageUrl>.Success("image url updated successfully!");
     }
     else
@@ -134,11 +148,59 @@ public class ImageUrlRepository : IImageUrlRepository
 
     if(await _context.SaveChangesAsync() > 0)
     {
+      await _hubContext.Clients.User(UserId).SendAsync("image-url-deleted", ImageId);
+      if(imageExists.IsPublished)
+      {
+        await _hubContext.Clients.All.SendAsync("published-image-deleted", ImageId);
+      }
       return RepositoryResponse<ImageUrl>.Success("image url deleted successfully!");
     }
     else
     {
       return RepositoryResponse<ImageUrl>.Failure("SERVER ERROR", "unable to delete image url at the moment.");
     }
+  }
+
+  public async Task<RepositoryResult<ImageUrl>> TogglePublishedImageStatus(string UserId, string ImageUrlId)
+  {
+    var imageExists = await _context.ImageUrl.FirstOrDefaultAsync(i => i.ImageUrlId == ImageUrlId && i.UserId == UserId);
+
+    if (imageExists == null)
+    {
+      return RepositoryResponse<ImageUrl>.Failure("CLIENT ERROR", "image url specified does not exist.");
+    }
+
+    imageExists.IsPublished = !imageExists.IsPublished;
+    imageExists.UpdatedAt = DateTime.UtcNow;
+    _context.ImageUrl.Update(imageExists);
+
+    if(await _context.SaveChangesAsync() > 0)
+    {
+      if(imageExists.IsPublished)
+      {
+        await _hubContext.Clients.All.SendAsync("published-image-created", imageExists);
+      }
+      else
+      {
+        await _hubContext.Clients.All.SendAsync("published-image-deleted", ImageUrlId);
+      }
+      return RepositoryResponse<ImageUrl>.Success("image url publish status toggled successfully!");
+    }
+    else
+    {
+      return RepositoryResponse<ImageUrl>.Failure("SERVER ERROR", "unable to toggle publish status at the moment.");
+    }
+  }
+
+  public async Task<RepositoryResult<ImageUrl>> GetPublishedImages()
+  {
+    var publishedImages =  await _context.ImageUrl.Where(i => i.IsPublished).Include(u => u.User).OrderByDescending(i => i.CreatedAt).ToArrayAsync();
+
+    if (publishedImages == null || publishedImages.Length == 0)
+    {
+      return RepositoryResponse<ImageUrl>.Failure("CLIENT ERROR", "no published images found.");
+    }
+
+    return RepositoryResponse<ImageUrl>.Success("published images retrieved successfully!", DataList: publishedImages);
   }
 }

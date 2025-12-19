@@ -1,14 +1,17 @@
 
 using ImageURLGenerator.Model;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 public class UserRepository : IUserRepository
 {
   private readonly DataContext _context;
+  private readonly IHubContext<BackendHub> _hubContext;
 
-  public UserRepository(DataContext context)
+  public UserRepository(DataContext context, IHubContext<BackendHub> hubContext)
   {
     _context = context;
+    _hubContext = hubContext;
   }
 
   public async Task<RepositoryResult<User>> CreateUser(CreateUserDto createUserDto)
@@ -75,6 +78,7 @@ public class UserRepository : IUserRepository
 
     if(await _context.SaveChangesAsync() > 0)
     {
+      await _hubContext.Clients.User(UserExists.UserId).SendAsync("user-updated", UserExists);
       return RepositoryResponse<User>.Success("profile updated successfully!");
     }
     else
@@ -99,6 +103,7 @@ public class UserRepository : IUserRepository
 
     if(await _context.SaveChangesAsync() > 0)
     {
+      await _hubContext.Clients.User(UserExists.UserId).SendAsync("user-updated", UserExists.ProfileImageUrl);
       return RepositoryResponse<User>.Success("profile image updated successfully!");
     }
     else
@@ -158,6 +163,7 @@ public class UserRepository : IUserRepository
 
     if(await _context.SaveChangesAsync() > 0)
     {
+      await _hubContext.Clients.User(UserExists.UserId).SendAsync("user-updated", UserExists);
       return RepositoryResponse<User>.Success("user role updated successfully!");
     }
     else

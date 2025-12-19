@@ -32,6 +32,7 @@ builder.Services.Configure<ApiBehaviorOptions>( options => {
       return new BadRequestObjectResult(response);
   };
 });
+builder.Services.AddSignalR();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateUserValidator>();
@@ -81,6 +82,7 @@ builder.Services.AddCors(options =>
     .AllowAnyHeader().AllowAnyMethod();
   });
 });
+builder.Services.AddSingleton<Microsoft.AspNetCore.SignalR.IUserIdProvider, CustomUserIdProvider>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -98,5 +100,6 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors("AllowAngularApp");
+app.MapHub<BackendHub>("/hub");
 
 app.Run();

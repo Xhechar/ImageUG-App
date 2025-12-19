@@ -12,6 +12,9 @@ public class ImageUrl
   public required string Url { get; set; }
   [Required]
   public required string UserId { get; set; }
+  public string? Description { get; set; }
+  [Required]
+  public bool IsPublished { get; set; } = false;
   [Required]
   public required DateTime CreatedAt { get; set; } = DateTime.UtcNow;
   public DateTime? UpdatedAt { get; set; }

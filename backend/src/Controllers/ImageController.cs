@@ -98,4 +98,45 @@ public class ImageController : ControllerBase
 
     return Ok(result);
   }
+
+  [Authorize(Roles = "User")]
+  [HttpPatch("toggle-published-image-status/{imageId}")]
+  [ProducesResponseType(typeof(RepositoryResult<ImageUrl>), 200)]
+  [ProducesResponseType(typeof(RepositoryResult<ImageUrl>), 400)]
+  [ProducesResponseType(typeof(RepositoryResult<ImageUrl>), 500)]
+  public async Task<IActionResult> TogglePublishedImageStatus([FromRoute] string ImageId)
+  {
+    RepositoryResult<ImageUrl> result = await _imageUrlRepository.TogglePublishedImageStatus(_currentUserService.UserId!, ImageId);
+
+    if(!result.Success)
+    {
+      return result.Title switch
+      {
+        "CLIENT ERROR" => BadRequest(result),
+        _ => StatusCode(500, result),
+      };
+    }
+
+    return Ok(result);
+  }
+
+  [HttpGet("get-published-images")]
+  [ProducesResponseType(typeof(RepositoryResult<ImageUrl>), 200)]
+  [ProducesResponseType(typeof(RepositoryResult<ImageUrl>), 400)]
+  [ProducesResponseType(typeof(RepositoryResult<ImageUrl>), 500)]
+  public async Task<IActionResult> GetPublishedImages()
+  {
+    RepositoryResult<ImageUrl> result = await _imageUrlRepository.GetPublishedImages();
+
+    if(!result.Success)
+    {
+      return result.Title switch
+      {
+        "CLIENT ERROR" => BadRequest(result),
+        _ => StatusCode(500, result),
+      };
+    }
+
+    return Ok(result);
+  }
 }

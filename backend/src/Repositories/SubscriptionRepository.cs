@@ -1,4 +1,5 @@
 
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 public class SubscriptionRepository : ISubscriptionRepository
@@ -7,23 +8,25 @@ public class SubscriptionRepository : ISubscriptionRepository
   private readonly  HttpClient _http;
   private readonly IPaymentService _paymentService;
   private readonly IConfiguration _configuration;
-  public SubscriptionRepository(DataContext context, HttpClient http, IPaymentService paymentService, IConfiguration configuration)
+  private readonly IHubContext<BackendHub> _hubContext;
+  public SubscriptionRepository(DataContext context, HttpClient http, IPaymentService paymentService, IConfiguration configuration, IHubContext<BackendHub> hubContext)
   {
     _context = context;
     _http = http;
     _paymentService = paymentService;
     _configuration = configuration;
+    _hubContext = hubContext;
   }
 
   public async Task<RepositoryResult<Subscription>> SendStkPush(string UserId, StkPushDto pushDto) 
-  {
-    var PaymentSettings = _configuration.GetSection("PaymentSettings");
-    
+  {    
     var user = await _context.User.FirstOrDefaultAsync(u => u.UserId == UserId);
 
     if (user == null) {
       return RepositoryResponse<Subscription>.Failure("CLIENT ERROR", "your profile details not found, cannot complete payment.");
     }
+    
+    var PaymentSettings = _configuration.GetSection("PaymentSettings");
 
     string accessToken = await _paymentService.GetAccessToken();
 
@@ -146,9 +149,12 @@ public class SubscriptionRepository : ISubscriptionRepository
 
     await _context.Subscription.AddAsync(subscriptionData);
     if (await _context.SaveChangesAsync() > 0) {
+      await _hubContext.Clients.User(PaymentDataExists.UserId).SendAsync("subscription-created", subscriptionData);
       Console.WriteLine("Subscription created successfully from Safaricom callback.");
     }
 
+    await _hubContext.Clients.User(PaymentDataExists.UserId).SendAsync("subscription-failed", "Your payment details was  successful but not recorded. Please contact support.");
     Console.WriteLine("Failed to create subscription from Safaricom callback.");
+    return;
   }
 }
