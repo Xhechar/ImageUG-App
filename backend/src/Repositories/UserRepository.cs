@@ -68,6 +68,7 @@ public class UserRepository : IUserRepository
 
     UserExists.Username = updateUserDto.Username ?? UserExists.Username;
     UserExists.Email = updateUserDto.Email ?? UserExists.Email;
+    UserExists.PhoneNumber = updateUserDto.PhoneNumber ?? UserExists.PhoneNumber;
     UserExists.ProfileImageUrl = updateUserDto.ProfileImageUrl ?? UserExists.ProfileImageUrl;
     UserExists.UpdatedAt = DateTime.UtcNow;
     _context.User.Update(UserExists);

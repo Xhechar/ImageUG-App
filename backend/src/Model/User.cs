@@ -34,6 +34,7 @@ namespace ImageURLGenerator.Model
     public DateTime? UpdatedAt { get; set; }
     [Required]
     public bool IsWelcomeEmailSent { get; set; } = false;
+    public int FreeTrialCount { get; set; } = 0; //max 5 free trials
 
     public ICollection<ImageUrl> ImageUrls { get; set; } = [];
     public ICollection<Subscription> Subscriptions { get; set; } = [];

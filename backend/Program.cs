@@ -2,6 +2,7 @@ using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -18,6 +19,19 @@ builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IImageUrlRepository, ImageUrlRepository>();
+builder.Services.Configure<ApiBehaviorOptions>( options => {
+  options.InvalidModelStateResponseFactory = context => {
+    var errors = context.ModelState
+      .Where(e => e.Value?.Errors.Count > 0)
+      .SelectMany(x => x.Value!.Errors)
+      .Select(x => x.ErrorMessage)
+      .ToArray();
+
+      var response = RepositoryResponse<string>.Failure("VALIDATION ERROR", errors[0]);
+
+      return new BadRequestObjectResult(response);
+  };
+});
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateUserValidator>();

@@ -20,6 +20,37 @@ public class ImageUrlRepository : IImageUrlRepository
       return RepositoryResponse<ImageUrl>.Failure("CLIENT ERROR", "your profile is not found, unable to generate image url.");
     }
 
+    if(userExists.FreeTrialCount >= 5 && (userExists.Subscriptions.Count == 0 || userExists.Subscriptions == null))
+    {
+      return RepositoryResponse<ImageUrl>.Failure("CLIENT ERROR", "you have exhausted your free trial limit, please subscribe to generate more image urls.");
+    }
+
+    if(userExists.FreeTrialCount < 5)
+    {
+      var createImageURL = new ImageUrl
+      {
+        ImageUrlId = Guid.NewGuid().ToString(),
+        UserId = UserId,
+        Url = createImageUrlDto.Url,
+        CreatedAt = DateTime.UtcNow
+      };
+
+      await _context.ImageUrl.AddAsync(createImageURL);
+
+      if(await _context.SaveChangesAsync() > 0)
+      {
+        userExists.FreeTrialCount += 1;
+        _context.User.Update(userExists);
+        await _context.SaveChangesAsync();
+
+        return RepositoryResponse<ImageUrl>.Success("image url generated successfully!");
+      }
+      else
+      {
+        return RepositoryResponse<ImageUrl>.Failure("SERVER ERROR", "unable to generate image url at the moment.");
+      }
+    }
+
     if(userExists.Subscriptions.Count == 0 || userExists.Subscriptions == null || userExists.Subscriptions.First().StartDate.AddDays(userExists.Subscriptions.First().DurationInDays) < DateTime.UtcNow)
     {
       return RepositoryResponse<ImageUrl>.Failure("CLIENT ERROR", "you do not have an active subscription, please subscribe to generate image urls.");

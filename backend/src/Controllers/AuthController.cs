@@ -19,12 +19,6 @@ public class AuthController : ControllerBase
   [ProducesResponseType(typeof(RepositoryResult<object>), 500)]
   public async Task<IActionResult> Login([FromBody] LoginDetails loginDetails)
   {
-
-    if(!ModelState.IsValid)
-    {
-      return BadRequest(RepositoryResponse<object>.Failure("CLIENT ERROR", "invalid request data."));
-    }
-
     RepositoryResult<object> result = await _authRepository.Login(loginDetails);
 
     if(result.Success) {
@@ -40,7 +34,11 @@ public class AuthController : ControllerBase
       return Ok(result);
     }
 
-    return Ok(result);
+    return (result.Title) switch
+    {
+      "CLIENT ERROR" => BadRequest(result),
+      _ => StatusCode(500, result),
+    };
   }
 
   [HttpPost("verify-email/{email}")]
@@ -73,11 +71,15 @@ public class AuthController : ControllerBase
   [ProducesResponseType(typeof(RepositoryResult<object>), 500)]
   public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto passwordDto)
   {
-    if(!ModelState.IsValid) {
-      return BadRequest(RepositoryResponse<object>.Failure("CLIENT ERROR", "invalid request data"));
-    }
-
     RepositoryResult<object> result = await _authRepository.ChangePassword(passwordDto);
+
+    if(!result.Success) {
+      return (result.Title) switch
+      {
+        "CLIENT ERROR" => BadRequest(result),
+        _ => StatusCode(500, result),
+      };
+    }
 
     return Ok(result);
   }
