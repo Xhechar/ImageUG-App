@@ -1,3 +1,5 @@
+import { User } from "./User";
+
 export interface ImageUrl {
   ImageUrlId: string;
   Url: string;
@@ -8,9 +10,4 @@ export interface ImageUrl {
   UpdatedAt?: Date;
   
   User?: User;
-}
-
-export interface User {
-  UserId: string;
-  // Add other User properties as needed
 }

@@ -1,1 +1,430 @@
-<p>landing works!</p>
+<!-- Toast Notification -->
+<div *ngIf="showToast" class="fixed top-24 right-6 z-50 animate-slide-in">
+  <div class="bg-dark-card border border-accent/20 rounded-xl px-6 py-4 shadow-glow flex items-center gap-3">
+    <i class="bx bx-info-circle text-accent text-2xl"></i>
+    <p class="text-light-text font-medium">{{ toastMessage }}</p>
+  </div>
+</div>
+
+<app-navbar></app-navbar>
+
+<!-- Hero Section -->
+<section class="min-h-screen bg-gradient-to-br from-dark-bg via-dark-card to-dark-bg flex items-center justify-center px-6 py-20 relative overflow-hidden">
+  <!-- Animated Background Elements -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-float"></div>
+    <div class="absolute bottom-20 right-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-float-delayed"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-secondary/5 rounded-full blur-3xl animate-pulse-slow"></div>
+  </div>
+
+  <div class="max-w-7xl mx-auto w-full relative z-10">
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <!-- Hero Content -->
+      <div class="text-center lg:text-left space-y-8 animate-fade-in">
+        <div class="inline-block">
+          <span class="px-4 py-2 bg-accent/10 border border-accent/30 rounded-full text-accent text-sm font-semibold tracking-wide">
+            <i class="bx bx-rocket mr-1"></i> Image URL Generation Made Easy
+          </span>
+        </div>
+        
+        <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold text-light-text leading-tight">
+          Turn Your Images Into 
+          <span class="text-gradient">Shareable URLs</span>
+        </h1>
+        
+        <p class="text-xl text-light-text/70 leading-relaxed max-w-2xl mx-auto lg:mx-0">
+          Upload, generate, and share image URLs instantly. Perfect for developers, designers, and content creators who need reliable image hosting with zero hassle.
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+          <button *ngIf="!isLoggedIn" (click)="navigateToSignup()" 
+            class="px-8 py-4 bg-primary hover:bg-primary/90 text-dark-bg font-semibold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-glow">
+            <i class="bx bx-user-plus mr-2"></i> Get Started Free
+          </button>
+          <button (click)="scrollToGallery()" 
+            class="px-8 py-4 bg-dark-card border border-accent/30 hover:border-accent text-light-text font-semibold rounded-xl transition-all duration-300 hover:scale-105">
+            <i class="bx bx-image mr-2"></i> View Gallery
+          </button>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-3 gap-8 pt-8 border-t border-accent/10">
+          <div class="text-center lg:text-left">
+            <div class="text-3xl font-bold text-primary">1000+</div>
+            <div class="text-sm text-light-text/60">Active Users</div>
+          </div>
+          <div class="text-center lg:text-left">
+            <div class="text-3xl font-bold text-accent">50K+</div>
+            <div class="text-sm text-light-text/60">Images Hosted</div>
+          </div>
+          <div class="text-center lg:text-left">
+            <div class="text-3xl font-bold text-secondary">99.9%</div>
+            <div class="text-sm text-light-text/60">Uptime</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upload Card -->
+      <div class="animate-fade-in-delayed">
+        <div class="bg-dark-card border border-accent/20 rounded-2xl p-8 shadow-glow hover:shadow-glow-lg transition-all duration-300">
+          <div class="text-center mb-6">
+            <div class="inline-block p-4 bg-primary/10 rounded-2xl mb-4">
+              <i class="bx bx-cloud-upload text-5xl text-primary"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-light-text mb-2">Upload Your Image</h3>
+            <p class="text-light-text/60">Generate a permanent URL in seconds</p>
+          </div>
+
+          <form (submit)="handleSubmit($event)" class="space-y-6">
+            <!-- File Upload -->
+            <div class="relative">
+              <label class="block w-full cursor-pointer">
+                <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden" />
+                <div class="border-2 border-dashed border-accent/30 hover:border-accent rounded-xl p-8 text-center transition-all duration-300 hover:bg-accent/5">
+                  <i class="bx bx-image-add text-5xl text-accent mb-3 block"></i>
+                  <p class="text-light-text font-medium mb-1">
+                    {{ selectedFile ? selectedFile.name : 'Click to select image' }}
+                  </p>
+                  <p class="text-sm text-light-text/50">PNG, JPG, GIF up to 10MB</p>
+                </div>
+              </label>
+            </div>
+
+            <!-- Description -->
+            <div>
+              <label class="block text-sm font-medium text-light-text mb-2">
+                <i class="bx bx-edit mr-1"></i> Description (Optional)
+              </label>
+              <textarea 
+                [(ngModel)]="description" 
+                name="description"
+                rows="3" 
+                placeholder="Add a description for your image..."
+                class="w-full bg-dark-bg border border-accent/20 rounded-xl px-4 py-3 text-light-text placeholder-light-text/40 focus:outline-none focus:border-accent transition-all duration-300">
+              </textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" 
+              class="w-full px-6 py-4 bg-primary hover:bg-primary/90 text-dark-bg font-semibold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-glow flex items-center justify-center gap-2">
+              <i class="bx bx-link text-xl"></i>
+              Generate URL
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-20 px-6 bg-dark-bg relative">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl md:text-5xl font-bold text-light-text mb-4">
+        Why Choose <span class="text-gradient">Imagen</span>?
+      </h2>
+      <p class="text-xl text-light-text/60">Powerful features for effortless image hosting</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Feature 1 -->
+      <div class="bg-dark-card border border-accent/20 rounded-2xl p-8 hover:border-accent transition-all duration-300 hover:scale-105 hover:shadow-glow group">
+        <div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-all duration-300">
+          <i class="bx bx-rocket text-3xl text-primary"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-light-text mb-3">Lightning Fast</h3>
+        <p class="text-light-text/60">Upload and generate URLs in milliseconds. Optimized for speed and performance.</p>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="bg-dark-card border border-accent/20 rounded-2xl p-8 hover:border-accent transition-all duration-300 hover:scale-105 hover:shadow-glow group">
+        <div class="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-accent/20 transition-all duration-300">
+          <i class="bx bx-lock-alt text-3xl text-accent"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-light-text mb-3">Secure Storage</h3>
+        <p class="text-light-text/60">Your images are stored securely with enterprise-grade encryption and backup.</p>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="bg-dark-card border border-accent/20 rounded-2xl p-8 hover:border-accent transition-all duration-300 hover:scale-105 hover:shadow-glow group">
+        <div class="w-16 h-16 bg-secondary/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-secondary/20 transition-all duration-300">
+          <i class="bx bx-code-alt text-3xl text-secondary"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-light-text mb-3">Developer Friendly</h3>
+        <p class="text-light-text/60">Clean URLs perfect for embedding in your apps, websites, and documentation.</p>
+      </div>
+
+      <!-- Feature 4 -->
+      <div class="bg-dark-card border border-accent/20 rounded-2xl p-8 hover:border-accent transition-all duration-300 hover:scale-105 hover:shadow-glow group">
+        <div class="w-16 h-16 bg-purple-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-purple-500/20 transition-all duration-300">
+          <i class="bx bx-mobile text-3xl text-purple-500"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-light-text mb-3">Fully Responsive</h3>
+        <p class="text-light-text/60">Works seamlessly across all devices - desktop, tablet, and mobile.</p>
+      </div>
+
+      <!-- Feature 5 -->
+      <div class="bg-dark-card border border-accent/20 rounded-2xl p-8 hover:border-accent transition-all duration-300 hover:scale-105 hover:shadow-glow group">
+        <div class="w-16 h-16 bg-pink-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-pink-500/20 transition-all duration-300">
+          <i class="bx bx-share-alt text-3xl text-pink-500"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-light-text mb-3">Easy Sharing</h3>
+        <p class="text-light-text/60">Publish and share your images with the community or keep them private.</p>
+      </div>
+
+      <!-- Feature 6 -->
+      <div class="bg-dark-card border border-accent/20 rounded-2xl p-8 hover:border-accent transition-all duration-300 hover:scale-105 hover:shadow-glow group">
+        <div class="w-16 h-16 bg-indigo-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-500/20 transition-all duration-300">
+          <i class="bx bx-line-chart text-3xl text-indigo-500"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-light-text mb-3">Analytics</h3>
+        <p class="text-light-text/60">Track views, downloads, and engagement metrics for your images.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing Section -->
+<section class="py-20 px-6 bg-dark-card relative overflow-hidden">
+  <div class="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
+    <div class="absolute -top-40 -right-40 w-80 h-80 bg-primary/20 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-accent/20 rounded-full blur-3xl"></div>
+  </div>
+
+  <div class="max-w-7xl mx-auto relative z-10">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl md:text-5xl font-bold text-light-text mb-4">
+        Simple, <span class="text-gradient">Transparent</span> Pricing
+      </h2>
+      <p class="text-xl text-light-text/60">Choose the plan that fits your needs</p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      <!-- Weekly Plan -->
+      <div class="bg-dark-bg border border-accent/20 rounded-2xl p-8 hover:border-accent transition-all duration-300 hover:scale-105">
+        <div class="text-center mb-8">
+          <div class="inline-block p-3 bg-accent/10 rounded-xl mb-4">
+            <i class="bx bx-calendar-week text-4xl text-accent"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-light-text mb-2">Weekly</h3>
+          <div class="flex items-baseline justify-center gap-2 mb-4">
+            <span class="text-5xl font-bold text-primary">$4.99</span>
+            <span class="text-light-text/60">/week</span>
+          </div>
+          <p class="text-sm text-light-text/60">Perfect for short-term projects</p>
+        </div>
+
+        <ul class="space-y-4 mb-8">
+          <li class="flex items-start gap-3">
+            <i class="bx bx-check text-accent text-xl mt-0.5"></i>
+            <span class="text-light-text/80">50 image uploads per week</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <i class="bx bx-check text-accent text-xl mt-0.5"></i>
+            <span class="text-light-text/80">5GB storage</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <i class="bx bx-check text-accent text-xl mt-0.5"></i>
+            <span class="text-light-text/80">Basic analytics</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <i class="bx bx-check text-accent text-xl mt-0.5"></i>
+            <span class="text-light-text/80">Email support</span>
+          </li>
+        </ul>
+
+        <button class="w-full px-6 py-3 bg-dark-card border border-accent hover:bg-accent/10 text-light-text font-semibold rounded-xl transition-all duration-300">
+          Choose Weekly
+        </button>
+      </div>
+
+      <!-- Monthly Plan (Popular) -->
+      <div class="bg-gradient-to-br from-primary/10 to-accent/10 border-2 border-primary rounded-2xl p-8 relative transform scale-105 hover:scale-110 transition-all duration-300 shadow-glow">
+        <div class="absolute -top-4 left-1/2 -translate-x-1/2">
+          <span class="px-4 py-1 bg-primary text-dark-bg text-sm font-bold rounded-full">MOST POPULAR</span>
+        </div>
+
+        <div class="text-center mb-8">
+          <div class="inline-block p-3 bg-primary/20 rounded-xl mb-4">
+            <i class="bx bx-calendar text-4xl text-primary"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-light-text mb-2">Monthly</h3>
+          <div class="flex items-baseline justify-center gap-2 mb-4">
+            <span class="text-5xl font-bold text-primary">$14.99</span>
+            <span class="text-light-text/60">/month</span>
+          </div>
+          <p class="text-sm text-light-text/60">Best value for regular users</p>
+        </div>
+
+        <ul class="space-y-4 mb-8">
+          <li class="flex items-start gap-3">
+            <i class="bx bx-check text-primary text-xl mt-0.5"></i>
+            <span class="text-light-text/80">Unlimited uploads</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <i class="bx bx-check text-primary text-xl mt-0.5"></i>
+            <span class="text-light-text/80">50GB storage</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <i class="bx bx-check text-primary text-xl mt-0.5"></i>
+            <span class="text-light-text/80">Advanced analytics</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <i class="bx bx-check text-primary text-xl mt-0.5"></i>
+            <span class="text-light-text/80">Priority support</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <i class="bx bx-check text-primary text-xl mt-0.5"></i>
+            <span class="text-light-text/80">Custom branding</span>
+          </li>
+        </ul>
+
+        <button class="w-full px-6 py-3 bg-primary hover:bg-primary/90 text-dark-bg font-semibold rounded-xl transition-all duration-300 hover:scale-105">
+          Choose Monthly
+        </button>
+      </div>
+
+      <!-- Yearly Plan -->
+      <div class="bg-dark-bg border border-accent/20 rounded-2xl p-8 hover:border-accent transition-all duration-300 hover:scale-105">
+        <div class="text-center mb-8">
+          <div class="inline-block p-3 bg-secondary/10 rounded-xl mb-4">
+            <i class="bx bx-calendar-star text-4xl text-secondary"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-light-text mb-2">Yearly</h3>
+          <div class="flex items-baseline justify-center gap-2 mb-4">
+            <span class="text-5xl font-bold text-primary">$99.99</span>
+            <span class="text-light-text/60">/year</span>
+          </div>
+          <p class="text-sm text-accent">Save 44% annually!</p>
+        </div>
+
+        <ul class="space-y-4 mb-8">
+          <li class="flex items-start gap-3">
+            <i class="bx bx-check text-accent text-xl mt-0.5"></i>
+            <span class="text-light-text/80">Unlimited uploads</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <i class="bx bx-check text-accent text-xl mt-0.5"></i>
+            <span class="text-light-text/80">Unlimited storage</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <i class="bx bx-check text-accent text-xl mt-0.5"></i>
+            <span class="text-light-text/80">Premium analytics</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <i class="bx bx-check text-accent text-xl mt-0.5"></i>
+            <span class="text-light-text/80">24/7 priority support</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <i class="bx bx-check text-accent text-xl mt-0.5"></i>
+            <span class="text-light-text/80">API access</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <i class="bx bx-check text-accent text-xl mt-0.5"></i>
+            <span class="text-light-text/80">White-label option</span>
+          </li>
+        </ul>
+
+        <button class="w-full px-6 py-3 bg-dark-card border border-accent hover:bg-accent/10 text-light-text font-semibold rounded-xl transition-all duration-300">
+          Choose Yearly
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Published Images Gallery -->
+<section id="gallery-section" class="py-20 px-6 bg-dark-bg">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl md:text-5xl font-bold text-light-text mb-4">
+        Community <span class="text-gradient">Gallery</span>
+      </h2>
+      <p class="text-xl text-light-text/60">Explore images published by our creative community</p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div *ngFor="let image of displayedImages" 
+        class="group bg-dark-card border border-accent/20 rounded-2xl overflow-hidden hover:border-accent transition-all duration-300 hover:scale-105 hover:shadow-glow cursor-pointer">
+        
+        <!-- Image -->
+        <div class="aspect-square overflow-hidden relative">
+          <img [src]="image.Url" [alt]="image.Description || 'Published image'" 
+            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+          <div class="absolute inset-0 bg-gradient-to-t from-dark-bg/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        </div>
+
+        <!-- Info -->
+        <div class="p-4">
+          <p class="text-light-text/80 text-sm mb-3 line-clamp-2">
+            {{ image.Description || 'No description provided' }}
+          </p>
+          
+          <!-- User Info -->
+          <div class="flex items-center gap-3 pt-3 border-t border-accent/10">
+            <div *ngIf="image.User?.ProfileImageUrl; else initials" class="w-8 h-8 rounded-full overflow-hidden">
+              <img [src]="image.User?.ProfileImageUrl" [alt]="image.User?.Username" class="w-full h-full object-cover" />
+            </div>
+            <ng-template #initials>
+              <div [ngClass]="'w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-dark-bg ' + getInitialsColor(image.User?.Username || 'Guest User')">
+                {{ getUserInitials(image.User?.Username || 'User') }}
+              </div>
+            </ng-template>
+            <div class="flex-1 min-w-0">
+              <p class="text-light-text text-sm font-medium truncate">{{ image.User?.Username }}</p>
+              <p class="text-light-text/50 text-xs">{{ image.CreatedAt | date: 'MMM d, y' }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="showPagination" class="flex items-center justify-center gap-4 mt-12">
+      <button (click)="previousPage()" [disabled]="currentPage === 0"
+        class="px-6 py-3 bg-dark-card border border-accent/20 hover:border-accent text-light-text font-medium rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105">
+        <i class="bx bx-chevron-left mr-1"></i> Previous
+      </button>
+      
+      <span class="text-light-text/60">
+        Page {{ currentPage + 1 }} of {{ totalPages }}
+      </span>
+      
+      <button (click)="nextPage()" [disabled]="currentPage === totalPages - 1"
+        class="px-6 py-3 bg-dark-card border border-accent/20 hover:border-accent text-light-text font-medium rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105">
+        Next <i class="bx bx-chevron-right ml-1"></i>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 px-6 bg-gradient-to-br from-primary/10 via-dark-card to-accent/10 relative overflow-hidden">
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-0 left-0 w-full h-full opacity-20">
+      <div class="absolute top-10 left-10 w-64 h-64 bg-primary/30 rounded-full blur-3xl animate-float"></div>
+      <div class="absolute bottom-10 right-10 w-80 h-80 bg-accent/30 rounded-full blur-3xl animate-float-delayed"></div>
+    </div>
+  </div>
+
+  <div class="max-w-4xl mx-auto text-center relative z-10">
+    <h2 class="text-4xl md:text-5xl font-bold text-light-text mb-6">
+      Ready to Start Generating <span class="text-gradient">Image URLs</span>?
+    </h2>
+    <p class="text-xl text-light-text/70 mb-8 max-w-2xl mx-auto">
+      Join thousands of developers and creators who trust Imagen for their image hosting needs.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <button *ngIf="!isLoggedIn" (click)="navigateToSignup()" 
+        class="px-10 py-5 bg-primary hover:bg-primary/90 text-dark-bg text-lg font-bold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-glow">
+        <i class="bx bx-rocket mr-2"></i> Start Free Trial
+      </button>
+      <button 
+        class="px-10 py-5 bg-dark-card border border-accent hover:border-accent text-light-text text-lg font-bold rounded-xl transition-all duration-300 hover:scale-105">
+        <i class="bx bx-play-circle mr-2"></i> Watch Demo
+      </button>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>

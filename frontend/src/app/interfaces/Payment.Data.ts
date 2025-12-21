@@ -1,4 +1,4 @@
-import { User } from "./ImageUrl";
+import { User } from "./User";
 
 export interface PaymentData {
   PaymentDataId: string;

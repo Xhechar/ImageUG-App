@@ -1,0 +1,225 @@
+<footer class="bg-dark-card border-t border-accent/20">
+  <div class="max-w-7xl mx-auto px-6 py-16">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+      
+      <!-- Brand Section -->
+      <div class="space-y-4">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center shadow-glow">
+            <i class="bx bx-image text-dark-bg text-3xl"></i>
+          </div>
+          <span class="text-3xl font-bold text-gradient">Imagen</span>
+        </div>
+        <p class="text-light-text/70 leading-relaxed">
+          The simplest way to generate and share image URLs. Built for developers, designers, and creators.
+        </p>
+        
+        <!-- Social Links -->
+        <div class="flex items-center gap-4 pt-4">
+          <a href="https://twitter.com" target="_blank" 
+            class="w-10 h-10 bg-dark-bg hover:bg-primary/20 border border-accent/20 hover:border-primary rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110">
+            <i class="bx bxl-twitter text-xl text-light-text hover:text-primary"></i>
+          </a>
+          <a href="https://github.com" target="_blank" 
+            class="w-10 h-10 bg-dark-bg hover:bg-primary/20 border border-accent/20 hover:border-primary rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110">
+            <i class="bx bxl-github text-xl text-light-text hover:text-primary"></i>
+          </a>
+          <a href="https://linkedin.com" target="_blank" 
+            class="w-10 h-10 bg-dark-bg hover:bg-primary/20 border border-accent/20 hover:border-primary rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110">
+            <i class="bx bxl-linkedin text-xl text-light-text hover:text-primary"></i>
+          </a>
+          <a href="https://discord.com" target="_blank" 
+            class="w-10 h-10 bg-dark-bg hover:bg-primary/20 border border-accent/20 hover:border-primary rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110">
+            <i class="bx bxl-discord-alt text-xl text-light-text hover:text-primary"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Product Links -->
+      <div>
+        <h3 class="text-lg font-bold text-light-text mb-4 flex items-center gap-2">
+          <i class="bx bx-package text-primary"></i>
+          Product
+        </h3>
+        <ul class="space-y-3">
+          <li>
+            <a (click)="navigateTo('/features')" 
+              class="text-light-text/70 hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-2 group">
+              <i class="bx bx-chevron-right text-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></i>
+              Features
+            </a>
+          </li>
+          <li>
+            <a (click)="navigateTo('/pricing')" 
+              class="text-light-text/70 hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-2 group">
+              <i class="bx bx-chevron-right text-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></i>
+              Pricing
+            </a>
+          </li>
+          <li>
+            <a (click)="navigateTo('/gallery')" 
+              class="text-light-text/70 hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-2 group">
+              <i class="bx bx-chevron-right text-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></i>
+              Gallery
+            </a>
+          </li>
+          <li>
+            <a (click)="navigateTo('/api-docs')" 
+              class="text-light-text/70 hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-2 group">
+              <i class="bx bx-chevron-right text-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></i>
+              API Documentation
+            </a>
+          </li>
+          <li>
+            <a (click)="navigateTo('/changelog')" 
+              class="text-light-text/70 hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-2 group">
+              <i class="bx bx-chevron-right text-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></i>
+              Changelog
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Company Links -->
+      <div>
+        <h3 class="text-lg font-bold text-light-text mb-4 flex items-center gap-2">
+          <i class="bx bx-buildings text-accent"></i>
+          Company
+        </h3>
+        <ul class="space-y-3">
+          <li>
+            <a (click)="navigateTo('/about')" 
+              class="text-light-text/70 hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-2 group">
+              <i class="bx bx-chevron-right text-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></i>
+              About Us
+            </a>
+          </li>
+          <li>
+            <a (click)="navigateTo('/blog')" 
+              class="text-light-text/70 hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-2 group">
+              <i class="bx bx-chevron-right text-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></i>
+              Blog
+            </a>
+          </li>
+          <li>
+            <a (click)="navigateTo('/careers')" 
+              class="text-light-text/70 hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-2 group">
+              <i class="bx bx-chevron-right text-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></i>
+              Careers
+            </a>
+          </li>
+          <li>
+            <a (click)="navigateTo('/contact')" 
+              class="text-light-text/70 hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-2 group">
+              <i class="bx bx-chevron-right text-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></i>
+              Contact
+            </a>
+          </li>
+          <li>
+            <a (click)="navigateTo('/press')" 
+              class="text-light-text/70 hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-2 group">
+              <i class="bx bx-chevron-right text-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></i>
+              Press Kit
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Support Links -->
+      <div>
+        <h3 class="text-lg font-bold text-light-text mb-4 flex items-center gap-2">
+          <i class="bx bx-support text-secondary"></i>
+          Support
+        </h3>
+        <ul class="space-y-3">
+          <li>
+            <a (click)="navigateTo('/help-center')" 
+              class="text-light-text/70 hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-2 group">
+              <i class="bx bx-chevron-right text-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></i>
+              Help Center
+            </a>
+          </li>
+          <li>
+            <a (click)="navigateTo('/faq')" 
+              class="text-light-text/70 hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-2 group">
+              <i class="bx bx-chevron-right text-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></i>
+              FAQ
+            </a>
+          </li>
+          <li>
+            <a (click)="navigateTo('/tutorials')" 
+              class="text-light-text/70 hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-2 group">
+              <i class="bx bx-chevron-right text-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></i>
+              Tutorials
+            </a>
+          </li>
+          <li>
+            <a (click)="navigateTo('/community')" 
+              class="text-light-text/70 hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-2 group">
+              <i class="bx bx-chevron-right text-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></i>
+              Community
+            </a>
+          </li>
+          <li>
+            <a (click)="navigateTo('/status')" 
+              class="text-light-text/70 hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-2 group">
+              <i class="bx bx-chevron-right text-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></i>
+              System Status
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Newsletter Section -->
+    <div class="border-t border-accent/20 pt-12 mb-12">
+      <div class="max-w-2xl mx-auto text-center">
+        <h3 class="text-2xl font-bold text-light-text mb-3">
+          Stay Updated
+        </h3>
+        <p class="text-light-text/70 mb-6">
+          Subscribe to our newsletter for the latest updates, tips, and exclusive offers.
+        </p>
+        <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+          <input type="email" 
+            placeholder="Enter your email" 
+            class="flex-1 px-6 py-3 bg-dark-bg border border-accent/20 rounded-xl text-light-text placeholder-light-text/40 focus:outline-none focus:border-accent transition-all duration-300" />
+          <button type="submit" 
+            class="px-8 py-3 bg-primary hover:bg-primary/90 text-dark-bg font-semibold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-glow whitespace-nowrap">
+            <i class="bx bx-envelope mr-2"></i>Subscribe
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="border-t border-accent/20 pt-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+        <p class="text-light-text/60 text-sm">
+          © {{ currentYear }} Imagen. All rights reserved.
+        </p>
+        
+        <div class="flex items-center gap-6">
+          <a (click)="navigateTo('/privacy')" 
+            class="text-light-text/60 hover:text-primary text-sm transition-colors duration-300 cursor-pointer">
+            Privacy Policy
+          </a>
+          <a (click)="navigateTo('/terms')" 
+            class="text-light-text/60 hover:text-primary text-sm transition-colors duration-300 cursor-pointer">
+            Terms of Service
+          </a>
+          <a (click)="navigateTo('/cookies')" 
+            class="text-light-text/60 hover:text-primary text-sm transition-colors duration-300 cursor-pointer">
+            Cookie Policy
+          </a>
+        </div>
+
+        <div class="flex items-center gap-2 text-light-text/60 text-sm">
+          <span>Made with</span>
+          <i class="bx bxs-heart text-red-500 animate-pulse"></i>
+          <span>by the Imagen Team</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
