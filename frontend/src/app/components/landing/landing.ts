@@ -23,11 +23,11 @@ export class Landing {
   currentPage: number = 0;
   imagesPerPage: number = 10;
 
-  // Dummy published images
+  // Dummy published images - OPTIMIZED with smaller, faster loading images
   allPublishedImages: ImageUrl[] = [
     {
       ImageUrlId: '1',
-      Url: 'https://images.unsplash.com/photo-1682687220742-aba13b6e50ba',
+      Url: 'https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=400&q=80',
       Description: 'Beautiful sunset over the mountains',
       User: {
         Username: 'JohnDoe', ProfileImageUrl: undefined,
@@ -49,7 +49,7 @@ export class Landing {
     },
     {
       ImageUrlId: '2',
-      Url: 'https://images.unsplash.com/photo-1682687221038-404cb8830901',
+      Url: 'https://images.unsplash.com/photo-1682687221038-404cb8830901?w=400&q=80',
       Description: 'Modern architecture design',
       User: {
         Username: 'SarahSmith',
@@ -72,7 +72,7 @@ export class Landing {
     },
     {
       ImageUrlId: '3',
-      Url: 'https://images.unsplash.com/photo-1682687220063-4742bd7fd538',
+      Url: 'https://images.unsplash.com/photo-1682687220063-4742bd7fd538?w=400&q=80',
       Description: 'Abstract art composition',
       User: {
         Username: 'MikeJohnson', ProfileImageUrl: undefined,
@@ -94,7 +94,7 @@ export class Landing {
     },
     {
       ImageUrlId: '4',
-      Url: 'https://images.unsplash.com/photo-1682687220923-c58b9a4592ae',
+      Url: 'https://images.unsplash.com/photo-1682687220923-c58b9a4592ae?w=400&q=80',
       Description: 'Nature landscape photography',
       User: {
         Username: 'EmilyBrown',
@@ -117,7 +117,7 @@ export class Landing {
     },
     {
       ImageUrlId: '5',
-      Url: 'https://images.unsplash.com/photo-1682687221080-5cb261c645cb',
+      Url: 'https://images.unsplash.com/photo-1682687221080-5cb261c645cb?w=400&q=80',
       Description: 'Urban street photography',
       User: {
         Username: 'ChrisWilson', ProfileImageUrl: undefined,
@@ -139,7 +139,7 @@ export class Landing {
     },
     {
       ImageUrlId: '6',
-      Url: 'https://images.unsplash.com/photo-1682687220199-d0124f48f95b',
+      Url: 'https://images.unsplash.com/photo-1682687220199-d0124f48f95b?w=400&q=80',
       Description: 'Minimalist interior design',
       User: {
         Username: 'LisaAnderson',
@@ -162,7 +162,7 @@ export class Landing {
     },
     {
       ImageUrlId: '7',
-      Url: 'https://images.unsplash.com/photo-1682687220566-5599dbbebf11',
+      Url: 'https://images.unsplash.com/photo-1682687220566-5599dbbebf11?w=400&q=80',
       Description: 'Food photography masterpiece',
       User: {
         Username: 'DavidMartinez', ProfileImageUrl: undefined,
@@ -184,7 +184,7 @@ export class Landing {
     },
     {
       ImageUrlId: '8',
-      Url: 'https://images.unsplash.com/photo-1682687221248-3116ba6abb93',
+      Url: 'https://images.unsplash.com/photo-1682687221248-3116ba6abb93?w=400&q=80',
       Description: 'Wildlife in natural habitat',
       User: {
         Username: 'JessicaTaylor',
@@ -207,7 +207,7 @@ export class Landing {
     },
     {
       ImageUrlId: '9',
-      Url: 'https://images.unsplash.com/photo-1682687220208-22d7a2543e88',
+      Url: 'https://images.unsplash.com/photo-1682687220208-22d7a2543e88?w=400&q=80',
       Description: 'Technology and innovation',
       User: {
         Username: 'RobertThomas', ProfileImageUrl: undefined,
@@ -229,7 +229,7 @@ export class Landing {
     },
     {
       ImageUrlId: '10',
-      Url: 'https://images.unsplash.com/photo-1682687221363-72518513620e',
+      Url: 'https://images.unsplash.com/photo-1682687221363-72518513620e?w=400&q=80',
       Description: 'Fashion editorial shot',
       User: {
         Username: 'AmandaWhite',
@@ -252,7 +252,7 @@ export class Landing {
     },
     {
       ImageUrlId: '11',
-      Url: 'https://images.unsplash.com/photo-1682687220015-186f63b8850a',
+      Url: 'https://images.unsplash.com/photo-1682687220015-186f63b8850a?w=400&q=80',
       Description: 'Coastal seascape view',
       User: {
         Username: 'KevinHarris', ProfileImageUrl: undefined,
@@ -274,7 +274,7 @@ export class Landing {
     },
     {
       ImageUrlId: '12',
-      Url: 'https://images.unsplash.com/photo-1682687220067-dced3a881c55',
+      Url: 'https://images.unsplash.com/photo-1682687220067-dced3a881c55?w=400&q=80',
       Description: 'Artistic black and white',
       User: {
         Username: 'NancyClark',
@@ -299,6 +299,23 @@ export class Landing {
 
   constructor(private router: Router) {}
 
+  ngOnInit(): void {
+    // Preload images for the first page
+    this.preloadImages();
+  }
+
+  preloadImages(): void {
+    // Preload only the images for the current page
+    this.displayedImages.forEach((image) => {
+      const img = new Image();
+      img.src = image.Url;
+      if (image.User?.ProfileImageUrl) {
+        const profileImg = new Image();
+        profileImg.src = image.User.ProfileImageUrl;
+      }
+    });
+  }
+
   get displayedImages(): ImageUrl[] {
     const start = this.currentPage * this.imagesPerPage;
     const end = start + this.imagesPerPage;
@@ -316,6 +333,7 @@ export class Landing {
   nextPage(): void {
     if (this.currentPage < this.totalPages - 1) {
       this.currentPage++;
+      this.preloadImages(); // Preload next page images
       this.scrollToGallery();
     }
   }
@@ -323,6 +341,7 @@ export class Landing {
   previousPage(): void {
     if (this.currentPage > 0) {
       this.currentPage--;
+      this.preloadImages(); // Preload previous page images
       this.scrollToGallery();
     }
   }
@@ -395,5 +414,17 @@ export class Landing {
 
   navigateToSignup(): void {
     this.router.navigate(['/signup']);
+  }
+
+  // Handle image load event
+  onImageLoad(event: any): void {
+    event.target.classList.add('loaded');
+  }
+
+  // Handle image error
+  onImageError(event: any): void {
+    console.error('Failed to load image:', event.target.src);
+    // Optionally set a fallback image
+    event.target.src = 'assets/placeholder.png';
   }
 }
