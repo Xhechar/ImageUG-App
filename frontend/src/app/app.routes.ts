@@ -3,11 +3,19 @@ import { Landing } from './components/landing/landing';
 import { Dashboard } from './components/dashboard/dashboard';
 import { Subscriptions } from './components/subscriptions/subscriptions';
 import { Gallery } from './components/gallery/gallery';
+import { Profile } from './components/profile/profile';
+import { Register } from './components/register/register';
+import { Login } from './components/login/login';
+import { Verifymail } from './components/verifymail/verifymail';
 
 export const routes: Routes = [
-  {path: 'imagen-home', component: Landing},
-  {path: '', redirectTo: 'imagen-home', pathMatch: 'full'},
-  {path: 'dashboard', component: Dashboard},
-  {path: 'subscriptions', component: Subscriptions},
-  { path: 'gallery', component: Gallery }
+  { path: 'imagen-home', component: Landing },
+  { path: '', redirectTo: 'imagen-home', pathMatch: 'full' },
+  { path: 'dashboard', component: Dashboard },
+  { path: 'subscriptions', component: Subscriptions },
+  { path: 'gallery', component: Gallery },
+  { path: 'profile', component: Profile },
+  { path: 'join-us', component: Register },
+  { path: 'login', component: Login },
+  { path: 'verify-mail', component: Verifymail }
 ];

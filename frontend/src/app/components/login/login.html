@@ -1,1 +1,144 @@
-<p>login works!</p>
+<div class="min-h-screen bg-dark-bg flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <!-- Toast Notification -->
+  <div *ngIf="showToast" class="fixed top-6 right-6 z-50 animate-slide-in">
+    <div [class]="'border rounded-xl px-6 py-4 shadow-glow flex items-center gap-3 ' + 
+      (toastType === 'success' ? 'bg-green-500/10 border-green-500/30' : 
+       toastType === 'error' ? 'bg-red-500/10 border-red-500/30' : 
+       'bg-dark-card border-accent/20')">
+      <i [class]="'text-2xl ' + 
+        (toastType === 'success' ? 'bx bx-check-circle text-green-500' : 
+         toastType === 'error' ? 'bx bx-error-circle text-red-500' : 
+         'bx bx-info-circle text-accent')"></i>
+      <p [class]="'font-medium ' + 
+        (toastType === 'success' ? 'text-green-400' : 
+         toastType === 'error' ? 'text-red-400' : 
+         'text-light-text')">{{ toastMessage }}</p>
+    </div>
+  </div>
+
+  <div class="max-w-md w-full">
+    <!-- Logo & Header -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-2xl mb-4 shadow-glow">
+        <i class="bx bx-image text-dark-bg text-3xl"></i>
+      </div>
+      <h2 class="text-3xl font-bold text-light-text mb-2">Welcome Back</h2>
+      <p class="text-light-text/60">Sign in to your Imagen account</p>
+    </div>
+
+    <!-- Login Form -->
+    <div class="bg-dark-card border border-accent/20 rounded-2xl p-8 shadow-glow">
+      <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)">
+        
+        <!-- Email -->
+        <div class="mb-5">
+          <label class="block text-sm font-medium text-light-text mb-2">
+            <i class="bx bx-envelope mr-1"></i> Email Address
+          </label>
+          <input 
+            #email="ngModel"
+            [(ngModel)]="loginData.Email"
+            name="email"
+            type="email" 
+            email
+            required
+            placeholder="Enter your email"
+            [class.border-red-500]="shouldShowError(email)"
+            [class.border-accent]="email.valid && email.touched"
+            class="w-full px-4 py-3 bg-dark-bg border border-accent/20 rounded-xl text-light-text placeholder-light-text/40 focus:outline-none focus:border-accent transition-all duration-300">
+          
+          <div *ngIf="shouldShowError(email)" class="mt-2 flex items-start gap-2 text-red-400 text-sm">
+            <i class="bx bx-error-circle text-lg mt-0.5"></i>
+            <span>{{ getErrorMessage(email, 'Email') }}</span>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="mb-5">
+          <label class="block text-sm font-medium text-light-text mb-2">
+            <i class="bx bx-lock-alt mr-1"></i> Password
+          </label>
+          <div class="relative">
+            <input 
+              #password="ngModel"
+              [(ngModel)]="loginData.Password"
+              name="password"
+              [type]="showPassword ? 'text' : 'password'"
+              required
+              minlength="8"
+              placeholder="Enter your password"
+              [class.border-red-500]="shouldShowError(password)"
+              [class.border-accent]="password.valid && password.touched"
+              class="w-full px-4 py-3 pr-12 bg-dark-bg border border-accent/20 rounded-xl text-light-text placeholder-light-text/40 focus:outline-none focus:border-accent transition-all duration-300">
+            
+            <button 
+              type="button"
+              (click)="togglePasswordVisibility()"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-light-text/60 hover:text-light-text transition-colors">
+              <i [class]="showPassword ? 'bx bx-hide' : 'bx bx-show'" class="text-xl"></i>
+            </button>
+          </div>
+          
+          <div *ngIf="shouldShowError(password)" class="mt-2 flex items-start gap-2 text-red-400 text-sm">
+            <i class="bx bx-error-circle text-lg mt-0.5"></i>
+            <span>{{ getErrorMessage(password, 'Password') }}</span>
+          </div>
+        </div>
+
+        <!-- Remember Me & Forgot Password -->
+        <div class="flex items-center justify-between mb-6">
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input 
+              [(ngModel)]="rememberMe"
+              name="rememberMe"
+              type="checkbox"
+              class="w-5 h-5 bg-dark-bg border-2 border-accent/30 rounded cursor-pointer checked:bg-accent checked:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20 transition-colors">
+            <span class="text-sm text-light-text/70 group-hover:text-light-text transition-colors">
+              Remember me
+            </span>
+          </label>
+
+          <button 
+            type="button"
+            (click)="navigateToForgotPassword()"
+            class="text-sm text-accent hover:text-accent/80 font-medium transition-colors">
+            Forgot Password?
+          </button>
+        </div>
+
+        <!-- Submit Button -->
+        <button 
+          type="submit"
+          [disabled]="isSubmitting"
+          class="w-full px-6 py-4 bg-primary hover:bg-primary/90 text-dark-bg text-lg font-bold rounded-xl transition-all duration-300 hover:shadow-glow disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mb-4">
+          <i *ngIf="isSubmitting" class="bx bx-loader-alt animate-spin text-xl"></i>
+          <span>{{ isSubmitting ? 'Signing In...' : 'Sign In' }}</span>
+        </button>
+
+        <!-- Divider -->
+        <div class="relative my-6">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-accent/20"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-4 bg-dark-card text-light-text/60">Don't have an account?</span>
+          </div>
+        </div>
+
+        <!-- Signup Link -->
+        <button 
+          type="button"
+          (click)="navigateToSignup()"
+          class="w-full px-6 py-3 bg-dark-bg border border-accent/30 hover:border-accent text-light-text font-semibold rounded-xl transition-all duration-300">
+          Create Account
+        </button>
+      </form>
+    </div>
+
+    <!-- Footer -->
+    <p class="text-center text-sm text-light-text/50 mt-8">
+      <i class="bx bx-shield-alt-2 mr-1"></i>
+      Your data is encrypted and secure
+    </p>
+  </div>
+</div>

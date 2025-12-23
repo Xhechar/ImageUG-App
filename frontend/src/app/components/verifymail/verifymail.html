@@ -1,1 +1,298 @@
-<p>verifymail works!</p>
+<div class="min-h-screen bg-dark-bg flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <!-- Toast Notification -->
+  <div *ngIf="showToast" class="fixed top-6 right-6 z-50 animate-slide-in">
+    <div [class]="'border rounded-xl px-6 py-4 shadow-glow flex items-center gap-3 ' + 
+      (toastType === 'success' ? 'bg-green-500/10 border-green-500/30' : 
+       toastType === 'error' ? 'bg-red-500/10 border-red-500/30' : 
+       'bg-dark-card border-accent/20')">
+      <i [class]="'text-2xl ' + 
+        (toastType === 'success' ? 'bx bx-check-circle text-green-500' : 
+         toastType === 'error' ? 'bx bx-error-circle text-red-500' : 
+         'bx bx-info-circle text-accent')"></i>
+      <p [class]="'font-medium ' + 
+        (toastType === 'success' ? 'text-green-400' : 
+         toastType === 'error' ? 'text-red-400' : 
+         'text-light-text')">{{ toastMessage }}</p>
+    </div>
+  </div>
+
+  <div class="max-w-md w-full">
+    <!-- Logo & Header -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-2xl mb-4 shadow-glow">
+        <i class="bx bx-lock-alt text-dark-bg text-3xl"></i>
+      </div>
+      <h2 class="text-3xl font-bold text-light-text mb-2">
+        {{ currentStep === 'email' ? 'Forgot Password?' : 
+           currentStep === 'verification' ? 'Verify Your Email' : 
+           currentStep === 'password' ? 'Create New Password' : 
+           'Password Reset Complete' }}
+      </h2>
+      <p class="text-light-text/60">
+        {{ currentStep === 'email' ? 'Enter your email to receive a verification code' : 
+           currentStep === 'verification' ? 'Enter the 6-digit code sent to your email' : 
+           currentStep === 'password' ? 'Choose a strong password for your account' : 
+           'Your password has been successfully reset' }}
+      </p>
+    </div>
+
+    <!-- Progress Indicator -->
+    <div *ngIf="currentStep !== 'success'" class="mb-8">
+      <div class="flex items-center justify-between">
+        <div class="flex flex-col items-center flex-1">
+          <div [class]="currentStep === 'email' ? 'bg-primary text-dark-bg' : 'bg-accent text-dark-bg'" 
+            class="w-10 h-10 rounded-full flex items-center justify-center font-bold mb-2 transition-all duration-300">
+            <i *ngIf="currentStep !== 'email'" class="bx bx-check text-xl"></i>
+            <span *ngIf="currentStep === 'email'">1</span>
+          </div>
+          <span class="text-xs text-light-text/60">Email</span>
+        </div>
+        
+        <div [class]="currentStep !== 'email' ? 'bg-accent' : 'bg-accent/20'" 
+          class="h-1 flex-1 mx-2 transition-all duration-300"></div>
+        
+        <div class="flex flex-col items-center flex-1">
+          <div [class]="currentStep === 'verification' ? 'bg-primary text-dark-bg' : 
+                        currentStep === 'password' ? 'bg-accent text-dark-bg' : 
+                        'bg-dark-card text-light-text/40'" 
+            class="w-10 h-10 rounded-full flex items-center justify-center font-bold border-2 border-accent/30 mb-2 transition-all duration-300">
+            <i *ngIf="currentStep === 'password'" class="bx bx-check text-xl"></i>
+            <span *ngIf="currentStep !== 'password'">2</span>
+          </div>
+          <span class="text-xs text-light-text/60">Verify</span>
+        </div>
+        
+        <div [class]="currentStep === 'password' ? 'bg-accent' : 'bg-accent/20'" 
+          class="h-1 flex-1 mx-2 transition-all duration-300"></div>
+        
+        <div class="flex flex-col items-center flex-1">
+          <div [class]="currentStep === 'password' ? 'bg-primary text-dark-bg' : 'bg-dark-card text-light-text/40'" 
+            class="w-10 h-10 rounded-full flex items-center justify-center font-bold border-2 border-accent/30 mb-2 transition-all duration-300">
+            3
+          </div>
+          <span class="text-xs text-light-text/60">Reset</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Card -->
+    <div class="bg-dark-card border border-accent/20 rounded-2xl p-8 shadow-glow">
+      
+      <!-- Step 1: Email Input -->
+      <div *ngIf="currentStep === 'email'">
+        <form #emailForm="ngForm" (ngSubmit)="requestCode(emailForm)">
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-light-text mb-2">
+              <i class="bx bx-envelope mr-1"></i> Email Address
+            </label>
+            <input 
+              #email="ngModel"
+              [(ngModel)]="changePasswordData.Email"
+              name="email"
+              type="email" 
+              email
+              required
+              placeholder="Enter your email"
+              [class.border-red-500]="shouldShowError(email)"
+              [class.border-accent]="email.valid && email.touched"
+              class="w-full px-4 py-3 bg-dark-bg border border-accent/20 rounded-xl text-light-text placeholder-light-text/40 focus:outline-none focus:border-accent transition-all duration-300">
+            
+            <div *ngIf="shouldShowError(email)" class="mt-2 flex items-start gap-2 text-red-400 text-sm">
+              <i class="bx bx-error-circle text-lg mt-0.5"></i>
+              <span>{{ getErrorMessage(email, 'Email') }}</span>
+            </div>
+          </div>
+
+          <button 
+            type="submit"
+            [disabled]="isSubmitting"
+            class="w-full px-6 py-4 bg-primary hover:bg-primary/90 text-dark-bg text-lg font-bold rounded-xl transition-all duration-300 hover:shadow-glow disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mb-4">
+            <i *ngIf="isSubmitting" class="bx bx-loader-alt animate-spin text-xl"></i>
+            <span>{{ isSubmitting ? 'Sending Code...' : 'Send Verification Code' }}</span>
+          </button>
+
+          <button 
+            type="button"
+            (click)="goBack()"
+            class="w-full px-6 py-3 bg-dark-bg border border-accent/30 hover:border-accent text-light-text font-semibold rounded-xl transition-all duration-300">
+            <i class="bx bx-arrow-back mr-2"></i>Back to Login
+          </button>
+        </form>
+      </div>
+
+      <!-- Step 2: Verification Code -->
+      <div *ngIf="currentStep === 'verification'">
+        <form #codeForm="ngForm" (ngSubmit)="verifyCode(codeForm)">
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-light-text mb-2">
+              <i class="bx bx-key mr-1"></i> Verification Code
+            </label>
+            <input 
+              #code="ngModel"
+              [(ngModel)]="changePasswordData.VerificationCode"
+              name="code"
+              type="text" 
+              required
+              minlength="6"
+              maxlength="6"
+              pattern="[0-9]{6}"
+              placeholder="Enter 6-digit code"
+              [class.border-red-500]="shouldShowError(code)"
+              [class.border-accent]="code.valid && code.touched"
+              class="w-full px-4 py-3 bg-dark-bg border border-accent/20 rounded-xl text-light-text placeholder-light-text/40 text-center text-2xl tracking-widest font-bold focus:outline-none focus:border-accent transition-all duration-300">
+            
+            <div *ngIf="shouldShowError(code)" class="mt-2 flex items-start gap-2 text-red-400 text-sm">
+              <i class="bx bx-error-circle text-lg mt-0.5"></i>
+              <span>{{ getErrorMessage(code, 'Verification Code') }}</span>
+            </div>
+
+            <p class="text-sm text-light-text/50 mt-3 text-center">
+              Code sent to <span class="text-accent font-medium">{{ changePasswordData.Email }}</span>
+            </p>
+          </div>
+
+          <!-- Resend Code -->
+          <div class="text-center mb-6">
+            <button 
+              type="button"
+              (click)="resendCode()"
+              [disabled]="countdown > 0 || isSubmitting"
+              class="text-sm text-accent hover:text-accent/80 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+              {{ countdown > 0 ? `Resend code in ${countdown}s` : 'Resend verification code' }}
+            </button>
+          </div>
+
+          <button 
+            type="submit"
+            [disabled]="isSubmitting"
+            class="w-full px-6 py-4 bg-primary hover:bg-primary/90 text-dark-bg text-lg font-bold rounded-xl transition-all duration-300 hover:shadow-glow disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mb-4">
+            <i *ngIf="isSubmitting" class="bx bx-loader-alt animate-spin text-xl"></i>
+            <span>{{ isSubmitting ? 'Verifying...' : 'Verify Code' }}</span>
+          </button>
+
+          <button 
+            type="button"
+            (click)="goBack()"
+            class="w-full px-6 py-3 bg-dark-bg border border-accent/30 hover:border-accent text-light-text font-semibold rounded-xl transition-all duration-300">
+            <i class="bx bx-arrow-back mr-2"></i>Change Email
+          </button>
+        </form>
+      </div>
+
+      <!-- Step 3: New Password -->
+      <div *ngIf="currentStep === 'password'">
+        <form #passwordForm="ngForm" (ngSubmit)="resetPassword(passwordForm)">
+          <!-- New Password -->
+          <div class="mb-5">
+            <label class="block text-sm font-medium text-light-text mb-2">
+              <i class="bx bx-lock-alt mr-1"></i> New Password
+            </label>
+            <div class="relative">
+              <input 
+                #newPassword="ngModel"
+                [(ngModel)]="changePasswordData.NewPassword"
+                name="newPassword"
+                [type]="showNewPassword ? 'text' : 'password'"
+                required
+                minlength="8"
+                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$"
+                placeholder="Create new password"
+                [class.border-red-500]="shouldShowError(newPassword)"
+                [class.border-accent]="newPassword.valid && newPassword.touched"
+                class="w-full px-4 py-3 pr-12 bg-dark-bg border border-accent/20 rounded-xl text-light-text placeholder-light-text/40 focus:outline-none focus:border-accent transition-all duration-300">
+              
+              <button 
+                type="button"
+                (click)="toggleNewPasswordVisibility()"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-light-text/60 hover:text-light-text transition-colors">
+                <i [class]="showNewPassword ? 'bx bx-hide' : 'bx bx-show'" class="text-xl"></i>
+              </button>
+            </div>
+            
+            <div *ngIf="shouldShowError(newPassword)" class="mt-2 flex items-start gap-2 text-red-400 text-sm">
+              <i class="bx bx-error-circle text-lg mt-0.5"></i>
+              <span>{{ getErrorMessage(newPassword, 'New Password') }}</span>
+            </div>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-light-text mb-2">
+              <i class="bx bx-lock-alt mr-1"></i> Confirm New Password
+            </label>
+            <div class="relative">
+              <input 
+                #confirmPwd="ngModel"
+                [(ngModel)]="confirmPassword"
+                name="confirmPassword"
+                [type]="showConfirmPassword ? 'text' : 'password'"
+                required
+                placeholder="Confirm new password"
+                [class.border-red-500]="(confirmPwd.touched && !passwordsMatch())"
+                [class.border-accent]="(confirmPwd.touched && passwordsMatch())"
+                class="w-full px-4 py-3 pr-12 bg-dark-bg border border-accent/20 rounded-xl text-light-text placeholder-light-text/40 focus:outline-none focus:border-accent transition-all duration-300">
+              
+              <button 
+                type="button"
+                (click)="toggleConfirmPasswordVisibility()"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-light-text/60 hover:text-light-text transition-colors">
+                <i [class]="showConfirmPassword ? 'bx bx-hide' : 'bx bx-show'" class="text-xl"></i>
+              </button>
+            </div>
+            
+            <div *ngIf="confirmPwd.touched && !passwordsMatch()" class="mt-2 flex items-start gap-2 text-red-400 text-sm">
+              <i class="bx bx-error-circle text-lg mt-0.5"></i>
+              <span>Passwords do not match</span>
+            </div>
+
+            <div *ngIf="confirmPassword && passwordsMatch() && confirmPwd.touched" 
+              class="mt-2 flex items-center gap-2 text-green-400 text-sm">
+              <i class="bx bx-check-circle"></i>
+              <span>Passwords match</span>
+            </div>
+          </div>
+
+          <button 
+            type="submit"
+            [disabled]="isSubmitting"
+            class="w-full px-6 py-4 bg-primary hover:bg-primary/90 text-dark-bg text-lg font-bold rounded-xl transition-all duration-300 hover:shadow-glow disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mb-4">
+            <i *ngIf="isSubmitting" class="bx bx-loader-alt animate-spin text-xl"></i>
+            <span>{{ isSubmitting ? 'Resetting Password...' : 'Reset Password' }}</span>
+          </button>
+
+          <button 
+            type="button"
+            (click)="goBack()"
+            class="w-full px-6 py-3 bg-dark-bg border border-accent/30 hover:border-accent text-light-text font-semibold rounded-xl transition-all duration-300">
+            <i class="bx bx-arrow-back mr-2"></i>Back
+          </button>
+        </form>
+      </div>
+
+      <!-- Step 4: Success -->
+      <div *ngIf="currentStep === 'success'" class="text-center py-8">
+        <div class="inline-flex items-center justify-center w-20 h-20 bg-green-500/10 rounded-full mb-6">
+          <i class="bx bx-check-circle text-5xl text-green-500"></i>
+        </div>
+        
+        <h3 class="text-2xl font-bold text-light-text mb-3">Password Reset Successful!</h3>
+        <p class="text-light-text/60 mb-8">
+          Your password has been successfully reset. You can now log in with your new password.
+        </p>
+
+        <button 
+          (click)="navigateToLogin()"
+          class="w-full px-6 py-4 bg-primary hover:bg-primary/90 text-dark-bg text-lg font-bold rounded-xl transition-all duration-300 hover:shadow-glow flex items-center justify-center gap-2">
+          <i class="bx bx-log-in"></i>
+          Go to Login
+        </button>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <p class="text-center text-sm text-light-text/50 mt-8">
+      <i class="bx bx-shield-alt-2 mr-1"></i>
+      Your data is encrypted and secure
+    </p>
+  </div>
+</div>
