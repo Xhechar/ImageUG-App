@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
-[Route("user/[Controller]")]
+[Route("[Controller]")]
 public class UserController : ControllerBase
 {
 

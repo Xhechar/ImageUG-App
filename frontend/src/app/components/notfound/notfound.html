@@ -1,1 +1,124 @@
-<p>notfound works!</p>
+<div class="min-h-screen bg-dark-bg flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+  
+  <!-- Animated Background Elements -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl animate-float"></div>
+    <div class="absolute bottom-20 right-10 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-float-delayed"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-secondary/3 rounded-full blur-3xl animate-pulse-slow"></div>
+  </div>
+
+  <div class="max-w-4xl w-full relative z-10">
+    
+    <!-- Main 404 Display -->
+    <div class="text-center mb-12">
+      <!-- Large 404 Text -->
+      <div class="relative inline-block mb-8">
+        <h1 class="text-[180px] md:text-[240px] font-black leading-none">
+          <span class="text-gradient opacity-20">404</span>
+        </h1>
+        <div class="absolute inset-0 flex items-center justify-center">
+          <div class="w-32 h-32 bg-dark-card border-2 border-accent/30 rounded-full flex items-center justify-center">
+            <i class="bx bx-ghost text-6xl text-accent animate-bounce"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <h2 class="text-3xl md:text-4xl font-bold text-light-text mb-4">
+        Oops! Page Not Found
+      </h2>
+      <p class="text-xl text-light-text/60 mb-3">
+        The page you're looking for doesn't exist or has been moved.
+      </p>
+      
+      <!-- Attempted URL -->
+      <div class="inline-block bg-dark-card border border-accent/20 rounded-xl px-6 py-3 mb-8">
+        <p class="text-sm text-light-text/50 mb-1">You tried to access:</p>
+        <code class="text-accent font-mono text-sm">{{ attemptedUrl }}</code>
+      </div>
+
+      <!-- Auto-redirect Notice -->
+      <div *ngIf="autoRedirect" class="mb-8">
+        <div class="inline-flex items-center gap-3 bg-primary/10 border border-primary/30 rounded-xl px-6 py-3">
+          <i class="bx bx-time-five text-primary text-xl"></i>
+          <p class="text-light-text">
+            Redirecting to home in 
+            <span class="font-bold text-primary">{{ countdown }}</span> 
+            seconds
+          </p>
+          <button (click)="cancelAutoRedirect()"
+            class="ml-2 text-light-text/60 hover:text-light-text transition-colors">
+            <i class="bx bx-x text-xl"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+      <button (click)="navigateToHome()"
+        class="px-8 py-4 bg-primary hover:bg-primary/90 text-dark-bg text-lg font-bold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-glow flex items-center gap-2">
+        <i class="bx bx-home"></i>
+        Go to Home
+      </button>
+      
+      <button (click)="goBack()"
+        class="px-8 py-4 bg-dark-card border border-accent/30 hover:border-accent text-light-text text-lg font-semibold rounded-xl transition-all duration-300 hover:scale-105 flex items-center gap-2">
+        <i class="bx bx-arrow-back"></i>
+        Go Back
+      </button>
+    </div>
+
+    <!-- Quick Links Section -->
+    <div class="bg-dark-card border border-accent/20 rounded-2xl p-8">
+      <h3 class="text-2xl font-bold text-light-text mb-6 text-center flex items-center justify-center gap-2">
+        <i class="bx bx-compass text-accent"></i>
+        Quick Navigation
+      </h3>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div *ngFor="let link of quickLinks"
+          (click)="navigateTo(link.route)"
+          [class]="getColorClass(link.color)"
+          class="p-5 border rounded-xl cursor-pointer transition-all duration-300 hover:scale-105 group">
+          
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 bg-dark-bg rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+              <i [class]="link.icon + ' text-2xl ' + getIconColorClass(link.color)"></i>
+            </div>
+            
+            <div class="flex-1">
+              <h4 class="font-bold text-light-text mb-1">{{ link.title }}</h4>
+              <p class="text-sm text-light-text/60">{{ link.description }}</p>
+            </div>
+            
+            <i class="bx bx-right-arrow-alt text-xl text-light-text/40 group-hover:text-light-text group-hover:translate-x-1 transition-all duration-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Help Section -->
+    <div class="mt-12 text-center">
+      <p class="text-light-text/60 mb-4">
+        <i class="bx bx-help-circle mr-1"></i>
+        Need help? Here are some suggestions:
+      </p>
+      
+      <div class="flex flex-wrap items-center justify-center gap-6 text-sm">
+        <a href="/help" class="text-accent hover:text-accent/80 transition-colors flex items-center gap-1">
+          <i class="bx bx-book-open"></i>
+          Help Center
+        </a>
+        <a href="/contact" class="text-accent hover:text-accent/80 transition-colors flex items-center gap-1">
+          <i class="bx bx-support"></i>
+          Contact Support
+        </a>
+        <a href="/faq" class="text-accent hover:text-accent/80 transition-colors flex items-center gap-1">
+          <i class="bx bx-question-mark"></i>
+          FAQ
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

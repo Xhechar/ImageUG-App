@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
-[Route("subscription/[controller]")]
+[Route("[controller]")]
 public class SubscriptionController : ControllerBase
 {
   private readonly ISubscriptionRepository _subscriptionRepository;

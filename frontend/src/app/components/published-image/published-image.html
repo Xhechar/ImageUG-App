@@ -1,0 +1,282 @@
+<div class="min-h-screen bg-dark-bg py-8 px-4 sm:px-6 lg:px-8">
+  <!-- Toast Notification -->
+  <div *ngIf="showToast" class="fixed top-24 right-6 z-50 animate-slide-in">
+    <div [class]="'border rounded-xl px-6 py-4 shadow-glow flex items-center gap-3 ' + 
+      (toastType === 'success' ? 'bg-green-500/10 border-green-500/30' : 
+       toastType === 'error' ? 'bg-red-500/10 border-red-500/30' : 
+       'bg-dark-card border-accent/20')">
+      <i [class]="'text-2xl ' + 
+        (toastType === 'success' ? 'bx bx-check-circle text-green-500' : 
+         toastType === 'error' ? 'bx bx-error-circle text-red-500' : 
+         'bx bx-info-circle text-accent')"></i>
+      <p [class]="'font-medium ' + 
+        (toastType === 'success' ? 'text-green-400' : 
+         toastType === 'error' ? 'text-red-400' : 
+         'text-light-text')">{{ toastMessage }}</p>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="max-w-7xl mx-auto">
+    <div class="flex items-center justify-center py-20">
+      <div class="text-center">
+        <i class="bx bx-loader-alt animate-spin text-6xl text-primary mb-4"></i>
+        <p class="text-light-text/60">Loading image details...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Not Found State -->
+  <div *ngIf="!isLoading && imageNotFound" class="max-w-7xl mx-auto">
+    <div class="flex items-center justify-center py-20">
+      <div class="text-center">
+        <i class="bx bx-error-circle text-6xl text-red-500 mb-4"></i>
+        <h2 class="text-2xl font-bold text-light-text mb-2">Image Not Found</h2>
+        <p class="text-light-text/60 mb-6">The image you're looking for doesn't exist or has been removed.</p>
+        <button (click)="goBack()"
+          class="px-6 py-3 bg-primary hover:bg-primary/90 text-dark-bg font-semibold rounded-xl transition-all duration-300 hover:scale-105">
+          <i class="bx bx-arrow-back mr-2"></i>Go Back
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!isLoading && !imageNotFound && currentImage" class="max-w-7xl mx-auto">
+    
+    <!-- Back Button -->
+    <button (click)="goBack()"
+      class="mb-6 px-4 py-2 bg-dark-card border border-accent/20 hover:border-accent text-light-text rounded-xl transition-all duration-300 flex items-center gap-2">
+      <i class="bx bx-arrow-back"></i>
+      Back to Gallery
+    </button>
+
+    <div class="grid lg:grid-cols-3 gap-8">
+      
+      <!-- Left Column - Image Display -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Main Image -->
+        <div class="bg-dark-card border border-accent/20 rounded-2xl overflow-hidden">
+          <div class="aspect-video bg-dark-bg relative">
+            <img [src]="currentImage.Url" 
+              [alt]="currentImage.Description || 'Image'" 
+              loading="lazy"
+              (load)="onImageLoad($event)"
+              (error)="onImageError($event)"
+              class="w-full h-full object-contain" />
+          </div>
+        </div>
+
+        <!-- Image Details Card -->
+        <div class="bg-dark-card border border-accent/20 rounded-2xl p-6">
+          <div class="flex items-start justify-between mb-6">
+            <div class="flex-1">
+              <div class="flex items-center gap-3 mb-4">
+                <h1 class="text-2xl font-bold text-light-text">Image Details</h1>
+                <span [class]="currentImage.IsPublished ? 'bg-accent/10 text-accent border-accent/30' : 'bg-secondary/10 text-secondary border-secondary/30'" 
+                  class="px-3 py-1 rounded-full text-xs font-bold border flex items-center gap-1">
+                  <i [class]="currentImage.IsPublished ? 'bx bx-globe' : 'bx bx-hide'"></i>
+                  {{ currentImage.IsPublished ? 'Published' : 'Private' }}
+                </span>
+              </div>
+              
+              <p class="text-light-text/70 leading-relaxed mb-6">
+                {{ currentImage.Description || 'No description provided for this image.' }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Image Metadata -->
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6 pb-6 border-b border-accent/20">
+            <div>
+              <p class="text-xs text-light-text/50 mb-1">Created</p>
+              <p class="text-sm font-semibold text-light-text">{{ currentImage.CreatedAt | date: 'MMM d, y' }}</p>
+            </div>
+            <div>
+              <p class="text-xs text-light-text/50 mb-1">Days Ago</p>
+              <p class="text-sm font-semibold text-accent">{{ getDaysSinceCreation() }} days</p>
+            </div>
+            <div>
+              <p class="text-xs text-light-text/50 mb-1">Image ID</p>
+              <p class="text-sm font-semibold text-light-text font-mono">{{ currentImage.ImageUrlId }}</p>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap gap-3">
+            <button (click)="copyUrl()"
+              class="flex-1 px-6 py-3 bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2">
+              <i class="bx bx-copy"></i>
+              Copy URL
+            </button>
+            <button (click)="downloadImage()"
+              class="flex-1 px-6 py-3 bg-accent/10 hover:bg-accent/20 border border-accent/30 text-accent rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2">
+              <i class="bx bx-download"></i>
+              Download
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column - Owner Info -->
+      <div class="space-y-6">
+        <!-- Owner Card -->
+        <div class="bg-dark-card border border-accent/20 rounded-2xl p-6">
+          <h3 class="text-lg font-bold text-light-text mb-6 flex items-center gap-2">
+            <i class="bx bx-user-circle text-accent"></i>
+            Image Owner
+          </h3>
+
+          <div class="flex items-center gap-4 mb-6 pb-6 border-b border-accent/20">
+            <!-- Profile Picture -->
+            <div class="cursor-pointer" (click)="viewOwnerProfile()">
+              <div *ngIf="!currentImage.User?.ProfileImageUrl" 
+                [class]="'w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold text-dark-bg ' + getInitialsColor()">
+                {{ getUserInitials() }}
+              </div>
+              
+              <div *ngIf="currentImage.User?.ProfileImageUrl" 
+                class="w-16 h-16 rounded-full overflow-hidden border-2 border-accent/20 hover:border-accent transition-all duration-300">
+                <img [src]="currentImage.User?.ProfileImageUrl" [alt]="currentImage.User?.Username" 
+                  class="w-full h-full object-cover" />
+              </div>
+            </div>
+
+            <!-- User Info -->
+            <div class="flex-1">
+              <h4 class="text-lg font-bold text-light-text mb-1">{{ currentImage.User?.Username }}</h4>
+              <p class="text-sm text-light-text/60 mb-2">{{ currentImage.User?.Email }}</p>
+              <span class="px-3 py-1 bg-primary/10 border border-primary/30 text-primary rounded-full text-xs font-semibold">
+                {{ currentImage.User?.Role }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Owner Stats -->
+          <div *ngIf="ownerStats" class="space-y-4 mb-6">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2 text-light-text/70">
+                <i class="bx bx-images text-primary"></i>
+                <span class="text-sm">Total Images</span>
+              </div>
+              <span class="text-lg font-bold text-primary">{{ ownerStats.totalImages }}</span>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2 text-light-text/70">
+                <i class="bx bx-globe text-accent"></i>
+                <span class="text-sm">Published</span>
+              </div>
+              <span class="text-lg font-bold text-accent">{{ ownerStats.publishedImages }}</span>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2 text-light-text/70">
+                <i class="bx bx-calendar text-secondary"></i>
+                <span class="text-sm">Member Since</span>
+              </div>
+              <span class="text-sm font-semibold text-light-text">{{ ownerStats.memberSince }}</span>
+            </div>
+          </div>
+
+          <!-- View Profile Button -->
+          <button (click)="viewOwnerProfile()"
+            class="w-full px-6 py-3 bg-dark-bg border border-accent/30 hover:border-accent text-light-text font-semibold rounded-xl transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2">
+            <i class="bx bx-user"></i>
+            View Full Profile
+          </button>
+        </div>
+
+        <!-- Quick Stats Card -->
+        <div class="bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/30 rounded-2xl p-6">
+          <h4 class="text-sm font-semibold text-light-text/70 mb-4">Image Statistics</h4>
+          <div class="space-y-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center">
+                <i class="bx bx-time text-primary"></i>
+              </div>
+              <div>
+                <p class="text-xs text-light-text/50">Created</p>
+                <p class="text-sm font-semibold text-light-text">{{ getDaysSinceCreation() }} days ago</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center">
+                <i class="bx bx-show text-accent"></i>
+              </div>
+              <div>
+                <p class="text-xs text-light-text/50">Status</p>
+                <p class="text-sm font-semibold text-light-text">{{ currentImage.IsPublished ? 'Public' : 'Private' }}</p>
+              </div>
+            </div>
+
+            <div *ngIf="currentImage.UpdatedAt" class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-secondary/20 rounded-lg flex items-center justify-center">
+                <i class="bx bx-edit text-secondary"></i>
+              </div>
+              <div>
+                <p class="text-xs text-light-text/50">Last Updated</p>
+                <p class="text-sm font-semibold text-light-text">{{ currentImage.UpdatedAt | date: 'MMM d, y' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- More From This User -->
+    <div *ngIf="otherImages.length > 0" class="mt-12">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-light-text flex items-center gap-2">
+          <i class="bx bx-collection text-primary"></i>
+          More from {{ currentImage.User?.Username }}
+        </h2>
+        <button (click)="viewOwnerProfile()"
+          class="text-accent hover:text-accent/80 font-medium transition-colors flex items-center gap-1">
+          View All
+          <i class="bx bx-right-arrow-alt text-xl"></i>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div *ngFor="let image of otherImages" 
+          (click)="viewImage(image.ImageUrlId)"
+          class="bg-dark-card border border-accent/20 rounded-xl overflow-hidden hover:border-accent transition-all duration-300 cursor-pointer group">
+          
+          <!-- Image Preview -->
+          <div class="aspect-square overflow-hidden relative bg-dark-bg">
+            <img [src]="image.Url" 
+              [alt]="image.Description || 'Image'" 
+              loading="lazy"
+              (load)="onImageLoad($event)"
+              (error)="onImageError($event)"
+              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+            
+            <div class="absolute inset-0 bg-gradient-to-t from-dark-bg/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            
+            <!-- Hover overlay -->
+            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
+                <i class="bx bx-show text-dark-bg text-2xl"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Image Info -->
+          <div class="p-3">
+            <p class="text-light-text/80 text-sm line-clamp-2 mb-2">
+              {{ image.Description || 'No description' }}
+            </p>
+            <p class="text-light-text/50 text-xs">
+              <i class="bx bx-calendar mr-1"></i>{{ image.CreatedAt | date: 'MMM d, y' }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- footer -->
+ <app-footer></app-footer>

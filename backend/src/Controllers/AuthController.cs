@@ -1,9 +1,10 @@
 
-using System.Threading.Tasks;
+using ImageURLGenerator.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
-[Route("auth/[controller]")]
+[Route("[controller]")]
 public class AuthController : ControllerBase
 {
   private readonly IAuthRepository _authRepository;
@@ -41,23 +42,23 @@ public class AuthController : ControllerBase
     };
   }
 
-  [HttpPost("verify-email/{email}")]
+  [HttpPost("verify-email")]
   [ProducesResponseType(typeof(RepositoryResult<object>), 200)]
   [ProducesResponseType(typeof(RepositoryResult<object>), 400)]
   [ProducesResponseType(typeof(RepositoryResult<object>), 500)]
-  public async Task<IActionResult> VerifyEmail([FromRoute] string Email)
+  public async Task<IActionResult> VerifyEmail([FromBody] EmailDto Email)
   {
-    if (string.IsNullOrEmpty(Email))
+    if (string.IsNullOrEmpty(Email.Email))
     {
       return BadRequest(RepositoryResponse<object>.Failure("CLIENT ERROR", "email is required."));
     }
 
-    RepositoryResult<object> result = await _authRepository.VerifyEmail(Email);
+    RepositoryResult<object> result = await _authRepository.VerifyEmail(Email.Email);
 
     return Ok(result);
   }
 
-  [HttpPost("logout")]
+  [HttpPatch("logout")]
   public IActionResult Logout()
   {
     Response.Cookies.Delete("auth_token");
@@ -82,5 +83,15 @@ public class AuthController : ControllerBase
     }
 
     return Ok(result);
+  }
+
+  [Authorize(Roles = "User")]
+  [HttpPatch("check-authentication-status")]
+  [ProducesResponseType(typeof(RepositoryResult<User>), 200)]
+  [ProducesResponseType(typeof(RepositoryResult<User>), 400)]
+  [ProducesResponseType(typeof(RepositoryResult<User>), 500)]
+  public ActionResult IsLoggedIn()
+  {
+    return Ok(RepositoryResponse<User>.Success("authentication successfull"));
   }
 }

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
-[Route("image/[controller]")]
+[Route("[controller]")]
 public class ImageController : ControllerBase
 {
   private readonly IImageUrlRepository _imageUrlRepository;
@@ -127,6 +127,26 @@ public class ImageController : ControllerBase
   public async Task<IActionResult> GetPublishedImages()
   {
     RepositoryResult<ImageUrl> result = await _imageUrlRepository.GetPublishedImages();
+
+    if(!result.Success)
+    {
+      return result.Title switch
+      {
+        "CLIENT ERROR" => BadRequest(result),
+        _ => StatusCode(500, result),
+      };
+    }
+
+    return Ok(result);
+  }
+
+  [HttpGet("get-single-published-image-details/{ImageUrlId}")]
+  [ProducesResponseType(typeof(RepositoryResult<ImageUrl>), 200)]
+  [ProducesResponseType(typeof(RepositoryResult<ImageUrl>), 400)]
+  [ProducesResponseType(typeof(RepositoryResult<ImageUrl>), 500)]
+  public async Task<IActionResult> GetSingleImageURL([FromRoute] string ImageUrlId)
+  {
+    RepositoryResult<ImageUrl> result = await _imageUrlRepository.GetSingleImageURL(ImageUrlId);
 
     if(!result.Success)
     {
