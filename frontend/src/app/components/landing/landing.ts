@@ -413,7 +413,7 @@ export class Landing {
   }
 
   navigateToSignup(): void {
-    this.router.navigate(['/signup']);
+    this.router.navigate(['/join-us']);
   }
 
   // Handle image load event

@@ -3,10 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CreateUserDto } from '../../Dtos/User/CreateUserDto';
+import { Notification } from '../notification/notification';
+import { Toast } from '../../services/toast';
+import { User } from '../../services/user';
 
 @Component({
   selector: 'app-register',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, Notification, RouterLink],
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
@@ -16,12 +19,11 @@ export class Register implements OnInit {
   showPassword: boolean = false;
   showConfirmPassword: boolean = false;
 
-  // Toast
   showToast: boolean = false;
   toastMessage: string = '';
   toastType: 'success' | 'error' | 'info' = 'info';
 
-  constructor(private fb: FormBuilder, private router: Router) {}
+  constructor(private fb: FormBuilder, private router: Router, private ts: Toast, private us: User) {}
 
   ngOnInit(): void {
     this.initForm();
@@ -178,14 +180,13 @@ export class Register implements OnInit {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
 
-  // Submit form
   async onSubmit(): Promise<void> {
-    // Mark all fields as touched to show validation errors
     Object.keys(this.signupForm.controls).forEach((key) => {
       this.signupForm.get(key)?.markAsTouched();
     });
 
     if (this.signupForm.invalid) {
+      // this.ts.showToast(false, 'Invalid Values', 'Please fix all errors before submitting');
       this.showToastMessage('Please fix all errors before submitting', 'error');
       return;
     }
@@ -197,31 +198,25 @@ export class Register implements OnInit {
       Username: formValue.username,
       Email: formValue.email,
       PhoneNumber: formValue.phoneNumber,
-      PasswordHash: formValue.password, // In real app, this would be hashed on backend
+      PasswordHash: formValue.password
     };
 
     try {
-      // Simulate API call
-      await this.delay(2000);
-
-      // Simulate random success/failure for demo
-      const success = Math.random() > 0.2; // 80% success rate
-
-      if (success) {
-        this.showToastMessage(
-          'Account created successfully! Redirecting...',
-          'success'
-        );
-
-        // Add your API call here
-        // await this.authService.signup(createUserDto);
-
-        // Redirect to login or dashboard
-        await this.delay(1500);
-        this.router.navigate(['/login']);
-      } else {
-        throw new Error('Email already exists');
-      }
+      this.us.createUser(createUserDto).subscribe({
+        next: (res) => {
+          if(res.Success) {
+            this.showToastMessage(res.SuccessMessage as string, 'success');
+            this.delay(1500).then(() => {
+              this.router.navigate(['/login']);
+            });
+          } else {
+            this.showToastMessage(res.ErrorMessage as string, 'error');
+          }
+        },
+        error: (err) => {
+          this.showToastMessage(err.error?.ErrorMessage as string ?? err.message, 'error');
+        }
+      })
     } catch (error: any) {
       this.showToastMessage(
         error.message || 'Failed to create account. Please try again.',

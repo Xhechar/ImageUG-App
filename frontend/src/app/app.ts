@@ -1,9 +1,10 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { User } from './interfaces/User';
 import { RouterLink } from '@angular/router';
+import { Auth } from './services/auth';
 
 @Component({
   selector: 'app-root',
@@ -11,33 +12,33 @@ import { RouterLink } from '@angular/router';
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
-export class App {
+export class App implements OnInit{
   isScrolled: boolean = false;
   isMobileMenuOpen: boolean = false;
   isProfileMenuOpen: boolean = false;
 
-  // Set this based on your auth service
-  isLoggedIn: boolean = true;
+  isLoggedIn: boolean = false;
 
-  // Current user data - populate from your auth service
-  currentUser: User | null = {
-    Username: 'JohnDoe',
-    ProfileImageUrl: 'https://example.com/profile.jpg',
-    PhoneNumber: '254-789-456-123',
-    UserId: '1',
-    Email: 'john.doe@example.com',
-    PasswordHash: 'hashedpassword',
-    Role: 'user',
-    CreatedAt: new Date(),
-    IsWelcomeEmailSent: true,
-    FreeTrialCount: 0,
-    ImageUrls: [],
-    Subscriptions: [],
-    PaymentDatas: [],
-  };
-  // Example: currentUser = { Username: 'JohnDoe', ProfileImageUrl: 'https://...' };
+  currentUser: User | null = null;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authService: Auth) {}
+
+  ngOnInit(): void {
+    
+  }
+
+  fetchCurrentUser(): void {
+    this.authService.isLoggedIn().subscribe({
+      next: (res) => {
+        if(res.Success) {
+          this.isLoggedIn = true;
+        }
+      },
+      error: (err) => {
+        
+      }
+    })
+  }
 
   @HostListener('window:scroll', [])
   onWindowScroll(): void {

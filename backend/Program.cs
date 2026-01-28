@@ -79,11 +79,12 @@ builder.Services.AddCors(options =>
   options.AddPolicy("AllowAngularApp", policy =>
   {
     policy.WithOrigins("http://localhost:4200")
-    .AllowAnyHeader().AllowAnyMethod();
+    .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
   });
 });
 builder.Services.AddSingleton<Microsoft.AspNetCore.SignalR.IUserIdProvider, CustomUserIdProvider>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -97,9 +98,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AllowAngularApp");
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors("AllowAngularApp");
+app.MapControllers();
 app.MapHub<BackendHub>("/hub");
 
 app.Run();

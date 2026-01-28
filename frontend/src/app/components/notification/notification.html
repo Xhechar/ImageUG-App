@@ -1,0 +1,40 @@
+<div *ngIf="isVisible" 
+  [class.closing]="isClosing"
+  class="notification-overlay">
+  
+  <div [class]="'notification-container ' + colorClasses"
+    [class.closing]="isClosing">
+    
+    <!-- Progress Bar -->
+    <div class="notification-progress">
+      <div [class]="'notification-progress-bar ' + (notificationType === 'success' ? 'bg-green-500' : notificationType === 'error' ? 'bg-red-500' : 'bg-accent')"></div>
+    </div>
+
+    <!-- Content -->
+    <div class="notification-content">
+      <!-- Icon -->
+      <div class="notification-icon-wrapper">
+        <div [class]="'notification-icon-circle ' + (notificationType === 'success' ? 'bg-green-500/20' : notificationType === 'error' ? 'bg-red-500/20' : 'bg-accent/20')">
+          <i [class]="'bx ' + icon + ' notification-icon ' + iconColorClass"></i>
+        </div>
+      </div>
+
+      <!-- Text Content -->
+      <div class="notification-text">
+        <h3 [class]="'notification-title ' + titleColorClass">
+          {{ title }}
+        </h3>
+        <p class="notification-message">
+          {{ message }}
+        </p>
+      </div>
+
+      <!-- Close Button -->
+      <button (click)="close()" 
+        class="notification-close"
+        aria-label="Close notification">
+        <i class="bx bx-x"></i>
+      </button>
+    </div>
+  </div>
+</div>
