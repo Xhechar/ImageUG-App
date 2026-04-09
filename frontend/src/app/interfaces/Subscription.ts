@@ -1,4 +1,4 @@
-import { User } from "./User";
+import { User } from './User';
 
 export interface Subscription {
   SubscriptionId: string;
@@ -13,4 +13,19 @@ export interface Subscription {
   StripeSubscriptionId?: string;
 
   User?: User;
+}
+
+export interface FetchedSubscription {
+  subscriptionId: string;
+  userId: string;
+  price: number;
+  referenceId: string;
+  startDate: Date;
+  durationInDays: number;
+  isActive: boolean;
+  updatedAt?: Date;
+  canceledAt?: Date;
+  stripeSubscriptionId?: string;
+
+  user?: User;
 }

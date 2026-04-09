@@ -8,9 +8,8 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add services
 builder.Services.AddHttpClient<PaymentService>();
-builder.Services.AddHttpClient<SubscriptionRepository>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
@@ -19,78 +18,87 @@ builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IImageUrlRepository, ImageUrlRepository>();
-builder.Services.Configure<ApiBehaviorOptions>( options => {
-  options.InvalidModelStateResponseFactory = context => {
-    var errors = context.ModelState
-      .Where(e => e.Value?.Errors.Count > 0)
-      .SelectMany(x => x.Value!.Errors)
-      .Select(x => x.ErrorMessage)
-      .ToArray();
 
-      var response = RepositoryResponse<string>.Failure("VALIDATION ERROR", errors[0]);
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var errors = context.ModelState
+            .Where(e => e.Value?.Errors.Count > 0)
+            .SelectMany(x => x.Value!.Errors)
+            .Select(x => x.ErrorMessage)
+            .ToArray();
 
-      return new BadRequestObjectResult(response);
-  };
+        var response = RepositoryResponse<string>.Failure("VALIDATION ERROR", errors[0]);
+        return new BadRequestObjectResult(response);
+    };
 });
+
 builder.Services.AddSignalR();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateUserValidator>();
+
 builder.Services.AddDbContext<DataContext>(options =>
 {
-  options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
 builder.Services.AddAuthentication(options =>
 {
-  options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-  options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(options =>
 {
-  var JwtSettings = builder.Configuration.GetSection("JwtSettings");
+    var JwtSettings = builder.Configuration.GetSection("JwtSettings");
 
-  options.TokenValidationParameters = new TokenValidationParameters
-  {
-    ValidateIssuer = true,
-    ValidIssuer = JwtSettings["Issuer"],
-    ValidateAudience = true,
-    ValidAudience = JwtSettings["Audience"],
-    ValidateLifetime = true,
-    ValidateIssuerSigningKey = true,
-    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSettings["SecretKey"]!))
-  };
-
-  options.Events = new JwtBearerEvents
-  {
-    OnMessageReceived = context =>
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-      var token = context.HttpContext.Request.Cookies["auth_token"];
-      if (!String.IsNullOrEmpty(token))
-      {
-        context.Token = token;
-      }
-      return Task.CompletedTask;
-    }
-  };
+        ValidateIssuer = true,
+        ValidIssuer = JwtSettings["Issuer"],
+        ValidateAudience = true,
+        ValidAudience = JwtSettings["Audience"],
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSettings["SecretKey"]!))
+    };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var token = context.HttpContext.Request.Cookies["auth_token"];
+            if (!string.IsNullOrEmpty(token))
+            {
+                context.Token = token;
+            }
+            return Task.CompletedTask;
+        }
+    };
 });
-builder.Services.AddHttpClient<PaymentService>();
+
 builder.Services.AddAuthorization();
+
 builder.Services.AddCors(options =>
 {
-  options.AddPolicy("AllowAngularApp", policy =>
-  {
-    policy.WithOrigins("http://localhost:4200")
-    .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
-  });
+    options.AddPolicy("AllowAngularApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
 });
+
 builder.Services.AddSingleton<Microsoft.AspNetCore.SignalR.IUserIdProvider, CustomUserIdProvider>();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Pipeline order matters!
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

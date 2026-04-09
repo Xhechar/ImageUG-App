@@ -4,10 +4,13 @@ import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Auth } from '../../services/auth';
+import { Toast } from '../../services/toast';
+import { Notification } from '../notification/notification';
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Notification],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -21,12 +24,11 @@ export class Login {
   showPassword: boolean = false;
   rememberMe: boolean = false;
 
-  // Toast
-  showToast: boolean = false;
-  toastMessage: string = '';
-  toastType: 'success' | 'error' | 'info' = 'info';
-
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private as: Auth,
+    private ts: Toast,
+  ) {}
 
   // Toggle password visibility
   togglePasswordVisibility(): void {
@@ -65,7 +67,11 @@ export class Login {
     });
 
     if (loginForm.invalid) {
-      this.showToastMessage('Please fix all errors before submitting', 'error');
+      this.ts.showToast(
+        false,
+        'Error',
+        'Please fix all errors before submitting',
+      );
       return;
     }
 
@@ -77,29 +83,34 @@ export class Login {
     };
 
     try {
-      // Simulate API call
-      await this.delay(2000);
-
-      // Simulate random success/failure for demo
-      const success = Math.random() > 0.3; // 70% success rate
-
-      if (success) {
-        this.showToastMessage('Login successful! Redirecting...', 'success');
-
-        // Add your API call here
-        // const response = await this.authService.login(loginDto);
-        // Store token, user data, etc.
-
-        // Redirect to dashboard
-        await this.delay(1500);
-        this.router.navigate(['/dashboard']);
-      } else {
-        throw new Error('Invalid email or password');
-      }
+      this.as.login(loginDto).subscribe({
+        next: (res) => {
+          console.log('Login response:', res);
+          if (res.success) {
+            console.log('Login successful:', res);
+            this.ts.showToast(
+              res.success,
+              res.title,
+              res.successMessage as string,
+            );
+            setTimeout(() => {
+              console.log('Navigating to dashboard...');
+              this.router.navigate(['/dashboard']);
+            }, 3000);
+          } else {
+            this.ts.showToast(
+              res.success,
+              res.title,
+              res.errorMessage as string,
+            );
+          }
+        },
+      });
     } catch (error: any) {
-      this.showToastMessage(
-        error.message || 'Login failed. Please check your credentials.',
-        'error'
+      this.ts.showToast(
+        false,
+        'Error',
+        error.message ?? 'Login failed. Please try again.',
       );
     } finally {
       this.isSubmitting = false;
@@ -114,23 +125,5 @@ export class Login {
   // Navigate to forgot password
   navigateToForgotPassword(): void {
     this.router.navigate(['/verify-mail']);
-  }
-
-  // Toast
-  showToastMessage(
-    message: string,
-    type: 'success' | 'error' | 'info' = 'info'
-  ): void {
-    this.toastMessage = message;
-    this.toastType = type;
-    this.showToast = true;
-    setTimeout(() => {
-      this.showToast = false;
-    }, 3000);
-  }
-
-  // Helper
-  private delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }

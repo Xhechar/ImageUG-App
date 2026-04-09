@@ -1,8 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { User } from '../../interfaces/User';
+import { FetchedUser } from '../../interfaces/User';
+import { User } from '../../services/user';
+import { FetchedSubscription } from '../../interfaces/Subscription';
+import { FetchedImageUrl } from '../../interfaces/ImageUrl';
 
 interface UserStats {
   totalImages: number;
@@ -20,31 +23,17 @@ interface UserStats {
 })
 export class Profile implements OnInit {
   // User data
-  currentUser: User = {
-    UserId: '1',
-    Username: 'JohnDoe',
-    PhoneNumber: '+254712345678',
-    Email: 'john.doe@example.com',
-    ProfileImageUrl: undefined,
-    Role: 'Premium User',
-    CreatedAt: new Date('2024-01-15'),
-    FreeTrialCount: 3,
-    PasswordHash: '',
-    IsWelcomeEmailSent: false,
-    ImageUrls: [],
-    Subscriptions: [],
-    PaymentDatas: []
-  };
+  currentUser: FetchedUser | null = null;
 
   // Form data (copy of user for editing)
-  formData: User = { ...this.currentUser };
+  formData!: FetchedUser;
 
   // User statistics
   userStats: UserStats = {
-    totalImages: 47,
-    publishedImages: 32,
-    totalRevenue: 159.97,
-    activeSubscriptions: 1,
+    totalImages: 0,
+    publishedImages: 0,
+    totalRevenue: 0,
+    activeSubscriptions: 0,
     accountAge: 0,
   };
 
@@ -68,14 +57,52 @@ export class Profile implements OnInit {
   };
   isChangingPassword: boolean = false;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private us: User,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit(): void {
-    this.calculateAccountAge();
+    this.fetchUser();
   }
 
+  fetchUser = () => {
+    this.us.getUserById().subscribe({
+      next: (res) => {
+        if (res?.data) {
+          this.currentUser = res.data;
+          this.formData = { ...res.data };
+          this.setStats(res.data);
+          this.calculateAccountAge();
+          this.cdr.detectChanges();
+        }
+      },
+    });
+  };
+
+  setStats = (user: FetchedUser) => {
+    const imageUrls = (user.imageUrls as FetchedImageUrl[]) || [];
+    const subscriptions = (user.subscriptions as FetchedSubscription[]) || [];
+
+    this.userStats = {
+      totalImages: imageUrls.length,
+      publishedImages: imageUrls.filter((img) => img.isPublished).length,
+      totalRevenue: subscriptions.reduce(
+        (total, sub) => total + (sub.price || 0),
+        0,
+      ),
+      activeSubscriptions: subscriptions.length,
+      accountAge: 0,
+    };
+  };
+
   calculateAccountAge(): void {
-    const createdDate = new Date(this.currentUser.CreatedAt);
+    if (!this.currentUser?.createdAt) {
+      return;
+    }
+
+    const createdDate = new Date(this.currentUser.createdAt);
     const today = new Date();
     const diffTime = Math.abs(today.getTime() - createdDate.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -84,10 +111,12 @@ export class Profile implements OnInit {
 
   // Get user initials
   getUserInitials(): string {
-    return this.currentUser.Username.substring(0, 2).toUpperCase();
+    const username = this.currentUser?.username || '';
+    return username.substring(0, 2).toUpperCase();
   }
 
   getInitialsColor(): string {
+    const username = this.currentUser?.username || '';
     const colors = [
       'bg-primary',
       'bg-secondary',
@@ -96,12 +125,14 @@ export class Profile implements OnInit {
       'bg-pink-500',
       'bg-indigo-500',
     ];
-    const index = this.currentUser.Username.charCodeAt(0) % colors.length;
+    const index = username ? username.charCodeAt(0) % colors.length : 0;
     return colors[index];
   }
 
   // Edit mode
   enterEditMode(): void {
+    if (!this.currentUser) return;
+
     this.isEditMode = true;
     this.formData = { ...this.currentUser };
     this.selectedFile = null;
@@ -109,6 +140,8 @@ export class Profile implements OnInit {
   }
 
   cancelEdit(): void {
+    if (!this.currentUser) return;
+
     this.isEditMode = false;
     this.formData = { ...this.currentUser };
     this.selectedFile = null;
@@ -144,23 +177,25 @@ export class Profile implements OnInit {
 
   // Save profile
   async saveProfile(): Promise<void> {
+    if (!this.currentUser) return;
+
     // Validation
-    if (!this.formData.Username.trim()) {
+    if (!this.formData.username.trim()) {
       this.showToastMessage('Username is required', 'error');
       return;
     }
 
-    if (!this.formData.Email.trim()) {
+    if (!this.formData.email.trim()) {
       this.showToastMessage('Email is required', 'error');
       return;
     }
 
-    if (!this.isValidEmail(this.formData.Email)) {
+    if (!this.isValidEmail(this.formData.email)) {
       this.showToastMessage('Please enter a valid email address', 'error');
       return;
     }
 
-    if (!this.formData.PhoneNumber.trim()) {
+    if (!this.formData.phoneNumber.trim()) {
       this.showToastMessage('Phone number is required', 'error');
       return;
     }
@@ -173,14 +208,14 @@ export class Profile implements OnInit {
     // If new profile image selected, upload it
     if (this.selectedFile) {
       // In real app, upload to Cloudinary here
-      this.currentUser.ProfileImageUrl = this.previewUrl || undefined;
+      this.currentUser.profileImageUrl = this.previewUrl || undefined;
     }
 
     // Update user data
-    this.currentUser.Username = this.formData.Username;
-    this.currentUser.Email = this.formData.Email;
-    this.currentUser.PhoneNumber = this.formData.PhoneNumber;
-    this.currentUser.UpdatedAt = new Date();
+    this.currentUser.username = this.formData.username;
+    this.currentUser.email = this.formData.email;
+    this.currentUser.phoneNumber = this.formData.phoneNumber;
+    this.currentUser.updatedAt = new Date();
 
     this.isSaving = false;
     this.isEditMode = false;
@@ -193,7 +228,9 @@ export class Profile implements OnInit {
 
   // Remove profile picture
   removeProfilePicture(): void {
-    this.currentUser.ProfileImageUrl = undefined;
+    if (!this.currentUser) return;
+
+    this.currentUser.profileImageUrl = undefined;
     this.previewUrl = null;
     this.selectedFile = null;
     this.showToastMessage('Profile picture removed', 'success');
@@ -268,7 +305,9 @@ export class Profile implements OnInit {
   }
 
   getMemberSince(): string {
-    return new Date(this.currentUser.CreatedAt).toLocaleDateString('en-US', {
+    if (!this.currentUser?.createdAt) return '';
+
+    return new Date(this.currentUser.createdAt).toLocaleDateString('en-US', {
       month: 'long',
       year: 'numeric',
     });
@@ -277,7 +316,7 @@ export class Profile implements OnInit {
   // Toast
   showToastMessage(
     message: string,
-    type: 'success' | 'error' | 'info' = 'info'
+    type: 'success' | 'error' | 'info' = 'info',
   ): void {
     this.toastMessage = message;
     this.toastType = type;

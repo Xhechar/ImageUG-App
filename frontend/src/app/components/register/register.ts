@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { CreateUserDto } from '../../Dtos/User/CreateUserDto';
-import { Notification } from '../notification/notification';
 import { Toast } from '../../services/toast';
 import { User } from '../../services/user';
+import { Notification } from "../notification/notification";
 
 @Component({
   selector: 'app-register',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, Notification, RouterLink],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, Notification],
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
@@ -204,24 +204,23 @@ export class Register implements OnInit {
     try {
       this.us.createUser(createUserDto).subscribe({
         next: (res) => {
-          if(res.Success) {
-            this.showToastMessage(res.SuccessMessage as string, 'success');
-            this.delay(1500).then(() => {
-              this.router.navigate(['/login']);
-            });
+          if(res.success) {
+            this.ts.showToast(res.success, res.title, res.successMessage as string);
+            setTimeout(() => {
+              this.navigateToLogin();
+            }, 3000);
           } else {
-            this.showToastMessage(res.ErrorMessage as string, 'error');
+            this.ts.showToast(res.success, res.title, res.errorMessage as string);
           }
         },
         error: (err) => {
-          this.showToastMessage(err.error?.ErrorMessage as string ?? err.message, 'error');
+          console.log(err);
+          
+          this.ts.showToast(false, err.error?.Title as string ?? 'Error', err.error?.ErrorMessage as string ?? err.message ?? 'Failed to create account. Please try again.');
         }
       })
     } catch (error: any) {
-      this.showToastMessage(
-        error.message || 'Failed to create account. Please try again.',
-        'error'
-      );
+      this.ts.showToast(false, 'Error', error.message ?? 'Failed to create account. Please try again.');
     } finally {
       this.isSubmitting = false;
     }
@@ -243,10 +242,5 @@ export class Register implements OnInit {
     setTimeout(() => {
       this.showToast = false;
     }, 3000);
-  }
-
-  // Helper
-  private delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }

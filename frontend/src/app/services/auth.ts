@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { ServiceResult } from '../service.result/service.result';
 import { ChangePasswordDto } from '../Dtos/Auth/ChangePasswordDto';
 import { environment } from '../Environment/service.environment';
-import { User } from './user';
+import { FetchedUser } from '../interfaces/User';
 
 @Injectable({
   providedIn: 'root',
@@ -18,19 +18,25 @@ export class Auth {
   login(logins: LoginDetails): Observable<ServiceResult<object>> {
     return this.http.post<ServiceResult<object>>(
       `${this.API_URL}login`,
-      logins
+      logins,
+      { withCredentials: true }
     );
   }
 
   verifyEmail(email: string): Observable<ServiceResult<unknown>> {
     return this.http.post<ServiceResult<unknown>>(
       `${this.API_URL}verify-email`,
-      { Email: email }
+      { Email: email },
+      { withCredentials: true }
     );
   }
 
   logout(): Observable<ServiceResult<object>> {
-    return this.http.patch<ServiceResult<object>>(`${this.API_URL}logout`, {});
+    return this.http.patch<ServiceResult<object>>(
+      `${this.API_URL}logout`,
+      {},
+      { withCredentials: true },
+    );
   }
 
   changePassword(
@@ -38,14 +44,16 @@ export class Auth {
   ): Observable<ServiceResult<object>> {
     return this.http.post<ServiceResult<object>>(
       `${this.API_URL}change-password`,
-      details
+      details,
+      { withCredentials: true },
     );
   }
 
-  isLoggedIn(): Observable<ServiceResult<User>> {
-    return this.http.patch<ServiceResult<User>>(
-      `${this.API_URL}check-authentication-statu`,
-      {}
+  isLoggedIn(): Observable<ServiceResult<FetchedUser>> {
+    return this.http.patch<ServiceResult<FetchedUser>>(
+      `${this.API_URL}check-authentication-status`,
+      {},
+      { withCredentials: true }
     );
   }
 }

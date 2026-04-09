@@ -24,7 +24,7 @@ export class Imageurl {
       details,
       {
         withCredentials: true,
-        headers: { UserId: userId },
+        // headers: { UserId: userId },
       }
     );
   }

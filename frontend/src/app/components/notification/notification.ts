@@ -31,9 +31,10 @@ export class Notification implements OnInit, OnDestroy {
     );
 
     this.titleSubscription = this.toastService.title$.subscribe((title) => {
-      this.title = title;
       if (title) {
         this.show();
+      } else if (this.isVisible) {
+        this.close();
       }
     });
 

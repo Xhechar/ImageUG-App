@@ -1,46 +1,77 @@
-<nav [class.scrolled]="isScrolled" 
+<nav
+  [class.scrolled]="isScrolled"
   class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
-  [ngClass]="isScrolled ? 'bg-dark-card/95 backdrop-blur-xl border-b border-accent/20 shadow-glow' : 'bg-transparent'">
-  
+  [ngClass]="isScrolled ? 'bg-dark-card/95 backdrop-blur-xl border-b border-accent/20 shadow-glow' : 'bg-transparent'"
+>
   <div class="max-w-7xl mx-auto px-6 py-4">
     <div class="flex items-center justify-between">
-      
       <!-- Logo -->
-      <div class="flex items-center gap-3 cursor-pointer" (click)="navigateTo('/')">
-        <div class="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center shadow-glow">
+      <div
+        class="flex items-center gap-3 cursor-pointer"
+        (click)="navigateTo('/')"
+      >
+        <div
+          class="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center shadow-glow"
+        >
           <i class="bx bx-image text-dark-bg text-2xl"></i>
         </div>
-        <span class="text-2xl font-bold text-gradient hidden sm:block">Imagen</span>
+        <span class="text-2xl font-bold text-gradient hidden sm:block"
+          >Imagen</span
+        >
       </div>
 
       <!-- Desktop Navigation Links (Not Logged In) -->
       <div *ngIf="!isLoggedIn" class="hidden lg:flex items-center gap-8">
-        <a routerLink="/" class="nav-link text-light-text hover:text-primary transition-colors duration-300 cursor-pointer font-medium">
+        <a
+          routerLink="/"
+          class="nav-link text-light-text hover:text-primary transition-colors duration-300 cursor-pointer font-medium"
+        >
           Home
         </a>
-        <a (click)="navigateTo('/features')" class="nav-link text-light-text hover:text-primary transition-colors duration-300 cursor-pointer font-medium">
+        <a
+          (click)="navigateTo('/features')"
+          class="nav-link text-light-text hover:text-primary transition-colors duration-300 cursor-pointer font-medium"
+        >
           Features
         </a>
-        <a (click)="navigateTo('/pricing')" class="nav-link text-light-text hover:text-primary transition-colors duration-300 cursor-pointer font-medium">
+        <a
+          (click)="navigateTo('/pricing')"
+          class="nav-link text-light-text hover:text-primary transition-colors duration-300 cursor-pointer font-medium"
+        >
           Pricing
         </a>
-        <a (click)="navigateTo('/gallery')" class="nav-link text-light-text hover:text-primary transition-colors duration-300 cursor-pointer font-medium">
+        <a
+          (click)="navigateTo('/gallery')"
+          class="nav-link text-light-text hover:text-primary transition-colors duration-300 cursor-pointer font-medium"
+        >
           Gallery
         </a>
       </div>
 
       <!-- Desktop Navigation Links (Logged In) -->
       <div *ngIf="isLoggedIn" class="hidden lg:flex items-center gap-8">
-        <a routerLink="/" class="nav-link text-light-text hover:text-primary transition-colors duration-300 cursor-pointer font-medium">
+        <a
+          routerLink="/"
+          class="nav-link text-light-text hover:text-primary transition-colors duration-300 cursor-pointer font-medium"
+        >
           <i class="bx bx-home mr-1"></i> Home
         </a>
-        <a routerLink="/dashboard" class="nav-link text-light-text hover:text-primary transition-colors duration-300 cursor-pointer font-medium">
+        <a
+          routerLink="/dashboard"
+          class="nav-link text-light-text hover:text-primary transition-colors duration-300 cursor-pointer font-medium"
+        >
           <i class="bx bx-grid-alt mr-1"></i> Dashboard
         </a>
-        <a (click)="navigateTo('/gallery')" class="nav-link text-light-text hover:text-primary transition-colors duration-300 cursor-pointer font-medium">
+        <a
+          (click)="navigateTo('/gallery')"
+          class="nav-link text-light-text hover:text-primary transition-colors duration-300 cursor-pointer font-medium"
+        >
           <i class="bx bx-image mr-1"></i> Gallery
         </a>
-        <a routerLink="/subscriptions" class="nav-link text-light-text hover:text-primary transition-colors duration-300 cursor-pointer font-medium">
+        <a
+          routerLink="/subscriptions"
+          class="nav-link text-light-text hover:text-primary transition-colors duration-300 cursor-pointer font-medium"
+        >
           <i class="bx bx-credit-card mr-1"></i> Subscriptions
         </a>
       </div>
@@ -48,51 +79,77 @@
       <!-- Desktop Auth Buttons / Profile -->
       <div class="hidden lg:flex items-center gap-4">
         <div *ngIf="!isLoggedIn" class="flex items-center gap-4">
-          <button (click)="navigateTo('/login')" 
-            class="px-6 py-2.5 text-light-text hover:text-primary font-medium transition-colors duration-300">
+          <button
+            (click)="navigateTo('/login')"
+            class="px-6 py-2.5 text-light-text hover:text-primary font-medium transition-colors duration-300"
+          >
             Login
           </button>
-          <button (click)="navigateTo('/join-us')" 
-            class="px-6 py-2.5 bg-primary hover:bg-primary/90 text-dark-bg font-semibold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-glow">
+          <button
+            (click)="navigateTo('/join-us')"
+            class="px-6 py-2.5 bg-primary hover:bg-primary/90 text-dark-bg font-semibold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-glow"
+          >
             Sign Up
           </button>
         </div>
 
         <!-- Profile Dropdown -->
         <div *ngIf="isLoggedIn" class="relative profile-menu-container">
-          <button (click)="toggleProfileMenu()" 
-            class="flex items-center gap-3 px-4 py-2 bg-dark-bg hover:bg-dark-bg/80 border border-accent/20 hover:border-accent rounded-xl transition-all duration-300">
-            
-            <div *ngIf="currentUser?.ProfileImageUrl; else initials" class="w-8 h-8 rounded-full overflow-hidden">
-              <img [src]="currentUser?.ProfileImageUrl" [alt]="currentUser?.Username" class="w-full h-full object-cover" />
+          <button
+            (click)="toggleProfileMenu()"
+            class="flex items-center gap-3 px-4 py-2 bg-dark-bg hover:bg-dark-bg/80 border border-accent/20 hover:border-accent rounded-xl transition-all duration-300"
+          >
+            <div
+              *ngIf="currentUser?.profileImageUrl; else initials"
+              class="w-8 h-8 rounded-full overflow-hidden"
+            >
+              <img
+                [src]="currentUser?.profileImageUrl"
+                [alt]="currentUser?.username"
+                class="w-full h-full object-cover"
+              />
             </div>
             <ng-template #initials>
-              <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-sm font-bold text-dark-bg">
+              <div
+                class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-sm font-bold text-dark-bg"
+              >
                 {{ getUserInitials() }}
               </div>
             </ng-template>
-            
-            <span class="text-light-text font-medium">{{ currentUser?.Username || 'User' }}</span>
-            <i class="bx bx-chevron-down text-light-text transition-transform duration-300" 
-              [ngClass]="{'rotate-180': isProfileMenuOpen}"></i>
+
+            <span class="text-light-text font-medium"
+              >{{ currentUser?.username || 'User' }}</span
+            >
+            <i
+              class="bx bx-chevron-down text-light-text transition-transform duration-300"
+              [ngClass]="{'rotate-180': isProfileMenuOpen}"
+            ></i>
           </button>
 
           <!-- Dropdown Menu -->
-          <div *ngIf="isProfileMenuOpen" 
-            class="absolute right-0 top-full mt-2 w-56 bg-dark-card border border-accent/20 rounded-xl shadow-glow overflow-hidden animate-fade-in">
-            <a (click)="navigateTo('/profile')" 
-              class="flex items-center gap-3 px-4 py-3 hover:bg-dark-bg transition-colors duration-200 cursor-pointer">
+          <div
+            *ngIf="isProfileMenuOpen"
+            class="absolute right-0 top-full mt-2 w-56 bg-dark-card border border-accent/20 rounded-xl shadow-glow overflow-hidden animate-fade-in"
+          >
+            <a
+              (click)="navigateTo('/profile')"
+              class="flex items-center gap-3 px-4 py-3 hover:bg-dark-bg transition-colors duration-200 cursor-pointer"
+            >
               <i class="bx bx-user text-accent text-xl"></i>
               <span class="text-light-text">My Profile</span>
             </a>
-            <a (click)="navigateTo('/settings')" 
-              class="flex items-center gap-3 px-4 py-3 hover:bg-dark-bg transition-colors duration-200 cursor-pointer">
+            <a
+              (click)="navigateTo('/settings')"
+              class="flex items-center gap-3 px-4 py-3 hover:bg-dark-bg transition-colors duration-200 cursor-pointer"
+            >
               <i class="bx bx-cog text-accent text-xl"></i>
               <span class="text-light-text">Settings</span>
             </a>
             <div class="border-t border-accent/10"></div>
-            <button (click)="logout()" 
-              class="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-500/10 transition-colors duration-200 text-left">
+            <button
+              (click)="logout()"
+              class="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-500/10 transition-colors duration-200 text-left"
+            >
               <i class="bx bx-log-out text-red-500 text-xl"></i>
               <span class="text-red-500">Logout</span>
             </button>
@@ -101,42 +158,60 @@
       </div>
 
       <!-- Mobile Menu Button -->
-      <button (click)="toggleMobileMenu()" 
-        class="lg:hidden p-2 text-light-text hover:text-primary transition-colors duration-300 mobile-menu-container">
-        <i class="bx text-3xl" [ngClass]="isMobileMenuOpen ? 'bx-x' : 'bx-menu'"></i>
+      <button
+        (click)="toggleMobileMenu()"
+        class="lg:hidden p-2 text-light-text hover:text-primary transition-colors duration-300 mobile-menu-container"
+      >
+        <i
+          class="bx text-3xl"
+          [ngClass]="isMobileMenuOpen ? 'bx-x' : 'bx-menu'"
+        ></i>
       </button>
     </div>
 
     <!-- Mobile Menu -->
-    <div *ngIf="isMobileMenuOpen" 
-      class="lg:hidden mt-4 pb-4 border-t border-accent/20 pt-4 animate-fade-in">
-      
+    <div
+      *ngIf="isMobileMenuOpen"
+      class="lg:hidden mt-4 pb-4 border-t border-accent/20 pt-4 animate-fade-in"
+    >
       <!-- Not Logged In Mobile Menu -->
       <div *ngIf="!isLoggedIn" class="space-y-2">
-        <a (click)="navigateTo('/')" 
-          class="block px-4 py-3 text-light-text hover:bg-dark-bg hover:text-primary rounded-xl transition-all duration-200 cursor-pointer font-medium">
+        <a
+          (click)="navigateTo('/')"
+          class="block px-4 py-3 text-light-text hover:bg-dark-bg hover:text-primary rounded-xl transition-all duration-200 cursor-pointer font-medium"
+        >
           Home
         </a>
-        <a (click)="navigateTo('/features')" 
-          class="block px-4 py-3 text-light-text hover:bg-dark-bg hover:text-primary rounded-xl transition-all duration-200 cursor-pointer font-medium">
+        <a
+          (click)="navigateTo('/features')"
+          class="block px-4 py-3 text-light-text hover:bg-dark-bg hover:text-primary rounded-xl transition-all duration-200 cursor-pointer font-medium"
+        >
           Features
         </a>
-        <a (click)="navigateTo('/pricing')" 
-          class="block px-4 py-3 text-light-text hover:bg-dark-bg hover:text-primary rounded-xl transition-all duration-200 cursor-pointer font-medium">
+        <a
+          (click)="navigateTo('/pricing')"
+          class="block px-4 py-3 text-light-text hover:bg-dark-bg hover:text-primary rounded-xl transition-all duration-200 cursor-pointer font-medium"
+        >
           Pricing
         </a>
-        <a (click)="navigateTo('/gallery')" 
-          class="block px-4 py-3 text-light-text hover:bg-dark-bg hover:text-primary rounded-xl transition-all duration-200 cursor-pointer font-medium">
+        <a
+          (click)="navigateTo('/gallery')"
+          class="block px-4 py-3 text-light-text hover:bg-dark-bg hover:text-primary rounded-xl transition-all duration-200 cursor-pointer font-medium"
+        >
           Gallery
         </a>
-        
+
         <div class="pt-4 border-t border-accent/10 space-y-2">
-          <button (click)="navigateTo('/login')" 
-            class="w-full px-4 py-3 text-light-text hover:bg-dark-bg rounded-xl transition-all duration-200 text-left font-medium">
+          <button
+            (click)="navigateTo('/login')"
+            class="w-full px-4 py-3 text-light-text hover:bg-dark-bg rounded-xl transition-all duration-200 text-left font-medium"
+          >
             Login
           </button>
-          <button (click)="navigateTo('/signup')" 
-            class="w-full px-4 py-3 bg-primary hover:bg-primary/90 text-dark-bg font-semibold rounded-xl transition-all duration-300">
+          <button
+            (click)="navigateTo('/signup')"
+            class="w-full px-4 py-3 bg-primary hover:bg-primary/90 text-dark-bg font-semibold rounded-xl transition-all duration-300"
+          >
             Sign Up
           </button>
         </div>
@@ -145,52 +220,79 @@
       <!-- Logged In Mobile Menu -->
       <div *ngIf="isLoggedIn" class="space-y-2">
         <!-- User Info -->
-        <div class="flex items-center gap-3 px-4 py-3 bg-dark-bg rounded-xl mb-4">
-          <div *ngIf="currentUser?.ProfileImageUrl; else mobileInitials" class="w-10 h-10 rounded-full overflow-hidden">
-            <img [src]="currentUser?.ProfileImageUrl" [alt]="currentUser?.Username" class="w-full h-full object-cover" />
+        <div
+          class="flex items-center gap-3 px-4 py-3 bg-dark-bg rounded-xl mb-4"
+        >
+          <div
+            *ngIf="currentUser?.profileImageUrl; else mobileInitials"
+            class="w-10 h-10 rounded-full overflow-hidden"
+          >
+            <img
+              [src]="currentUser?.profileImageUrl"
+              [alt]="currentUser?.username"
+              class="w-full h-full object-cover"
+            />
           </div>
           <ng-template #mobileInitials>
-            <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-sm font-bold text-dark-bg">
+            <div
+              class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-sm font-bold text-dark-bg"
+            >
               {{ getUserInitials() }}
             </div>
           </ng-template>
-          <span class="text-light-text font-semibold">{{ currentUser?.Username || 'User' }}</span>
+          <span class="text-light-text font-semibold"
+            >{{ currentUser?.username || 'User' }}</span
+          >
         </div>
 
-        <a (click)="navigateTo('/')" 
-          class="flex items-center gap-3 px-4 py-3 text-light-text hover:bg-dark-bg hover:text-primary rounded-xl transition-all duration-200 cursor-pointer">
+        <a
+          (click)="navigateTo('/')"
+          class="flex items-center gap-3 px-4 py-3 text-light-text hover:bg-dark-bg hover:text-primary rounded-xl transition-all duration-200 cursor-pointer"
+        >
           <i class="bx bx-home text-xl"></i>
           <span class="font-medium">Home</span>
         </a>
-        <a (click)="navigateTo('/dashboard')" 
-          class="flex items-center gap-3 px-4 py-3 text-light-text hover:bg-dark-bg hover:text-primary rounded-xl transition-all duration-200 cursor-pointer">
+        <a
+          (click)="navigateTo('/dashboard')"
+          class="flex items-center gap-3 px-4 py-3 text-light-text hover:bg-dark-bg hover:text-primary rounded-xl transition-all duration-200 cursor-pointer"
+        >
           <i class="bx bx-grid-alt text-xl"></i>
           <span class="font-medium">Dashboard</span>
         </a>
-        <a (click)="navigateTo('/gallery')" 
-          class="flex items-center gap-3 px-4 py-3 text-light-text hover:bg-dark-bg hover:text-primary rounded-xl transition-all duration-200 cursor-pointer">
+        <a
+          (click)="navigateTo('/gallery')"
+          class="flex items-center gap-3 px-4 py-3 text-light-text hover:bg-dark-bg hover:text-primary rounded-xl transition-all duration-200 cursor-pointer"
+        >
           <i class="bx bx-image text-xl"></i>
           <span class="font-medium">Gallery</span>
         </a>
-        <a (click)="navigateTo('/subscriptions')" 
-          class="flex items-center gap-3 px-4 py-3 text-light-text hover:bg-dark-bg hover:text-primary rounded-xl transition-all duration-200 cursor-pointer">
+        <a
+          (click)="navigateTo('/subscriptions')"
+          class="flex items-center gap-3 px-4 py-3 text-light-text hover:bg-dark-bg hover:text-primary rounded-xl transition-all duration-200 cursor-pointer"
+        >
           <i class="bx bx-credit-card text-xl"></i>
           <span class="font-medium">Subscriptions</span>
         </a>
-        <a (click)="navigateTo('/profile')" 
-          class="flex items-center gap-3 px-4 py-3 text-light-text hover:bg-dark-bg hover:text-primary rounded-xl transition-all duration-200 cursor-pointer">
+        <a
+          (click)="navigateTo('/profile')"
+          class="flex items-center gap-3 px-4 py-3 text-light-text hover:bg-dark-bg hover:text-primary rounded-xl transition-all duration-200 cursor-pointer"
+        >
           <i class="bx bx-user text-xl"></i>
           <span class="font-medium">Profile</span>
         </a>
-        <a (click)="navigateTo('/settings')" 
-          class="flex items-center gap-3 px-4 py-3 text-light-text hover:bg-dark-bg hover:text-primary rounded-xl transition-all duration-200 cursor-pointer">
+        <a
+          (click)="navigateTo('/settings')"
+          class="flex items-center gap-3 px-4 py-3 text-light-text hover:bg-dark-bg hover:text-primary rounded-xl transition-all duration-200 cursor-pointer"
+        >
           <i class="bx bx-cog text-xl"></i>
           <span class="font-medium">Settings</span>
         </a>
-        
+
         <div class="pt-4 border-t border-accent/10">
-          <button (click)="logout()" 
-            class="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-500/10 text-red-500 rounded-xl transition-all duration-200">
+          <button
+            (click)="logout()"
+            class="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-500/10 text-red-500 rounded-xl transition-all duration-200"
+          >
             <i class="bx bx-log-out text-xl"></i>
             <span class="font-medium">Logout</span>
           </button>
@@ -207,3 +309,5 @@
 <div class="router-outlet-container w-full min-h-screen">
   <router-outlet></router-outlet>
 </div>
+
+<app-notification></app-notification>

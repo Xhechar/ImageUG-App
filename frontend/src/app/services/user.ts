@@ -6,6 +6,7 @@ import { CreateUserDto } from '../Dtos/User/CreateUserDto';
 import { UpdateUserDto } from '../Dtos/User/UpdateUserDto';
 import { environment } from '../Environment/service.environment';
 import { ServiceResult } from '../service.result/service.result';
+import { FetchedUser } from '../interfaces/User';
 
 @Injectable({
   providedIn: 'root',
@@ -18,8 +19,7 @@ export class User {
   createUser(details: CreateUserDto): Observable<ServiceResult<User>> {
     return this.http.post<ServiceResult<User>>(
       `${this.API_URL}create-user`,
-      details,
-      { withCredentials: true }
+      details
     );
   }
 
@@ -42,8 +42,8 @@ export class User {
     );
   }
 
-  getUserById(): Observable<ServiceResult<User>> {
-    return this.http.get<ServiceResult<User>>(`${this.API_URL}get-user-by-id`, {
+  getUserById(): Observable<ServiceResult<FetchedUser>> {
+    return this.http.get<ServiceResult<FetchedUser>>(`${this.API_URL}get-user-by-id`, {
       withCredentials: true,
     });
   }

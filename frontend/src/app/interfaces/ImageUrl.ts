@@ -11,3 +11,13 @@ export interface ImageUrl {
   
   User?: User;
 }
+
+export interface FetchedImageUrl {
+  imageUrlId: string;
+  url: string;
+  userId: string;
+  description?: string;
+  isPublished: boolean;
+  createdAt: Date;
+  updatedAt?: Date;
+}

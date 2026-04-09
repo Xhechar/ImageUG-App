@@ -1,142 +1,218 @@
-<div class="min-h-screen bg-dark-bg py-8 px-4 sm:px-6 lg:px-8">
+<div
+  *ngIf="currentUser"
+  class="min-h-screen bg-dark-bg py-8 px-4 sm:px-6 lg:px-8"
+>
   <!-- Toast Notification -->
   <div *ngIf="showToast" class="fixed top-24 right-6 z-50 animate-slide-in">
-    <div [class]="'border rounded-xl px-6 py-4 shadow-glow flex items-center gap-3 ' + 
+    <div
+      [class]="'border rounded-xl px-6 py-4 shadow-glow flex items-center gap-3 ' + 
       (toastType === 'success' ? 'bg-green-500/10 border-green-500/30' : 
        toastType === 'error' ? 'bg-red-500/10 border-red-500/30' : 
-       'bg-dark-card border-accent/20')">
-      <i [class]="'text-2xl ' + 
+       'bg-dark-card border-accent/20')"
+    >
+      <i
+        [class]="'text-2xl ' + 
         (toastType === 'success' ? 'bx bx-check-circle text-green-500' : 
          toastType === 'error' ? 'bx bx-error-circle text-red-500' : 
-         'bx bx-info-circle text-accent')"></i>
-      <p [class]="'font-medium ' + 
+         'bx bx-info-circle text-accent')"
+      ></i>
+      <p
+        [class]="'font-medium ' + 
         (toastType === 'success' ? 'text-green-400' : 
          toastType === 'error' ? 'text-red-400' : 
-         'text-light-text')">{{ toastMessage }}</p>
+         'text-light-text')"
+      >
+        {{ toastMessage }}
+      </p>
     </div>
   </div>
 
   <div class="max-w-5xl mx-auto">
-    
     <!-- Page Header -->
     <div class="mb-8">
       <h1 class="text-3xl md:text-4xl font-bold text-light-text mb-2">
         <i class="bx bx-user-circle text-primary mr-2"></i>
         My Profile
       </h1>
-      <p class="text-light-text/60">Manage your account information and preferences</p>
+      <p class="text-light-text/60">
+        Manage your account information and preferences
+      </p>
     </div>
 
     <!-- User Stats -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
       <!-- Total Images -->
-      <div class="bg-dark-card border border-accent/20 rounded-xl p-5 hover:border-accent transition-all duration-300">
+      <div
+        class="bg-dark-card border border-accent/20 rounded-xl p-5 hover:border-accent transition-all duration-300"
+      >
         <div class="flex items-center justify-between mb-3">
-          <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+          <div
+            class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center"
+          >
             <i class="bx bx-image text-xl text-primary"></i>
           </div>
         </div>
-        <p class="text-2xl font-bold text-light-text mb-1">{{ userStats.totalImages }}</p>
+        <p class="text-2xl font-bold text-light-text mb-1">
+          {{ userStats ? userStats.totalImages : 0 }}
+        </p>
         <p class="text-xs text-light-text/60">Total Images</p>
       </div>
 
       <!-- Published -->
-      <div class="bg-dark-card border border-accent/20 rounded-xl p-5 hover:border-accent transition-all duration-300">
+      <div
+        class="bg-dark-card border border-accent/20 rounded-xl p-5 hover:border-accent transition-all duration-300"
+      >
         <div class="flex items-center justify-between mb-3">
-          <div class="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
+          <div
+            class="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center"
+          >
             <i class="bx bx-globe text-xl text-accent"></i>
           </div>
         </div>
-        <p class="text-2xl font-bold text-light-text mb-1">{{ userStats.publishedImages }}</p>
+        <p class="text-2xl font-bold text-light-text mb-1">
+          {{ userStats ? userStats.publishedImages : 0 }}
+        </p>
         <p class="text-xs text-light-text/60">Published</p>
       </div>
 
       <!-- Revenue -->
-      <div class="bg-dark-card border border-accent/20 rounded-xl p-5 hover:border-accent transition-all duration-300">
+      <div
+        class="bg-dark-card border border-accent/20 rounded-xl p-5 hover:border-accent transition-all duration-300"
+      >
         <div class="flex items-center justify-between mb-3">
-          <div class="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center">
+          <div
+            class="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center"
+          >
             <i class="bx bx-dollar text-xl text-secondary"></i>
           </div>
         </div>
-        <p class="text-2xl font-bold text-light-text mb-1">${{ userStats.totalRevenue }}</p>
+        <p class="text-2xl font-bold text-light-text mb-1">
+          ${{ (userStats.totalRevenue || 0) | number:'1.2-2' }}
+        </p>
         <p class="text-xs text-light-text/60">Total Spent</p>
       </div>
 
       <!-- Account Age -->
-      <div class="bg-dark-card border border-accent/20 rounded-xl p-5 hover:border-accent transition-all duration-300">
+      <div
+        class="bg-dark-card border border-accent/20 rounded-xl p-5 hover:border-accent transition-all duration-300"
+      >
         <div class="flex items-center justify-between mb-3">
-          <div class="w-10 h-10 bg-purple-500/10 rounded-lg flex items-center justify-center">
+          <div
+            class="w-10 h-10 bg-purple-500/10 rounded-lg flex items-center justify-center"
+          >
             <i class="bx bx-calendar text-xl text-purple-500"></i>
           </div>
         </div>
-        <p class="text-2xl font-bold text-light-text mb-1">{{ userStats.accountAge }}</p>
+        <p class="text-2xl font-bold text-light-text mb-1">
+          {{ userStats.accountAge }}
+        </p>
         <p class="text-xs text-light-text/60">Days Active</p>
       </div>
     </div>
 
     <!-- Profile Card -->
-    <div class="bg-dark-card border border-accent/20 rounded-2xl overflow-hidden">
-      
+    <div
+      class="bg-dark-card border border-accent/20 rounded-2xl overflow-hidden"
+    >
       <!-- Header Section -->
-      <div class="bg-gradient-to-r from-primary/10 via-accent/10 to-secondary/10 p-8 border-b border-accent/20">
-        <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
-          
+      <div
+        class="bg-gradient-to-r from-primary/10 via-accent/10 to-secondary/10 p-8 border-b border-accent/20"
+      >
+        <div
+          class="flex flex-col md:flex-row items-center md:items-start gap-6"
+        >
           <!-- Profile Picture -->
           <div class="relative group">
-            <div *ngIf="!currentUser.ProfileImageUrl && !previewUrl" 
-              [class]="'w-32 h-32 rounded-full flex items-center justify-center text-4xl font-bold text-dark-bg ' + getInitialsColor()">
+            <div
+              *ngIf="!currentUser.profileImageUrl && !previewUrl"
+              [class]="'w-32 h-32 rounded-full flex items-center justify-center text-4xl font-bold text-dark-bg ' + getInitialsColor()"
+            >
               {{ getUserInitials() }}
             </div>
-            
-            <div *ngIf="currentUser.ProfileImageUrl && !previewUrl" 
-              class="w-32 h-32 rounded-full overflow-hidden border-4 border-accent/20">
-              <img [src]="currentUser.ProfileImageUrl" [alt]="currentUser.Username" 
-                class="w-full h-full object-cover" />
+
+            <div
+              *ngIf="currentUser.profileImageUrl && !previewUrl"
+              class="w-32 h-32 rounded-full overflow-hidden border-4 border-accent/20"
+            >
+              <img
+                [src]="currentUser.profileImageUrl"
+                [alt]="currentUser.username"
+                class="w-full h-full object-cover"
+              />
             </div>
 
-            <div *ngIf="previewUrl" 
-              class="w-32 h-32 rounded-full overflow-hidden border-4 border-primary">
-              <img [src]="previewUrl" [alt]="currentUser.Username" 
-                class="w-full h-full object-cover" />
+            <div
+              *ngIf="previewUrl"
+              class="w-32 h-32 rounded-full overflow-hidden border-4 border-primary"
+            >
+              <img
+                [src]="previewUrl"
+                [alt]="currentUser.username"
+                class="w-full h-full object-cover"
+              />
             </div>
 
             <!-- Edit overlay when in edit mode -->
-            <div *ngIf="isEditMode" class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div
+              *ngIf="isEditMode"
+              class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            >
               <label class="cursor-pointer">
-                <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden" />
+                <input
+                  type="file"
+                  (change)="onFileSelected($event)"
+                  accept="image/*"
+                  class="hidden"
+                />
                 <i class="bx bx-camera text-white text-3xl"></i>
               </label>
             </div>
 
             <!-- Active indicator -->
-            <div class="absolute bottom-2 right-2 w-6 h-6 bg-green-500 rounded-full border-4 border-dark-card"></div>
+            <div
+              class="absolute bottom-2 right-2 w-6 h-6 bg-green-500 rounded-full border-4 border-dark-card"
+            ></div>
           </div>
 
           <!-- User Info -->
           <div class="flex-1 text-center md:text-left">
-            <h2 class="text-3xl font-bold text-light-text mb-2">{{ currentUser.Username }}</h2>
-            <p class="text-light-text/60 mb-1">{{ currentUser.Email }}</p>
-            <p class="text-sm text-light-text/50 mb-4">{{ currentUser.Role }}</p>
-            
+            <h2 class="text-3xl font-bold text-light-text mb-2">
+              {{ currentUser.username }}
+            </h2>
+            <p class="text-light-text/60 mb-1">{{ currentUser.email }}</p>
+            <p class="text-sm text-light-text/50 mb-4">
+              {{ currentUser.role }}
+            </p>
+
             <div class="flex flex-wrap gap-2 justify-center md:justify-start">
-              <span class="px-4 py-1.5 bg-primary/10 border border-primary/30 text-primary rounded-full text-xs font-semibold">
-                <i class="bx bx-calendar mr-1"></i>Member since {{ getMemberSince() }}
+              <span
+                class="px-4 py-1.5 bg-primary/10 border border-primary/30 text-primary rounded-full text-xs font-semibold"
+              >
+                <i class="bx bx-calendar mr-1"></i>Member since {{
+                getMemberSince() }}
               </span>
-              <span class="px-4 py-1.5 bg-accent/10 border border-accent/30 text-accent rounded-full text-xs font-semibold">
-                <i class="bx bx-gift mr-1"></i>{{ currentUser.FreeTrialCount }} Free Trials
+              <span
+                class="px-4 py-1.5 bg-accent/10 border border-accent/30 text-accent rounded-full text-xs font-semibold"
+              >
+                <i class="bx bx-gift mr-1"></i>{{ currentUser.freeTrialCount }}
+                Free Trials
               </span>
             </div>
           </div>
 
           <!-- Action Buttons (View Mode) -->
           <div *ngIf="!isEditMode" class="flex flex-col gap-2">
-            <button (click)="enterEditMode()"
-              class="px-6 py-2.5 bg-primary hover:bg-primary/90 text-dark-bg font-semibold rounded-xl transition-all duration-300 hover:scale-105 flex items-center gap-2">
+            <button
+              (click)="enterEditMode()"
+              class="px-6 py-2.5 bg-primary hover:bg-primary/90 text-dark-bg font-semibold rounded-xl transition-all duration-300 hover:scale-105 flex items-center gap-2"
+            >
               <i class="bx bx-edit"></i>
               Edit Profile
             </button>
-            <button (click)="openPasswordModal()"
-              class="px-6 py-2.5 bg-dark-bg border border-accent/30 hover:border-accent text-light-text font-semibold rounded-xl transition-all duration-300 flex items-center gap-2">
+            <button
+              (click)="openPasswordModal()"
+              class="px-6 py-2.5 bg-dark-bg border border-accent/30 hover:border-accent text-light-text font-semibold rounded-xl transition-all duration-300 flex items-center gap-2"
+            >
               <i class="bx bx-lock"></i>
               Change Password
             </button>
@@ -144,14 +220,20 @@
 
           <!-- Action Buttons (Edit Mode) -->
           <div *ngIf="isEditMode" class="flex flex-col gap-2">
-            <button (click)="saveProfile()" [disabled]="isSaving"
-              class="px-6 py-2.5 bg-accent hover:bg-accent/90 text-dark-bg font-semibold rounded-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+            <button
+              (click)="saveProfile()"
+              [disabled]="isSaving"
+              class="px-6 py-2.5 bg-accent hover:bg-accent/90 text-dark-bg font-semibold rounded-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
               <i *ngIf="isSaving" class="bx bx-loader-alt animate-spin"></i>
               <i *ngIf="!isSaving" class="bx bx-save"></i>
               {{ isSaving ? 'Saving...' : 'Save Changes' }}
             </button>
-            <button (click)="cancelEdit()" [disabled]="isSaving"
-              class="px-6 py-2.5 bg-dark-bg border border-accent/30 hover:border-accent text-light-text font-semibold rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+            <button
+              (click)="cancelEdit()"
+              [disabled]="isSaving"
+              class="px-6 py-2.5 bg-dark-bg border border-accent/30 hover:border-accent text-light-text font-semibold rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               Cancel
             </button>
           </div>
@@ -160,24 +242,26 @@
 
       <!-- Profile Form -->
       <div class="p-8">
-        <h3 class="text-xl font-bold text-light-text mb-6 flex items-center gap-2">
+        <h3
+          class="text-xl font-bold text-light-text mb-6 flex items-center gap-2"
+        >
           <i class="bx bx-info-circle text-accent"></i>
           Personal Information
         </h3>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          
           <!-- Username -->
           <div>
             <label class="block text-sm font-medium text-light-text/70 mb-2">
               <i class="bx bx-user mr-1"></i> Username
             </label>
-            <input 
-              [(ngModel)]="formData.Username"
+            <input
+              [(ngModel)]="formData.username"
               [disabled]="!isEditMode"
-              type="text" 
+              type="text"
               placeholder="Enter username"
-              class="w-full px-4 py-3 bg-dark-bg border border-accent/20 rounded-xl text-light-text placeholder-light-text/40 focus:outline-none focus:border-accent transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed">
+              class="w-full px-4 py-3 bg-dark-bg border border-accent/20 rounded-xl text-light-text placeholder-light-text/40 focus:outline-none focus:border-accent transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+            />
           </div>
 
           <!-- Email -->
@@ -185,12 +269,13 @@
             <label class="block text-sm font-medium text-light-text/70 mb-2">
               <i class="bx bx-envelope mr-1"></i> Email Address
             </label>
-            <input 
-              [(ngModel)]="formData.Email"
+            <input
+              [(ngModel)]="formData.email"
               [disabled]="!isEditMode"
-              type="email" 
+              type="email"
               placeholder="Enter email"
-              class="w-full px-4 py-3 bg-dark-bg border border-accent/20 rounded-xl text-light-text placeholder-light-text/40 focus:outline-none focus:border-accent transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed">
+              class="w-full px-4 py-3 bg-dark-bg border border-accent/20 rounded-xl text-light-text placeholder-light-text/40 focus:outline-none focus:border-accent transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+            />
           </div>
 
           <!-- Phone Number -->
@@ -198,12 +283,13 @@
             <label class="block text-sm font-medium text-light-text/70 mb-2">
               <i class="bx bx-phone mr-1"></i> Phone Number
             </label>
-            <input 
-              [(ngModel)]="formData.PhoneNumber"
+            <input
+              [(ngModel)]="formData.phoneNumber"
               [disabled]="!isEditMode"
-              type="tel" 
+              type="tel"
               placeholder="Enter phone number"
-              class="w-full px-4 py-3 bg-dark-bg border border-accent/20 rounded-xl text-light-text placeholder-light-text/40 focus:outline-none focus:border-accent transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed">
+              class="w-full px-4 py-3 bg-dark-bg border border-accent/20 rounded-xl text-light-text placeholder-light-text/40 focus:outline-none focus:border-accent transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+            />
           </div>
 
           <!-- User ID (Read-only) -->
@@ -211,67 +297,94 @@
             <label class="block text-sm font-medium text-light-text/70 mb-2">
               <i class="bx bx-id-card mr-1"></i> User ID
             </label>
-            <input 
-              [value]="currentUser.UserId"
+            <input
+              [value]="currentUser.userId"
               disabled
               type="text"
-              class="w-full px-4 py-3 bg-dark-bg border border-accent/20 rounded-xl text-light-text/50 font-mono opacity-60 cursor-not-allowed">
+              class="w-full px-4 py-3 bg-dark-bg border border-accent/20 rounded-xl text-light-text/50 font-mono opacity-60 cursor-not-allowed"
+            />
           </div>
         </div>
 
         <!-- Profile Image Actions (Edit Mode) -->
         <div *ngIf="isEditMode" class="mt-8 pt-6 border-t border-accent/20">
-          <h4 class="text-lg font-semibold text-light-text mb-4">Profile Picture</h4>
+          <h4 class="text-lg font-semibold text-light-text mb-4">
+            Profile Picture
+          </h4>
           <div class="flex flex-wrap gap-3">
-            <label class="px-6 py-3 bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary rounded-xl font-semibold transition-all duration-300 cursor-pointer flex items-center gap-2">
+            <label
+              class="px-6 py-3 bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary rounded-xl font-semibold transition-all duration-300 cursor-pointer flex items-center gap-2"
+            >
               <i class="bx bx-upload"></i>
               Upload New Picture
-              <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden" />
+              <input
+                type="file"
+                (change)="onFileSelected($event)"
+                accept="image/*"
+                class="hidden"
+              />
             </label>
-            
-            <button *ngIf="currentUser.ProfileImageUrl || previewUrl" 
+
+            <button
+              *ngIf="currentUser.profileImageUrl || previewUrl"
               (click)="removeProfilePicture()"
-              class="px-6 py-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-500 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2">
+              class="px-6 py-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-500 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2"
+            >
               <i class="bx bx-trash"></i>
               Remove Picture
             </button>
           </div>
           <p class="text-sm text-light-text/50 mt-3">
             <i class="bx bx-info-circle mr-1"></i>
-            Recommended: Square image, at least 400x400px, max 5MB (JPG, PNG, GIF)
+            Recommended: Square image, at least 400x400px, max 5MB (JPG, PNG,
+            GIF)
           </p>
         </div>
       </div>
 
       <!-- Quick Actions -->
       <div class="p-8 bg-dark-bg/50 border-t border-accent/20">
-        <h3 class="text-xl font-bold text-light-text mb-6 flex items-center gap-2">
+        <h3
+          class="text-xl font-bold text-light-text mb-6 flex items-center gap-2"
+        >
           <i class="bx bx-bolt text-accent"></i>
           Quick Actions
         </h3>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <button (click)="viewGallery()"
-            class="p-4 bg-dark-card hover:bg-dark-card/80 border border-accent/20 hover:border-accent rounded-xl transition-all duration-300 text-left group">
+          <button
+            (click)="viewGallery()"
+            class="p-4 bg-dark-card hover:bg-dark-card/80 border border-accent/20 hover:border-accent rounded-xl transition-all duration-300 text-left group"
+          >
             <div class="flex items-center gap-4">
-              <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <div
+                class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
+              >
                 <i class="bx bx-images text-2xl text-primary"></i>
               </div>
               <div>
-                <h4 class="font-semibold text-light-text mb-1">View My Gallery</h4>
+                <h4 class="font-semibold text-light-text mb-1">
+                  View My Gallery
+                </h4>
                 <p class="text-sm text-light-text/60">Manage your images</p>
               </div>
             </div>
           </button>
 
-          <button (click)="viewBilling()"
-            class="p-4 bg-dark-card hover:bg-dark-card/80 border border-accent/20 hover:border-accent rounded-xl transition-all duration-300 text-left group">
+          <button
+            (click)="viewBilling()"
+            class="p-4 bg-dark-card hover:bg-dark-card/80 border border-accent/20 hover:border-accent rounded-xl transition-all duration-300 text-left group"
+          >
             <div class="flex items-center gap-4">
-              <div class="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <div
+                class="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
+              >
                 <i class="bx bx-credit-card text-2xl text-accent"></i>
               </div>
               <div>
-                <h4 class="font-semibold text-light-text mb-1">Billing & Subscriptions</h4>
+                <h4 class="font-semibold text-light-text mb-1">
+                  Billing & Subscriptions
+                </h4>
                 <p class="text-sm text-light-text/60">Manage your plans</p>
               </div>
             </div>
@@ -283,14 +396,22 @@
 </div>
 
 <!-- Change Password Modal -->
-<div *ngIf="showPasswordModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-  <div class="bg-dark-card border border-accent/30 rounded-2xl max-w-md w-full p-8 shadow-glow animate-scale-in">
+<div
+  *ngIf="showPasswordModal"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
+>
+  <div
+    class="bg-dark-card border border-accent/30 rounded-2xl max-w-md w-full p-8 shadow-glow animate-scale-in"
+  >
     <div class="flex items-center justify-between mb-6">
       <h3 class="text-2xl font-bold text-light-text flex items-center gap-2">
         <i class="bx bx-lock-alt text-accent"></i>
         Change Password
       </h3>
-      <button (click)="closePasswordModal()" class="text-light-text/60 hover:text-light-text transition-colors">
+      <button
+        (click)="closePasswordModal()"
+        class="text-light-text/60 hover:text-light-text transition-colors"
+      >
         <i class="bx bx-x text-3xl"></i>
       </button>
     </div>
@@ -298,45 +419,65 @@
     <div class="space-y-4">
       <!-- Current Password -->
       <div>
-        <label class="block text-sm font-medium text-light-text/70 mb-2">Current Password</label>
-        <input 
+        <label class="block text-sm font-medium text-light-text/70 mb-2"
+          >Current Password</label
+        >
+        <input
           [(ngModel)]="passwordData.currentPassword"
-          type="password" 
+          type="password"
           placeholder="Enter current password"
-          class="w-full px-4 py-3 bg-dark-bg border border-accent/20 rounded-xl text-light-text placeholder-light-text/40 focus:outline-none focus:border-accent transition-all duration-300">
+          class="w-full px-4 py-3 bg-dark-bg border border-accent/20 rounded-xl text-light-text placeholder-light-text/40 focus:outline-none focus:border-accent transition-all duration-300"
+        />
       </div>
 
       <!-- New Password -->
       <div>
-        <label class="block text-sm font-medium text-light-text/70 mb-2">New Password</label>
-        <input 
+        <label class="block text-sm font-medium text-light-text/70 mb-2"
+          >New Password</label
+        >
+        <input
           [(ngModel)]="passwordData.newPassword"
-          type="password" 
+          type="password"
           placeholder="Enter new password"
-          class="w-full px-4 py-3 bg-dark-bg border border-accent/20 rounded-xl text-light-text placeholder-light-text/40 focus:outline-none focus:border-accent transition-all duration-300">
+          class="w-full px-4 py-3 bg-dark-bg border border-accent/20 rounded-xl text-light-text placeholder-light-text/40 focus:outline-none focus:border-accent transition-all duration-300"
+        />
         <p class="text-xs text-light-text/50 mt-1">Minimum 8 characters</p>
       </div>
 
       <!-- Confirm Password -->
       <div>
-        <label class="block text-sm font-medium text-light-text/70 mb-2">Confirm New Password</label>
-        <input 
+        <label class="block text-sm font-medium text-light-text/70 mb-2"
+          >Confirm New Password</label
+        >
+        <input
           [(ngModel)]="passwordData.confirmPassword"
-          type="password" 
+          type="password"
           placeholder="Confirm new password"
-          class="w-full px-4 py-3 bg-dark-bg border border-accent/20 rounded-xl text-light-text placeholder-light-text/40 focus:outline-none focus:border-accent transition-all duration-300">
+          class="w-full px-4 py-3 bg-dark-bg border border-accent/20 rounded-xl text-light-text placeholder-light-text/40 focus:outline-none focus:border-accent transition-all duration-300"
+        />
       </div>
 
       <!-- Actions -->
       <div class="flex gap-3 pt-4">
-        <button (click)="closePasswordModal()" [disabled]="isChangingPassword"
-          class="flex-1 px-6 py-3 bg-dark-bg border border-accent/30 hover:border-accent text-light-text font-semibold rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+        <button
+          (click)="closePasswordModal()"
+          [disabled]="isChangingPassword"
+          class="flex-1 px-6 py-3 bg-dark-bg border border-accent/30 hover:border-accent text-light-text font-semibold rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
           Cancel
         </button>
-        <button (click)="changePassword()" [disabled]="isChangingPassword"
-          class="flex-1 px-6 py-3 bg-accent hover:bg-accent/90 text-dark-bg font-semibold rounded-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-          <i *ngIf="isChangingPassword" class="bx bx-loader-alt animate-spin text-xl"></i>
-          <span>{{ isChangingPassword ? 'Changing...' : 'Change Password' }}</span>
+        <button
+          (click)="changePassword()"
+          [disabled]="isChangingPassword"
+          class="flex-1 px-6 py-3 bg-accent hover:bg-accent/90 text-dark-bg font-semibold rounded-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        >
+          <i
+            *ngIf="isChangingPassword"
+            class="bx bx-loader-alt animate-spin text-xl"
+          ></i>
+          <span
+            >{{ isChangingPassword ? 'Changing...' : 'Change Password' }}</span
+          >
         </button>
       </div>
     </div>

@@ -13,7 +13,7 @@ public class CurrentUserService : ICurrentUserService
 
   private ClaimsPrincipal? User => _httpContextAccessor.HttpContext?.User;
 
-  public string? UserId => User?.FindFirstValue(JwtRegisteredClaimNames.Sub);
+  public string? UserId => User?.FindFirstValue(ClaimTypes.NameIdentifier);
   public string? Email => User?.FindFirstValue(JwtRegisteredClaimNames.Email);
   public string? Role => User?.FindFirstValue(ClaimTypes.Role);
   public bool IsAuthenticated => User?.Identity?.IsAuthenticated ?? false;

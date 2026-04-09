@@ -1,13 +1,13 @@
 
 export interface ServiceResult<T> {
-  Success: boolean;
-  Title: string;
-  SuccessMessage?: string;
-  ErrorMessage?: string;
-  Data?: T;
-  DataList?: T[];
-  Token?: string;
-  Role?: string;
+  success: boolean;
+  title: string;
+  successMessage?: string;
+  errorMessage?: string;
+  data?: T;
+  dataList?: T[];
+  token?: string;
+  role?: string;
 }
 
 export class ServiceResponse {
@@ -17,19 +17,19 @@ export class ServiceResponse {
     DataList?: T[]
   ): ServiceResult<T> {
     return {
-      Success: true,
-      Title: 'SUCCESS',
-      SuccessMessage,
-      Data,
-      DataList,
+      success: true,
+      title: 'SUCCESS',
+      successMessage: SuccessMessage,
+      data: Data,
+      dataList: DataList,
     };
   }
 
   static Failure<T>(Title: string, ErrorMessage?: string): ServiceResult<T> {
     return {
-      Success: false,
-      Title,
-      ErrorMessage,
+      success: false,
+      title: Title,
+      errorMessage: ErrorMessage,
     };
   }
 
@@ -39,11 +39,11 @@ export class ServiceResponse {
     Role?: string
   ): ServiceResult<T> {
     return {
-      Success: true,
-      Title: 'AUTH_SUCCESS',
-      SuccessMessage,
-      Token,
-      Role,
+      success: true,
+      title: 'AUTH_SUCCESS',
+      successMessage: SuccessMessage,
+      token: Token,
+      role: Role,
     };
   }
 }

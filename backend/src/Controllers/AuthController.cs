@@ -8,10 +8,12 @@ using Microsoft.AspNetCore.Mvc;
 public class AuthController : ControllerBase
 {
   private readonly IAuthRepository _authRepository;
+  private readonly ICurrentUserService _currentUserService;
 
-  public AuthController(IAuthRepository authRepository)
+  public AuthController(IAuthRepository authRepository, ICurrentUserService currentUserService)
   {
     _authRepository = authRepository;
+    _currentUserService = currentUserService;
   }
 
   [HttpPost("login")]
@@ -28,7 +30,7 @@ public class AuthController : ControllerBase
       {
         HttpOnly = true,
         Secure = false,
-        SameSite = SameSiteMode.Strict,
+        SameSite = SameSiteMode.Lax,
         Expires = DateTimeOffset.UtcNow.AddMinutes(45)
       });
 
@@ -90,8 +92,15 @@ public class AuthController : ControllerBase
   [ProducesResponseType(typeof(RepositoryResult<User>), 200)]
   [ProducesResponseType(typeof(RepositoryResult<User>), 400)]
   [ProducesResponseType(typeof(RepositoryResult<User>), 500)]
-  public ActionResult IsLoggedIn()
+  public async Task<IActionResult> IsLoggedIn()
   {
-    return Ok(RepositoryResponse<User>.Success("authentication successfull"));
+    if (_currentUserService.UserId == null)
+    {
+      return BadRequest(RepositoryResponse<User>.Failure("CLIENT ERROR", "not authenticated"));
+    }
+
+    var result = await _authRepository.CheckAuthenticationStatus(_currentUserService.UserId);
+
+    return Ok(result);
   }
 }

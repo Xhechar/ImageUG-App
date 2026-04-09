@@ -1,4 +1,4 @@
-
+using ImageURLGenerator.Model;
 using Microsoft.EntityFrameworkCore;
 
 public class AuthRepository : IAuthRepository
@@ -125,5 +125,17 @@ public class AuthRepository : IAuthRepository
     {
       return RepositoryResponse<object>.Failure("SERVER ERROR", "unable to change password at the moment.");
     }
+  }
+
+  public async Task<RepositoryResult<User>> CheckAuthenticationStatus(string UserId)
+  {
+    
+    var user = await _context.User.FirstOrDefaultAsync(u => u.UserId == UserId);
+
+    if (user == null) {
+      return RepositoryResponse<User>.Failure("CLIENT ERROR", "user not found.");
+    }
+
+    return RepositoryResponse<User>.Success("authentication status retrieved successfully!", Data: user);
   }
 }

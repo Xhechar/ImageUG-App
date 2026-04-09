@@ -13,3 +13,15 @@ export interface PaymentData {
   
   User?: User;
 }
+
+export interface FetchedPaymentData {
+  paymentDataId: string;
+  userId: string;
+  amount: number;
+  durationInDays: number;
+  merchantRequestId: string;
+  checkoutRequestId: string;
+  responseDescription: string;
+  isSuccessful: boolean;
+  createdAt: Date;
+}

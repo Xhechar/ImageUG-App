@@ -19,7 +19,7 @@ public class TokenService : ITokenService
     var JwtSettings = this.Config.GetSection("JwtSettings");
 
     var claims = new[] {
-      new Claim(JwtRegisteredClaimNames.Sub, details.UserId),
+      new Claim(ClaimTypes.NameIdentifier, details.UserId),
       new Claim(JwtRegisteredClaimNames.Email, details.Email),
       new Claim(ClaimTypes.Role, details.Role)
     };
