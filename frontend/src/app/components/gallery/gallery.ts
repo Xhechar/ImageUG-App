@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ImageUrl } from '../../interfaces/ImageUrl';
+import { FetchedImageUrl } from '../../interfaces/ImageUrl';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Imageurl } from '../../services/imageurl';
+import { User } from '../../services/user';
+import { FetchedUser } from '../../interfaces/User';
+import { uploadToCloudinary } from '../../utils';
 
 @Component({
   selector: 'app-gallery',
@@ -12,58 +16,10 @@ import { FormsModule } from '@angular/forms';
 })
 export class Gallery implements OnInit {
   // User images
-  userImages: ImageUrl[] = [
-    {
-      ImageUrlId: '1',
-      Url: 'https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=400&q=80',
-      UserId: '1',
-      Description: 'Beautiful sunset landscape photography',
-      IsPublished: true,
-      CreatedAt: new Date('2024-12-15'),
-    },
-    {
-      ImageUrlId: '2',
-      Url: 'https://images.unsplash.com/photo-1682687221038-404cb8830901?w=400&q=80',
-      UserId: '1',
-      Description: 'Modern architecture and design',
-      IsPublished: false,
-      CreatedAt: new Date('2024-12-14'),
-    },
-    {
-      ImageUrlId: '3',
-      Url: 'https://images.unsplash.com/photo-1682687220063-4742bd7fd538?w=400&q=80',
-      UserId: '1',
-      Description: 'Abstract art composition with vibrant colors',
-      IsPublished: true,
-      CreatedAt: new Date('2024-12-13'),
-    },
-    {
-      ImageUrlId: '4',
-      Url: 'https://images.unsplash.com/photo-1682687220923-c58b9a4592ae?w=400&q=80',
-      UserId: '1',
-      Description: 'Nature landscape with mountains',
-      IsPublished: false,
-      CreatedAt: new Date('2024-12-12'),
-    },
-    {
-      ImageUrlId: '5',
-      Url: 'https://images.unsplash.com/photo-1682687221080-5cb261c645cb?w=400&q=80',
-      UserId: '1',
-      Description: 'Urban street photography in city',
-      IsPublished: true,
-      CreatedAt: new Date('2024-12-11'),
-    },
-    {
-      ImageUrlId: '6',
-      Url: 'https://images.unsplash.com/photo-1682687220199-d0124f48f95b?w=400&q=80',
-      UserId: '1',
-      Description: 'Minimalist interior design concept',
-      IsPublished: true,
-      CreatedAt: new Date('2024-12-10'),
-    },
-  ];
+  userImages: FetchedImageUrl[] = [];
+  currentUser: FetchedUser | null = null;
 
-  filteredImages: ImageUrl[] = [];
+  filteredImages: FetchedImageUrl[] = [];
 
   // Filters
   searchTerm: string = '';
@@ -80,7 +36,7 @@ export class Gallery implements OnInit {
   showDeleteModal: boolean = false;
 
   // Create/Edit data
-  selectedImage: ImageUrl | null = null;
+  selectedImage: FetchedImageUrl | null = null;
   selectedFile: File | null = null;
   imageDescription: string = '';
   isUploading: boolean = false;
@@ -90,10 +46,54 @@ export class Gallery implements OnInit {
   toastMessage: string = '';
   toastType: 'success' | 'error' | 'info' = 'info';
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private imageurl: Imageurl,
+    private user: User,
+  ) {}
 
   ngOnInit(): void {
-    this.applyFilters();
+    this.fetchCurrentUser();
+    this.fetchUserImages();
+  }
+
+  // Fetch current user
+  fetchCurrentUser(): void {
+    this.user.getUserById().subscribe({
+      next: (result) => {
+        if (result.success) {
+          this.currentUser = result.data as unknown as FetchedUser;
+        } else {
+          this.showToastMessage(
+            result.errorMessage || 'Failed to load user',
+            'error',
+          );
+        }
+      },
+      error: (err) => {
+        this.showToastMessage('Error loading user', 'error');
+      },
+    });
+  }
+
+  // Fetch user images
+  fetchUserImages(): void {
+    this.imageurl.getUserImages().subscribe({
+      next: (result) => {
+        if (result.success) {
+          this.userImages = result.dataList || [];
+          this.applyFilters();
+        } else {
+          this.showToastMessage(
+            result.errorMessage || 'Failed to load images',
+            'error',
+          );
+        }
+      },
+      error: (err) => {
+        this.showToastMessage('Error loading images', 'error');
+      },
+    });
   }
 
   // Stats
@@ -102,11 +102,11 @@ export class Gallery implements OnInit {
   }
 
   get publishedImages(): number {
-    return this.userImages.filter((img) => img.IsPublished).length;
+    return this.userImages.filter((img) => img.isPublished).length;
   }
 
   get unpublishedImages(): number {
-    return this.userImages.filter((img) => !img.IsPublished).length;
+    return this.userImages.filter((img) => !img.isPublished).length;
   }
 
   // Filter and sort
@@ -116,33 +116,33 @@ export class Gallery implements OnInit {
     if (this.searchTerm) {
       filtered = filtered.filter(
         (img) =>
-          img.Description?.toLowerCase().includes(
-            this.searchTerm.toLowerCase()
-          ) ||
-          img.ImageUrlId.toLowerCase().includes(this.searchTerm.toLowerCase())
+          img.description
+            ?.toLowerCase()
+            .includes(this.searchTerm.toLowerCase()) ||
+          img.imageUrlId.toLowerCase().includes(this.searchTerm.toLowerCase()),
       );
     }
 
     if (this.filterStatus === 'published') {
-      filtered = filtered.filter((img) => img.IsPublished);
+      filtered = filtered.filter((img) => img.isPublished);
     } else if (this.filterStatus === 'unpublished') {
-      filtered = filtered.filter((img) => !img.IsPublished);
+      filtered = filtered.filter((img) => !img.isPublished);
     }
 
     if (this.sortBy === 'newest') {
       filtered.sort(
         (a, b) =>
-          new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime()
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
       );
     } else if (this.sortBy === 'oldest') {
       filtered.sort(
         (a, b) =>
-          new Date(a.CreatedAt).getTime() - new Date(b.CreatedAt).getTime()
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
       );
     } else if (this.sortBy === 'description') {
       filtered.sort((a, b) => {
-        const aDesc = a.Description || '';
-        const bDesc = b.Description || '';
+        const aDesc = a.description || '';
+        const bDesc = b.description || '';
         return aDesc.localeCompare(bDesc);
       });
     }
@@ -151,7 +151,7 @@ export class Gallery implements OnInit {
     this.currentPage = 0;
   }
 
-  get displayedImages(): ImageUrl[] {
+  get displayedImages(): FetchedImageUrl[] {
     const start = this.currentPage * this.itemsPerPage;
     const end = start + this.itemsPerPage;
     return this.filteredImages.slice(start, end);
@@ -195,36 +195,54 @@ export class Gallery implements OnInit {
   }
 
   async createImage(): Promise<void> {
-    if (!this.selectedFile) {
-      this.showToastMessage('Please select an image file', 'error');
+    if (!this.selectedFile || !this.currentUser) {
+      this.showToastMessage(
+        'Please select an image and ensure user is loaded',
+        'error',
+      );
       return;
     }
 
     this.isUploading = true;
 
-    // Simulate upload delay
-    await this.delay(2000);
+    try {
+      const cloudinaryUrl = await uploadToCloudinary(this.selectedFile);
+      const dto = {
+        Url: cloudinaryUrl,
+        Description: this.imageDescription || undefined,
+      };
 
-    // Create new image (in real app, upload to Cloudinary first)
-    const newImage: ImageUrl = {
-      ImageUrlId: Date.now().toString(),
-      Url: URL.createObjectURL(this.selectedFile), // Replace with Cloudinary URL
-      UserId: '1',
-      Description: this.imageDescription,
-      IsPublished: false,
-      CreatedAt: new Date(),
-    };
-
-    this.userImages.unshift(newImage);
-    this.applyFilters();
-    this.closeCreateModal();
-    this.showToastMessage('Image created successfully!', 'success');
+      this.imageurl.createImageUrl(dto).subscribe({
+        next: (result) => {
+          console.log("result: ", result);
+          if (result.success) {
+            this.fetchUserImages();
+            this.closeCreateModal();
+            this.showToastMessage('Image created successfully!', 'success');
+          } else {
+            this.showToastMessage(
+              result.errorMessage || 'Failed to create image',
+              'error',
+            );
+          }
+        },
+        error: (err) => {
+          this.showToastMessage('Error creating image', 'error');
+        },
+        complete: () => {
+          this.isUploading = false;
+        },
+      });
+    } catch (error) {
+      this.showToastMessage('Failed to upload image', 'error');
+      this.isUploading = false;
+    }
   }
 
   // Edit image
-  openEditModal(image: ImageUrl): void {
+  openEditModal(image: FetchedImageUrl): void {
     this.selectedImage = { ...image };
-    this.imageDescription = image.Description || '';
+    this.imageDescription = image.description || '';
     this.selectedFile = null;
     this.showEditModal = true;
   }
@@ -242,30 +260,50 @@ export class Gallery implements OnInit {
 
     this.isUploading = true;
 
-    // Simulate upload delay
-    await this.delay(2000);
-
-    const index = this.userImages.findIndex(
-      (img) => img.ImageUrlId === this.selectedImage!.ImageUrlId
-    );
-    if (index !== -1) {
-      // If new file selected, update URL (upload to Cloudinary first)
+    try {
+      let newUrl = this.selectedImage.url;
       if (this.selectedFile) {
-        this.userImages[index].Url = URL.createObjectURL(this.selectedFile);
+        newUrl = await uploadToCloudinary(this.selectedFile);
       }
 
-      // Update description
-      this.userImages[index].Description = this.imageDescription;
-      this.userImages[index].UpdatedAt = new Date();
-    }
+      const dto = {
+        Url: newUrl,
+        Description: this.imageDescription || undefined,
+      };
 
-    this.applyFilters();
-    this.closeEditModal();
-    this.showToastMessage('Image updated successfully!', 'success');
+      this.imageurl
+        .updateImageUrl(this.selectedImage.imageUrlId, dto)
+        .subscribe({
+          next: (result) => {
+            if (result.success) {
+              this.fetchUserImages();
+              this.closeEditModal();
+              this.showToastMessage('Image updated successfully!', 'success');
+              this.isUploading = false;
+            } else {
+            this.isUploading = false;
+              this.showToastMessage(
+                result.errorMessage || 'Failed to update image',
+                'error',
+              );
+            }
+          },
+          error: (err) => {
+            this.isUploading = false;
+            this.showToastMessage('Error updating image', 'error');
+          },
+          complete: () => {
+            this.isUploading = false;
+          },
+        });
+    } catch (error) {
+      this.showToastMessage('Failed to upload image', 'error');
+      this.isUploading = false;
+    }
   }
 
   // Delete image
-  confirmDelete(image: ImageUrl): void {
+  confirmDelete(image: FetchedImageUrl): void {
     this.selectedImage = image;
     this.showDeleteModal = true;
   }
@@ -278,22 +316,46 @@ export class Gallery implements OnInit {
   deleteImage(): void {
     if (!this.selectedImage) return;
 
-    this.userImages = this.userImages.filter(
-      (img) => img.ImageUrlId !== this.selectedImage!.ImageUrlId
-    );
-    this.applyFilters();
-    this.closeDeleteModal();
-    this.showToastMessage('Image deleted successfully', 'success');
+    this.imageurl.deleteImage(this.selectedImage.imageUrlId).subscribe({
+      next: (result) => {
+        if (result.success) {
+          this.fetchUserImages();
+          this.closeDeleteModal();
+          this.showToastMessage('Image deleted successfully', 'success');
+        } else {
+          this.showToastMessage(
+            result.errorMessage || 'Failed to delete image',
+            'error',
+          );
+        }
+      },
+      error: (err) => {
+        this.showToastMessage('Error deleting image', 'error');
+      },
+    });
   }
 
   // Toggle publish
-  togglePublish(image: ImageUrl): void {
-    image.IsPublished = !image.IsPublished;
-    image.UpdatedAt = new Date();
-    this.showToastMessage(
-      `Image ${image.IsPublished ? 'published' : 'unpublished'} successfully`,
-      'success'
-    );
+  togglePublish(image: FetchedImageUrl): void {
+    this.imageurl.togglePublishedImageStatus(image.imageUrlId).subscribe({
+      next: (result) => {
+        if (result.success) {
+          this.fetchUserImages();
+          this.showToastMessage(
+            `Image ${image.isPublished ? 'unpublished' : 'published'} successfully`,
+            'success',
+          );
+        } else {
+          this.showToastMessage(
+            result.errorMessage || 'Failed to toggle publish status',
+            'error',
+          );
+        }
+      },
+      error: (err) => {
+        this.showToastMessage('Error toggling publish status', 'error');
+      },
+    });
   }
 
   // Copy URL
@@ -311,14 +373,14 @@ export class Gallery implements OnInit {
   // Toast
   showToastMessage(
     message: string,
-    type: 'success' | 'error' | 'info' = 'info'
+    type: 'success' | 'error' | 'info' = 'info',
   ): void {
     this.toastMessage = message;
     this.toastType = type;
     this.showToast = true;
     setTimeout(() => {
       this.showToast = false;
-    }, 3000);
+    }, 5000);
   }
 
   // Helpers

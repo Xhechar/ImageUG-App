@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../Environment/service.environment';
 import { ServiceResult } from '../service.result/service.result';
-import { Subscription as UserSubscription } from '../interfaces/Subscription';
+import { FetchedSubscription, Subscription as UserSubscription } from '../interfaces/Subscription';
 import { StkPushDto } from '../Dtos/Payments/STKPushDto';
 
 @Injectable({
@@ -24,8 +24,8 @@ export class Subscription {
     );
   }
 
-  getUserSubscriptions(): Observable<ServiceResult<Subscription[]>> {
-    return this.http.post<ServiceResult<Subscription[]>>(
+  getUserSubscriptions(): Observable<ServiceResult<FetchedSubscription>> {
+    return this.http.post<ServiceResult<FetchedSubscription>>(
       `${this.API_URL}get-user-subscriptions`,
       {},
       { withCredentials: true }

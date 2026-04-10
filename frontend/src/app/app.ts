@@ -7,6 +7,8 @@ import { RouterLink } from '@angular/router';
 import { Auth } from './services/auth';
 import { Notification } from './components/notification/notification';
 import { Nav } from './services/nav';
+import { Toast } from './services/toast';
+import { Signalr } from './services/signalr';
 
 @Component({
   selector: 'app-root',
@@ -25,6 +27,9 @@ export class App implements OnInit {
   constructor(
     private router: Router,
     private ns: Nav,
+    private as: Auth,
+    private ts: Toast,
+    private sgrs: Signalr
   ) {}
 
   ngOnInit(): void {
@@ -73,10 +78,24 @@ export class App implements OnInit {
   }
 
   logout(): void {
-    // Implement your logout logic here
-    this.isLoggedIn = false;
-    this.currentUser = null;
-    this.router.navigate(['/']);
-    this.isProfileMenuOpen = false;
+    this.as.logout().subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.isLoggedIn = false;
+          this.currentUser = null;
+          this.router.navigate(['/']);
+          this.isProfileMenuOpen = false;
+          this.sgrs.stopConnection();
+          this.ts.showToast(
+            res.success,
+            res.title,
+            res.successMessage as string
+          );
+        }
+      },
+      error: (err) => {
+        this.ts.showToast(false, 'Error', err.message ?? 'Logout failed. Please try again.');
+      },
+    });
   }
 }

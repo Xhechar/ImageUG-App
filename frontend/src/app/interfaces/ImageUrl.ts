@@ -1,4 +1,4 @@
-import { User } from "./User";
+import { FetchedUser, User } from "./User";
 
 export interface ImageUrl {
   ImageUrlId: string;
@@ -20,4 +20,6 @@ export interface FetchedImageUrl {
   isPublished: boolean;
   createdAt: Date;
   updatedAt?: Date;
+
+  user?: FetchedUser;
 }

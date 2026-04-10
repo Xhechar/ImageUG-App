@@ -2,9 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ImageUrl } from '../../interfaces/ImageUrl';
-import { User } from '../../interfaces/User';
-import { Subscription } from '../../interfaces/Subscription';
+import { FetchedImageUrl } from '../../interfaces/ImageUrl';
+import { FetchedUser } from '../../interfaces/User';
+import { FetchedSubscription } from '../../interfaces/Subscription';
+import { User as UserService } from '../../services/user';
+import { Imageurl as ImageUrlService } from '../../services/imageurl';
+import { Subscription as SubscriptionService } from '../../services/subscription';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,77 +16,10 @@ import { Subscription } from '../../interfaces/Subscription';
   styleUrl: './dashboard.css',
 })
 export class Dashboard implements OnInit {
-  // User data
-  currentUser: User = {
-    UserId: '1',
-    Username: 'JohnDoe',
-    Email: 'john@example.com',
-    FreeTrialCount: 3,
-    PhoneNumber: '',
-    PasswordHash: '',
-    Role: '',
-    CreatedAt: new Date(),
-    IsWelcomeEmailSent: false,
-    ImageUrls: [],
-    Subscriptions: [],
-    PaymentDatas: [],
-  };
-
-  // Subscription data
-  activeSubscription: Subscription | null = {
-    SubscriptionId: '1',
-    UserId: '1',
-    Price: 14.99,
-    ReferenceId: 'REF123456',
-    StartDate: new Date('2024-12-01'),
-    DurationInDays: 30,
-    IsActive: true,
-  };
-
-  // User images
-  userImages: ImageUrl[] = [
-    {
-      ImageUrlId: '1',
-      Url: 'https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=400&q=80',
-      UserId: '1',
-      Description: 'Beautiful sunset landscape',
-      IsPublished: true,
-      CreatedAt: new Date('2024-12-15'),
-    },
-    {
-      ImageUrlId: '2',
-      Url: 'https://images.unsplash.com/photo-1682687221038-404cb8830901?w=400&q=80',
-      UserId: '1',
-      Description: 'Modern architecture',
-      IsPublished: false,
-      CreatedAt: new Date('2024-12-14'),
-    },
-    {
-      ImageUrlId: '3',
-      Url: 'https://images.unsplash.com/photo-1682687220063-4742bd7fd538?w=400&q=80',
-      UserId: '1',
-      Description: 'Abstract art composition',
-      IsPublished: true,
-      CreatedAt: new Date('2024-12-13'),
-    },
-    {
-      ImageUrlId: '4',
-      Url: 'https://images.unsplash.com/photo-1682687220923-c58b9a4592ae?w=400&q=80',
-      UserId: '1',
-      IsPublished: false,
-      CreatedAt: new Date('2024-12-12'),
-    },
-    {
-      ImageUrlId: '5',
-      Url: 'https://images.unsplash.com/photo-1682687221080-5cb261c645cb?w=400&q=80',
-      UserId: '1',
-      Description: 'Urban street photography',
-      IsPublished: true,
-      CreatedAt: new Date('2024-12-11'),
-    },
-  ];
-
-  filteredImages: ImageUrl[] = [];
+  currentUser: FetchedUser | null = null;
+  activeSubscription: FetchedSubscription | null = null;
+  userImages: Array<FetchedImageUrl> = [];
+  filteredImages: Array<FetchedImageUrl> = [];
 
   // Filters
   searchTerm: string = '';
@@ -117,10 +53,96 @@ export class Dashboard implements OnInit {
   currentPage: number = 0;
   itemsPerPage: number = 6;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private userService: UserService,
+    private imageService: ImageUrlService,
+    private subscriptionService: SubscriptionService,
+  ) {}
 
   ngOnInit(): void {
-    this.applyFilters();
+    this.loadDashboard();
+  }
+
+  loadDashboard(): void {
+    this.fetchCurrentUser();
+    this.fetchUserImages();
+    this.fetchUserSubscriptions();
+  }
+
+  fetchCurrentUser(): void {
+    this.userService.getUserById().subscribe({
+      next: (res) => {
+        if (res?.data) {
+          this.currentUser = res.data;
+
+          if (res.data.imageUrls?.length) {
+            this.userImages = res.data.imageUrls;
+            this.applyFilters();
+          }
+
+          if (res.data.subscriptions?.length) {
+            this.activeSubscription = this.findActiveSubscription(
+              res.data.subscriptions,
+            );
+          }
+        }
+      },
+      error: () => {
+        this.showToastMessage('Failed to load account details', 'error');
+      },
+    });
+  }
+
+  fetchUserImages(): void {
+    this.imageService.getUserImages().subscribe({
+      next: (res) => {
+        const images =
+          (res.dataList) ??
+          [];
+
+        if (Array.isArray(images)) {
+          this.userImages = images;
+          this.applyFilters();
+        }
+      },
+      error: () => {
+        this.showToastMessage('Failed to load images', 'error');
+      },
+    });
+  }
+
+  fetchUserSubscriptions(): void {
+    this.subscriptionService.getUserSubscriptions().subscribe({
+      next: (res) => {
+        const subscriptions =
+          (res.dataList as FetchedSubscription[]) ??
+          [];
+
+        if (Array.isArray(subscriptions)) {
+          this.activeSubscription = this.findActiveSubscription(subscriptions);
+        }
+      },
+      error: () => {
+        this.showToastMessage('Failed to load subscriptions', 'error');
+      },
+    });
+  }
+
+  findActiveSubscription(
+    subscriptions: FetchedSubscription[],
+  ): FetchedSubscription | null {
+    const active = subscriptions.find((sub) => sub.isActive);
+    if (active) {
+      return active;
+    }
+
+    const sorted = [...subscriptions].sort(
+      (a, b) =>
+        new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
+    );
+
+    return sorted.length ? sorted[0] : null;
   }
 
   // Stats calculations
@@ -129,31 +151,33 @@ export class Dashboard implements OnInit {
   }
 
   get publishedImages(): number {
-    return this.userImages.filter((img) => img.IsPublished).length;
+    return this.userImages.filter((img) => img.isPublished).length;
   }
 
   get unpublishedImages(): number {
-    return this.userImages.filter((img) => !img.IsPublished).length;
+    return this.userImages.filter((img) => !img.isPublished).length;
   }
 
   get daysRemaining(): number {
     if (!this.activeSubscription) return 0;
-    const startDate = new Date(this.activeSubscription.StartDate);
+
+    const startDate = new Date(this.activeSubscription.startDate);
     const endDate = new Date(
       startDate.getTime() +
-        this.activeSubscription.DurationInDays * 24 * 60 * 60 * 1000
+        this.activeSubscription.durationInDays * 24 * 60 * 60 * 1000,
     );
     const today = new Date();
     const diffTime = endDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
     return Math.max(0, diffDays);
   }
 
   get subscriptionPlanName(): string {
     if (!this.activeSubscription) return 'No Plan';
-    if (this.activeSubscription.DurationInDays === 7) return 'Weekly';
-    if (this.activeSubscription.DurationInDays === 30) return 'Monthly';
-    if (this.activeSubscription.DurationInDays === 365) return 'Yearly';
+    if (this.activeSubscription.durationInDays === 7) return 'Weekly';
+    if (this.activeSubscription.durationInDays === 30) return 'Monthly';
+    if (this.activeSubscription.durationInDays === 365) return 'Yearly';
     return 'Custom';
   }
 
@@ -161,39 +185,35 @@ export class Dashboard implements OnInit {
   applyFilters(): void {
     let filtered = [...this.userImages];
 
-    // Search filter
     if (this.searchTerm) {
+      const lowerSearch = this.searchTerm.toLowerCase();
       filtered = filtered.filter(
         (img) =>
-          img.Description?.toLowerCase().includes(
-            this.searchTerm.toLowerCase()
-          ) ||
-          img.ImageUrlId.toLowerCase().includes(this.searchTerm.toLowerCase())
+          (img.description ?? '').toLowerCase().includes(lowerSearch) ||
+          img.imageUrlId.toLowerCase().includes(lowerSearch),
       );
     }
 
-    // Status filter
     if (this.filterStatus === 'published') {
-      filtered = filtered.filter((img) => img.IsPublished);
+      filtered = filtered.filter((img) => img.isPublished);
     } else if (this.filterStatus === 'unpublished') {
-      filtered = filtered.filter((img) => !img.IsPublished);
+      filtered = filtered.filter((img) => !img.isPublished);
     }
 
-    // Sort
     if (this.sortBy === 'newest') {
       filtered.sort(
         (a, b) =>
-          new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime()
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
       );
     } else if (this.sortBy === 'oldest') {
       filtered.sort(
         (a, b) =>
-          new Date(a.CreatedAt).getTime() - new Date(b.CreatedAt).getTime()
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
       );
     } else if (this.sortBy === 'description') {
       filtered.sort((a, b) => {
-        const aDesc = a.Description || '';
-        const bDesc = b.Description || '';
+        const aDesc = a.description || '';
+        const bDesc = b.description || '';
         return aDesc.localeCompare(bDesc);
       });
     }
@@ -202,7 +222,7 @@ export class Dashboard implements OnInit {
     this.currentPage = 0;
   }
 
-  get displayedImages(): ImageUrl[] {
+  get displayedImages(): FetchedImageUrl[] {
     const start = this.currentPage * this.itemsPerPage;
     const end = start + this.itemsPerPage;
     return this.filteredImages.slice(start, end);
@@ -225,15 +245,28 @@ export class Dashboard implements OnInit {
   }
 
   // Toggle publish status
-  togglePublish(image: ImageUrl): void {
-    image.IsPublished = !image.IsPublished;
-    image.UpdatedAt = new Date();
-    // Add your API call here to update the backend
-
-    this.showToastMessage(
-      `Image ${image.IsPublished ? 'published' : 'unpublished'} successfully`,
-      'success'
-    );
+  togglePublish(image: FetchedImageUrl): void {
+    this.imageService.togglePublishedImageStatus(image.imageUrlId).subscribe({
+      next: (result) => {
+        if (result.success) {
+          image.isPublished = !image.isPublished;
+          this.applyFilters();
+          this.showToastMessage(
+            result.successMessage || 'Image status updated',
+            'success',
+          );
+          this.fetchUserImages();
+        } else {
+          this.showToastMessage(
+            result.errorMessage || 'Failed to toggle publish status',
+            'error',
+          );
+        }
+      },
+      error: () => {
+        this.showToastMessage('Failed to toggle publish status', 'error');
+      },
+    });
   }
 
   // Copy URL to clipboard
@@ -264,19 +297,30 @@ export class Dashboard implements OnInit {
   deleteImage(): void {
     if (!this.imageToDelete) return;
 
-    this.userImages = this.userImages.filter(
-      (img) => img.ImageUrlId !== this.imageToDelete
-    );
-    this.applyFilters();
-    this.closeDeleteModal();
-    this.showToastMessage('Image deleted successfully', 'success');
-    // Add your API call here
+    this.imageService.deleteImage(this.imageToDelete).subscribe({
+      next: (result) => {
+        if (result.success) {
+          this.userImages = this.userImages.filter(
+            (img) => img.imageUrlId !== this.imageToDelete,
+          );
+          this.applyFilters();
+          this.closeDeleteModal();
+          this.showToastMessage(result.successMessage || 'Image deleted successfully', 'success');
+        }
+        if (!result.success) {
+          this.showToastMessage(
+            result.errorMessage || 'Failed to delete image',
+            'error',
+          );
+        }
+      }
+    });
   }
 
   // Show toast notification
   showToastMessage(
     message: string,
-    type: 'success' | 'error' | 'info' = 'info'
+    type: 'success' | 'error' | 'info' = 'info',
   ): void {
     this.toastMessage = message;
     this.toastType = type;

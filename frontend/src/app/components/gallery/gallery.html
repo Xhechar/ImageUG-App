@@ -1,25 +1,34 @@
 <div class="min-h-screen bg-dark-bg py-8 px-4 sm:px-6 lg:px-8">
   <!-- Toast Notification -->
   <div *ngIf="showToast" class="fixed top-24 right-6 z-50 animate-slide-in">
-    <div [class]="'border rounded-xl px-6 py-4 shadow-glow flex items-center gap-3 ' + 
+    <div
+      [class]="'border rounded-xl px-6 py-4 shadow-glow flex items-center gap-3 ' + 
       (toastType === 'success' ? 'bg-green-500/10 border-green-500/30' : 
        toastType === 'error' ? 'bg-red-500/10 border-red-500/30' : 
-       'bg-dark-card border-accent/20')">
-      <i [class]="'text-2xl ' + 
+       'bg-dark-card border-accent/20')"
+    >
+      <i
+        [class]="'text-2xl ' + 
         (toastType === 'success' ? 'bx bx-check-circle text-green-500' : 
          toastType === 'error' ? 'bx bx-error-circle text-red-500' : 
-         'bx bx-info-circle text-accent')"></i>
-      <p [class]="'font-medium ' + 
+         'bx bx-info-circle text-accent')"
+      ></i>
+      <p
+        [class]="'font-medium ' + 
         (toastType === 'success' ? 'text-green-400' : 
          toastType === 'error' ? 'text-red-400' : 
-         'text-light-text')">{{ toastMessage }}</p>
+         'text-light-text')"
+      >
+        {{ toastMessage }}
+      </p>
     </div>
   </div>
 
   <div class="max-w-7xl mx-auto">
-    
     <!-- Page Header -->
-    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
+    <div
+      class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8"
+    >
       <div>
         <h1 class="text-3xl md:text-4xl font-bold text-light-text mb-2">
           <i class="bx bx-images text-primary mr-2"></i>
@@ -27,9 +36,11 @@
         </h1>
         <p class="text-light-text/60">Manage and organize your images</p>
       </div>
-      
-      <button (click)="openCreateModal()"
-        class="px-6 py-3 bg-primary hover:bg-primary/90 text-dark-bg font-semibold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-glow flex items-center gap-2">
+
+      <button
+        (click)="openCreateModal()"
+        class="px-6 py-3 bg-primary hover:bg-primary/90 text-dark-bg font-semibold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-glow flex items-center gap-2"
+      >
         <i class="bx bx-plus text-xl"></i>
         Create New Image
       </button>
@@ -38,9 +49,13 @@
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
       <!-- Total Images -->
-      <div class="bg-dark-card border border-accent/20 rounded-xl p-6 hover:border-accent transition-all duration-300">
+      <div
+        class="bg-dark-card border border-accent/20 rounded-xl p-6 hover:border-accent transition-all duration-300"
+      >
         <div class="flex items-center justify-between mb-4">
-          <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+          <div
+            class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center"
+          >
             <i class="bx bx-image text-2xl text-primary"></i>
           </div>
           <span class="text-3xl font-bold text-primary">{{ totalImages }}</span>
@@ -50,24 +65,36 @@
       </div>
 
       <!-- Published Images -->
-      <div class="bg-dark-card border border-accent/20 rounded-xl p-6 hover:border-accent transition-all duration-300">
+      <div
+        class="bg-dark-card border border-accent/20 rounded-xl p-6 hover:border-accent transition-all duration-300"
+      >
         <div class="flex items-center justify-between mb-4">
-          <div class="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center">
+          <div
+            class="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center"
+          >
             <i class="bx bx-globe text-2xl text-accent"></i>
           </div>
-          <span class="text-3xl font-bold text-accent">{{ publishedImages }}</span>
+          <span class="text-3xl font-bold text-accent"
+            >{{ publishedImages }}</span
+          >
         </div>
         <h3 class="text-light-text font-semibold">Published</h3>
         <p class="text-sm text-light-text/60">Public images</p>
       </div>
 
       <!-- Unpublished Images -->
-      <div class="bg-dark-card border border-accent/20 rounded-xl p-6 hover:border-accent transition-all duration-300">
+      <div
+        class="bg-dark-card border border-accent/20 rounded-xl p-6 hover:border-accent transition-all duration-300"
+      >
         <div class="flex items-center justify-between mb-4">
-          <div class="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center">
+          <div
+            class="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center"
+          >
             <i class="bx bx-hide text-2xl text-secondary"></i>
           </div>
-          <span class="text-3xl font-bold text-secondary">{{ unpublishedImages }}</span>
+          <span class="text-3xl font-bold text-secondary"
+            >{{ unpublishedImages }}</span
+          >
         </div>
         <h3 class="text-light-text font-semibold">Private</h3>
         <p class="text-sm text-light-text/60">Unpublished images</p>
@@ -76,33 +103,43 @@
 
     <!-- Filters and Search -->
     <div class="bg-dark-card border border-accent/20 rounded-xl p-6 mb-8">
-      <h3 class="text-xl font-bold text-light-text mb-4 flex items-center gap-2">
+      <h3
+        class="text-xl font-bold text-light-text mb-4 flex items-center gap-2"
+      >
         <i class="bx bx-filter text-accent"></i>
         Filter Images
       </h3>
-      
+
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <!-- Search -->
         <div>
-          <label class="block text-sm font-medium text-light-text/70 mb-2">Search</label>
+          <label class="block text-sm font-medium text-light-text/70 mb-2"
+            >Search</label
+          >
           <div class="relative">
-            <i class="bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-light-text/40 text-xl"></i>
-            <input 
+            <i
+              class="bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-light-text/40 text-xl"
+            ></i>
+            <input
               [(ngModel)]="searchTerm"
               (ngModelChange)="applyFilters()"
-              type="text" 
+              type="text"
               placeholder="Search by description..."
-              class="w-full pl-10 pr-4 py-3 bg-dark-bg border border-accent/20 rounded-xl text-light-text placeholder-light-text/40 focus:outline-none focus:border-accent transition-all duration-300">
+              class="w-full pl-10 pr-4 py-3 bg-dark-bg border border-accent/20 rounded-xl text-light-text placeholder-light-text/40 focus:outline-none focus:border-accent transition-all duration-300"
+            />
           </div>
         </div>
 
         <!-- Status Filter -->
         <div>
-          <label class="block text-sm font-medium text-light-text/70 mb-2">Status</label>
-          <select 
+          <label class="block text-sm font-medium text-light-text/70 mb-2"
+            >Status</label
+          >
+          <select
             [(ngModel)]="filterStatus"
             (ngModelChange)="applyFilters()"
-            class="w-full px-4 py-3 bg-dark-bg border border-accent/20 rounded-xl text-light-text focus:outline-none focus:border-accent transition-all duration-300 cursor-pointer">
+            class="w-full px-4 py-3 bg-dark-bg border border-accent/20 rounded-xl text-light-text focus:outline-none focus:border-accent transition-all duration-300 cursor-pointer"
+          >
             <option value="all">All Images</option>
             <option value="published">Published Only</option>
             <option value="unpublished">Unpublished Only</option>
@@ -111,11 +148,14 @@
 
         <!-- Sort By -->
         <div>
-          <label class="block text-sm font-medium text-light-text/70 mb-2">Sort By</label>
-          <select 
+          <label class="block text-sm font-medium text-light-text/70 mb-2"
+            >Sort By</label
+          >
+          <select
             [(ngModel)]="sortBy"
             (ngModelChange)="applyFilters()"
-            class="w-full px-4 py-3 bg-dark-bg border border-accent/20 rounded-xl text-light-text focus:outline-none focus:border-accent transition-all duration-300 cursor-pointer">
+            class="w-full px-4 py-3 bg-dark-bg border border-accent/20 rounded-xl text-light-text focus:outline-none focus:border-accent transition-all duration-300 cursor-pointer"
+          >
             <option value="newest">Newest First</option>
             <option value="oldest">Oldest First</option>
             <option value="description">By Description</option>
@@ -126,32 +166,44 @@
 
     <!-- Images Grid -->
     <div class="bg-dark-card border border-accent/20 rounded-xl p-6 mb-8">
-      <h3 class="text-xl font-bold text-light-text mb-6 flex items-center gap-2">
+      <h3
+        class="text-xl font-bold text-light-text mb-6 flex items-center gap-2"
+      >
         <i class="bx bx-collection text-primary"></i>
         Gallery ({{ filteredImages.length }} images)
       </h3>
 
-      <div *ngIf="displayedImages.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div *ngFor="let image of displayedImages" 
-          class="bg-dark-bg border border-accent/20 rounded-xl overflow-hidden hover:border-accent transition-all duration-300 group">
-          
+      <div
+        *ngIf="displayedImages.length > 0"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+      >
+        <div
+          *ngFor="let image of displayedImages"
+          class="bg-dark-bg border border-accent/20 rounded-xl overflow-hidden hover:border-accent transition-all duration-300 group"
+        >
           <!-- Image Preview -->
           <div class="aspect-square overflow-hidden relative bg-dark-bg">
-            <img [src]="image.Url" 
-              [alt]="image.Description || 'Image'" 
+            <img
+              [src]="image.url"
+              [alt]="image.description || 'Image'"
               loading="lazy"
               (load)="onImageLoad($event)"
               (error)="onImageError($event)"
-              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-            
+              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            />
+
             <!-- Status Badge -->
             <div class="absolute top-3 right-3">
-              <span *ngIf="image.IsPublished" 
-                class="px-3 py-1 bg-accent/90 backdrop-blur-sm text-dark-bg text-xs font-bold rounded-full flex items-center gap-1">
+              <span
+                *ngIf="image.isPublished"
+                class="px-3 py-1 bg-accent/90 backdrop-blur-sm text-dark-bg text-xs font-bold rounded-full flex items-center gap-1"
+              >
                 <i class="bx bx-globe"></i> Published
               </span>
-              <span *ngIf="!image.IsPublished" 
-                class="px-3 py-1 bg-secondary/90 backdrop-blur-sm text-dark-bg text-xs font-bold rounded-full flex items-center gap-1">
+              <span
+                *ngIf="!image.isPublished"
+                class="px-3 py-1 bg-secondary/90 backdrop-blur-sm text-dark-bg text-xs font-bold rounded-full flex items-center gap-1"
+              >
                 <i class="bx bx-hide"></i> Private
               </span>
             </div>
@@ -159,39 +211,52 @@
 
           <!-- Image Info -->
           <div class="p-4">
-            <p class="text-light-text/80 text-sm mb-3 line-clamp-2 min-h-[40px]">
-              {{ image.Description || 'No description provided' }}
+            <p
+              class="text-light-text/80 text-sm mb-3 line-clamp-2 min-h-[40px]"
+            >
+              {{ image.description || 'No description provided' }}
             </p>
-            
+
             <p class="text-light-text/50 text-xs mb-4">
-              <i class="bx bx-calendar mr-1"></i>{{ image.CreatedAt | date: 'MMM d, y' }}
+              <i class="bx bx-calendar mr-1"></i>{{ image.createdAt | date: 'MMM
+              d, y' }}
             </p>
 
             <!-- Actions -->
             <div class="space-y-2">
               <div class="flex gap-2">
-                <button (click)="togglePublish(image)" 
-                  [class]="image.IsPublished ? 'bg-secondary/10 hover:bg-secondary/20 text-secondary border-secondary/30' : 'bg-accent/10 hover:bg-accent/20 text-accent border-accent/30'"
-                  class="flex-1 px-3 py-2 border rounded-lg text-sm font-medium transition-all duration-300 flex items-center justify-center gap-1">
-                  <i [class]="image.IsPublished ? 'bx bx-hide' : 'bx bx-globe'"></i>
-                  {{ image.IsPublished ? 'Unpublish' : 'Publish' }}
+                <button
+                  (click)="togglePublish(image)"
+                  [class]="image.isPublished ? 'bg-secondary/10 hover:bg-secondary/20 text-secondary border-secondary/30' : 'bg-accent/10 hover:bg-accent/20 text-accent border-accent/30'"
+                  class="flex-1 px-3 py-2 border rounded-lg text-sm font-medium transition-all duration-300 flex items-center justify-center gap-1"
+                >
+                  <i
+                    [class]="image.isPublished ? 'bx bx-hide' : 'bx bx-globe'"
+                  ></i>
+                  {{ image.isPublished ? 'Unpublish' : 'Publish' }}
                 </button>
-                
-                <button (click)="copyUrl(image.Url)" 
-                  class="px-3 py-2 bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary rounded-lg text-sm font-medium transition-all duration-300">
+
+                <button
+                  (click)="copyUrl(image.url)"
+                  class="px-3 py-2 bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary rounded-lg text-sm font-medium transition-all duration-300"
+                >
                   <i class="bx bx-copy"></i>
                 </button>
               </div>
 
               <div class="flex gap-2">
-                <button (click)="openEditModal(image)"
-                  class="flex-1 px-3 py-2 bg-dark-card hover:bg-dark-card/80 border border-accent/30 hover:border-accent text-light-text rounded-lg text-sm font-medium transition-all duration-300 flex items-center justify-center gap-1">
+                <button
+                  (click)="openEditModal(image)"
+                  class="flex-1 px-3 py-2 bg-dark-card hover:bg-dark-card/80 border border-accent/30 hover:border-accent text-light-text rounded-lg text-sm font-medium transition-all duration-300 flex items-center justify-center gap-1"
+                >
                   <i class="bx bx-edit"></i>
                   Edit
                 </button>
-                
-                <button (click)="confirmDelete(image)" 
-                  class="px-3 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-500 rounded-lg text-sm font-medium transition-all duration-300">
+
+                <button
+                  (click)="confirmDelete(image)"
+                  class="px-3 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-500 rounded-lg text-sm font-medium transition-all duration-300"
+                >
                   <i class="bx bx-trash"></i>
                 </button>
               </div>
@@ -203,27 +268,42 @@
       <!-- Empty State -->
       <div *ngIf="displayedImages.length === 0" class="text-center py-16">
         <i class="bx bx-image-add text-6xl text-light-text/30 mb-4"></i>
-        <h3 class="text-xl font-semibold text-light-text/60 mb-2">No images found</h3>
-        <p class="text-light-text/40 mb-6">Try adjusting your filters or create a new image</p>
-        <button (click)="openCreateModal()"
-          class="px-6 py-3 bg-primary hover:bg-primary/90 text-dark-bg font-semibold rounded-xl transition-all duration-300 hover:scale-105">
+        <h3 class="text-xl font-semibold text-light-text/60 mb-2">
+          No images found
+        </h3>
+        <p class="text-light-text/40 mb-6">
+          Try adjusting your filters or create a new image
+        </p>
+        <button
+          (click)="openCreateModal()"
+          class="px-6 py-3 bg-primary hover:bg-primary/90 text-dark-bg font-semibold rounded-xl transition-all duration-300 hover:scale-105"
+        >
           <i class="bx bx-plus mr-2"></i>Create New Image
         </button>
       </div>
 
       <!-- Pagination -->
-      <div *ngIf="totalPages > 1" class="flex items-center justify-center gap-4 mt-8 pt-6 border-t border-accent/20">
-        <button (click)="previousPage()" [disabled]="currentPage === 0"
-          class="px-6 py-2 bg-dark-bg border border-accent/20 hover:border-accent text-light-text font-medium rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105">
+      <div
+        *ngIf="totalPages > 1"
+        class="flex items-center justify-center gap-4 mt-8 pt-6 border-t border-accent/20"
+      >
+        <button
+          (click)="previousPage()"
+          [disabled]="currentPage === 0"
+          class="px-6 py-2 bg-dark-bg border border-accent/20 hover:border-accent text-light-text font-medium rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105"
+        >
           <i class="bx bx-chevron-left mr-1"></i> Previous
         </button>
-        
+
         <span class="text-light-text/60">
           Page {{ currentPage + 1 }} of {{ totalPages }}
         </span>
-        
-        <button (click)="nextPage()" [disabled]="currentPage === totalPages - 1"
-          class="px-6 py-2 bg-dark-bg border border-accent/20 hover:border-accent text-light-text font-medium rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105">
+
+        <button
+          (click)="nextPage()"
+          [disabled]="currentPage === totalPages - 1"
+          class="px-6 py-2 bg-dark-bg border border-accent/20 hover:border-accent text-light-text font-medium rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105"
+        >
           Next <i class="bx bx-chevron-right ml-1"></i>
         </button>
       </div>
@@ -232,14 +312,22 @@
 </div>
 
 <!-- Create Image Modal -->
-<div *ngIf="showCreateModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-  <div class="bg-dark-card border border-accent/30 rounded-2xl max-w-2xl w-full p-8 shadow-glow animate-scale-in max-h-[90vh] overflow-y-auto">
+<div
+  *ngIf="showCreateModal"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
+>
+  <div
+    class="bg-dark-card border border-accent/30 rounded-2xl max-w-2xl w-full p-8 shadow-glow animate-scale-in max-h-[90vh] overflow-y-auto"
+  >
     <div class="flex items-center justify-between mb-6">
       <h3 class="text-2xl font-bold text-light-text flex items-center gap-2">
         <i class="bx bx-plus-circle text-primary"></i>
         Create New Image
       </h3>
-      <button (click)="closeCreateModal()" class="text-light-text/60 hover:text-light-text transition-colors">
+      <button
+        (click)="closeCreateModal()"
+        class="text-light-text/60 hover:text-light-text transition-colors"
+      >
         <i class="bx bx-x text-3xl"></i>
       </button>
     </div>
@@ -251,8 +339,15 @@
           <i class="bx bx-image-add mr-1"></i> Select Image
         </label>
         <label class="block w-full cursor-pointer">
-          <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden" />
-          <div class="border-2 border-dashed border-accent/30 hover:border-accent rounded-xl p-8 text-center transition-all duration-300 hover:bg-accent/5">
+          <input
+            type="file"
+            (change)="onFileSelected($event)"
+            accept="image/*"
+            class="hidden"
+          />
+          <div
+            class="border-2 border-dashed border-accent/30 hover:border-accent rounded-xl p-8 text-center transition-all duration-300 hover:bg-accent/5"
+          >
             <i class="bx bx-cloud-upload text-5xl text-accent mb-3 block"></i>
             <p class="text-light-text font-medium mb-1">
               {{ selectedFile ? selectedFile.name : 'Click to select image' }}
@@ -267,23 +362,33 @@
         <label class="block text-sm font-medium text-light-text mb-2">
           <i class="bx bx-edit mr-1"></i> Description (Optional)
         </label>
-        <textarea 
-          [(ngModel)]="imageDescription" 
-          rows="4" 
+        <textarea
+          [(ngModel)]="imageDescription"
+          rows="4"
           placeholder="Add a description for your image..."
-          class="w-full bg-dark-bg border border-accent/20 rounded-xl px-4 py-3 text-light-text placeholder-light-text/40 focus:outline-none focus:border-accent transition-all duration-300">
+          class="w-full bg-dark-bg border border-accent/20 rounded-xl px-4 py-3 text-light-text placeholder-light-text/40 focus:outline-none focus:border-accent transition-all duration-300"
+        >
         </textarea>
       </div>
 
       <!-- Actions -->
       <div class="flex gap-3">
-        <button (click)="closeCreateModal()" [disabled]="isUploading"
-          class="flex-1 px-6 py-3 bg-dark-bg border border-accent/30 hover:border-accent text-light-text font-semibold rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+        <button
+          (click)="closeCreateModal()"
+          [disabled]="isUploading"
+          class="flex-1 px-6 py-3 bg-dark-bg border border-accent/30 hover:border-accent text-light-text font-semibold rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
           Cancel
         </button>
-        <button (click)="createImage()" [disabled]="isUploading || !selectedFile"
-          class="flex-1 px-6 py-3 bg-primary hover:bg-primary/90 text-dark-bg font-semibold rounded-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-          <i *ngIf="isUploading" class="bx bx-loader-alt animate-spin text-xl"></i>
+        <button
+          (click)="createImage()"
+          [disabled]="isUploading || !selectedFile"
+          class="flex-1 px-6 py-3 bg-primary hover:bg-primary/90 text-dark-bg font-semibold rounded-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        >
+          <i
+            *ngIf="isUploading"
+            class="bx bx-loader-alt animate-spin text-xl"
+          ></i>
           <i *ngIf="!isUploading" class="bx bx-check"></i>
           {{ isUploading ? 'Creating...' : 'Create Image' }}
         </button>
@@ -293,14 +398,22 @@
 </div>
 
 <!-- Edit Image Modal -->
-<div *ngIf="showEditModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-  <div class="bg-dark-card border border-accent/30 rounded-2xl max-w-2xl w-full p-8 shadow-glow animate-scale-in max-h-[90vh] overflow-y-auto">
+<div
+  *ngIf="showEditModal"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
+>
+  <div
+    class="bg-dark-card border border-accent/30 rounded-2xl max-w-2xl w-full p-8 shadow-glow animate-scale-in max-h-[90vh] overflow-y-auto"
+  >
     <div class="flex items-center justify-between mb-6">
       <h3 class="text-2xl font-bold text-light-text flex items-center gap-2">
         <i class="bx bx-edit text-accent"></i>
         Edit Image
       </h3>
-      <button (click)="closeEditModal()" class="text-light-text/60 hover:text-light-text transition-colors">
+      <button
+        (click)="closeEditModal()"
+        class="text-light-text/60 hover:text-light-text transition-colors"
+      >
         <i class="bx bx-x text-3xl"></i>
       </button>
     </div>
@@ -308,10 +421,17 @@
     <div class="space-y-6">
       <!-- Current Image Preview -->
       <div>
-        <label class="block text-sm font-medium text-light-text mb-2">Current Image</label>
-        <div class="aspect-video rounded-xl overflow-hidden bg-dark-bg border border-accent/20">
-          <img [src]="selectedImage?.Url" [alt]="selectedImage?.Description || 'Current image'" 
-            class="w-full h-full object-cover" />
+        <label class="block text-sm font-medium text-light-text mb-2"
+          >Current Image</label
+        >
+        <div
+          class="aspect-video rounded-xl overflow-hidden bg-dark-bg border border-accent/20"
+        >
+          <img
+            [src]="selectedImage?.url"
+            [alt]="selectedImage?.description || 'Current image'"
+            class="w-full h-full object-cover"
+          />
         </div>
       </div>
 
@@ -321,13 +441,23 @@
           <i class="bx bx-image-add mr-1"></i> Replace Image (Optional)
         </label>
         <label class="block w-full cursor-pointer">
-          <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden" />
-          <div class="border-2 border-dashed border-accent/30 hover:border-accent rounded-xl p-6 text-center transition-all duration-300 hover:bg-accent/5">
+          <input
+            type="file"
+            (change)="onFileSelected($event)"
+            accept="image/*"
+            class="hidden"
+          />
+          <div
+            class="border-2 border-dashed border-accent/30 hover:border-accent rounded-xl p-6 text-center transition-all duration-300 hover:bg-accent/5"
+          >
             <i class="bx bx-cloud-upload text-4xl text-accent mb-2 block"></i>
             <p class="text-light-text font-medium text-sm mb-1">
-              {{ selectedFile ? selectedFile.name : 'Click to select new image' }}
+              {{ selectedFile ? selectedFile.name : 'Click to select new image'
+              }}
             </p>
-            <p class="text-xs text-light-text/50">Leave empty to keep current image</p>
+            <p class="text-xs text-light-text/50">
+              Leave empty to keep current image
+            </p>
           </div>
         </label>
       </div>
@@ -337,23 +467,33 @@
         <label class="block text-sm font-medium text-light-text mb-2">
           <i class="bx bx-edit mr-1"></i> Description
         </label>
-        <textarea 
-          [(ngModel)]="imageDescription" 
-          rows="4" 
+        <textarea
+          [(ngModel)]="imageDescription"
+          rows="4"
           placeholder="Add a description for your image..."
-          class="w-full bg-dark-bg border border-accent/20 rounded-xl px-4 py-3 text-light-text placeholder-light-text/40 focus:outline-none focus:border-accent transition-all duration-300">
+          class="w-full bg-dark-bg border border-accent/20 rounded-xl px-4 py-3 text-light-text placeholder-light-text/40 focus:outline-none focus:border-accent transition-all duration-300"
+        >
         </textarea>
       </div>
 
       <!-- Actions -->
       <div class="flex gap-3">
-        <button (click)="closeEditModal()" [disabled]="isUploading"
-          class="flex-1 px-6 py-3 bg-dark-bg border border-accent/30 hover:border-accent text-light-text font-semibold rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+        <button
+          (click)="closeEditModal()"
+          [disabled]="isUploading"
+          class="flex-1 px-6 py-3 bg-dark-bg border border-accent/30 hover:border-accent text-light-text font-semibold rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
           Cancel
         </button>
-        <button (click)="updateImage()" [disabled]="isUploading"
-          class="flex-1 px-6 py-3 bg-accent hover:bg-accent/90 text-dark-bg font-semibold rounded-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-          <i *ngIf="isUploading" class="bx bx-loader-alt animate-spin text-xl"></i>
+        <button
+          (click)="updateImage()"
+          [disabled]="isUploading"
+          class="flex-1 px-6 py-3 bg-accent hover:bg-accent/90 text-dark-bg font-semibold rounded-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        >
+          <i
+            *ngIf="isUploading"
+            class="bx bx-loader-alt animate-spin text-xl"
+          ></i>
           <i *ngIf="!isUploading" class="bx bx-save"></i>
           {{ isUploading ? 'Updating...' : 'Update Image' }}
         </button>
@@ -363,23 +503,36 @@
 </div>
 
 <!-- Delete Confirmation Modal -->
-<div *ngIf="showDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-  <div class="bg-dark-card border border-red-500/30 rounded-2xl max-w-md w-full p-8 shadow-glow animate-scale-in">
+<div
+  *ngIf="showDeleteModal"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
+>
+  <div
+    class="bg-dark-card border border-red-500/30 rounded-2xl max-w-md w-full p-8 shadow-glow animate-scale-in"
+  >
     <div class="text-center mb-6">
-      <div class="inline-flex items-center justify-center w-16 h-16 bg-red-500/10 rounded-full mb-4">
+      <div
+        class="inline-flex items-center justify-center w-16 h-16 bg-red-500/10 rounded-full mb-4"
+      >
         <i class="bx bx-trash text-4xl text-red-500"></i>
       </div>
       <h3 class="text-2xl font-bold text-light-text mb-2">Delete Image?</h3>
-      <p class="text-light-text/60">This action cannot be undone. The image will be permanently deleted.</p>
+      <p class="text-light-text/60">
+        This action cannot be undone. The image will be permanently deleted.
+      </p>
     </div>
 
     <div class="flex gap-3">
-      <button (click)="closeDeleteModal()"
-        class="flex-1 px-6 py-3 bg-dark-bg border border-accent/30 hover:border-accent text-light-text font-semibold rounded-xl transition-all duration-300">
+      <button
+        (click)="closeDeleteModal()"
+        class="flex-1 px-6 py-3 bg-dark-bg border border-accent/30 hover:border-accent text-light-text font-semibold rounded-xl transition-all duration-300"
+      >
         Cancel
       </button>
-      <button (click)="deleteImage()"
-        class="flex-1 px-6 py-3 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-xl transition-all duration-300 hover:scale-105">
+      <button
+        (click)="deleteImage()"
+        class="flex-1 px-6 py-3 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-xl transition-all duration-300 hover:scale-105"
+      >
         Delete
       </button>
     </div>

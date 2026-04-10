@@ -1,10 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ImageUrl } from '../../interfaces/ImageUrl';
+import { FetchedImageUrl } from '../../interfaces/ImageUrl';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Navbar } from '../navbar/navbar';
 import { Footer } from '../footer/footer';
+import { Imageurl } from '../../services/imageurl';
+import { Auth } from '../../services/auth';
+import { Signalr } from '../../services/signalr';
+import { uploadToCloudinary } from '../../utils';
 
 @Component({
   selector: 'app-landing',
@@ -12,314 +16,70 @@ import { Footer } from '../footer/footer';
   templateUrl: './landing.html',
   styleUrl: './landing.css',
 })
-export class Landing {
+export class Landing implements OnInit {
   selectedFile: File | null = null;
-  description: string = '';
+  selectedFilePreview: string | null = null;
+  isUploading: boolean = false;
+  generatedUrl: string = '';
+  isCopied: boolean = false;
   showToast: boolean = false;
   toastMessage: string = '';
-  isLoggedIn: boolean = false; // Set this based on your auth service
+  toastType: 'success' | 'error' | 'info' = 'info';
+  isLoggedIn: boolean = false;
+
+  // Gallery state
+  isLoadingImages: boolean = false;
+  imagesError: string = '';
 
   // Pagination
   currentPage: number = 0;
-  imagesPerPage: number = 10;
+  imagesPerPage: number = 12;
+  allPublishedImages: FetchedImageUrl[] = [];
 
-  // Dummy published images - OPTIMIZED with smaller, faster loading images
-  allPublishedImages: ImageUrl[] = [
-    {
-      ImageUrlId: '1',
-      Url: 'https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=400&q=80',
-      Description: 'Beautiful sunset over the mountains',
-      User: {
-        Username: 'JohnDoe', ProfileImageUrl: undefined,
-        UserId: '',
-        PhoneNumber: '',
-        Email: '',
-        PasswordHash: '',
-        Role: '',
-        CreatedAt: new Date(),
-        IsWelcomeEmailSent: false,
-        FreeTrialCount: 0,
-        ImageUrls: [],
-        Subscriptions: [],
-        PaymentDatas: []
-      },
-      CreatedAt: new Date('2024-01-15'),
-      UserId: '',
-      IsPublished: false
-    },
-    {
-      ImageUrlId: '2',
-      Url: 'https://images.unsplash.com/photo-1682687221038-404cb8830901?w=400&q=80',
-      Description: 'Modern architecture design',
-      User: {
-        Username: 'SarahSmith',
-        ProfileImageUrl: 'https://i.pravatar.cc/150?img=1',
-        UserId: '',
-        PhoneNumber: '',
-        Email: '',
-        PasswordHash: '',
-        Role: '',
-        CreatedAt: new Date(),
-        IsWelcomeEmailSent: false,
-        FreeTrialCount: 0,
-        ImageUrls: [],
-        Subscriptions: [],
-        PaymentDatas: []
-      },
-      CreatedAt: new Date('2024-01-14'),
-      UserId: '',
-      IsPublished: false
-    },
-    {
-      ImageUrlId: '3',
-      Url: 'https://images.unsplash.com/photo-1682687220063-4742bd7fd538?w=400&q=80',
-      Description: 'Abstract art composition',
-      User: {
-        Username: 'MikeJohnson', ProfileImageUrl: undefined,
-        UserId: '',
-        PhoneNumber: '',
-        Email: '',
-        PasswordHash: '',
-        Role: '',
-        CreatedAt: new Date(),
-        IsWelcomeEmailSent: false,
-        FreeTrialCount: 0,
-        ImageUrls: [],
-        Subscriptions: [],
-        PaymentDatas: []
-      },
-      CreatedAt: new Date('2024-01-13'),
-      UserId: '',
-      IsPublished: false
-    },
-    {
-      ImageUrlId: '4',
-      Url: 'https://images.unsplash.com/photo-1682687220923-c58b9a4592ae?w=400&q=80',
-      Description: 'Nature landscape photography',
-      User: {
-        Username: 'EmilyBrown',
-        ProfileImageUrl: 'https://i.pravatar.cc/150?img=5',
-        UserId: '',
-        PhoneNumber: '',
-        Email: '',
-        PasswordHash: '',
-        Role: '',
-        CreatedAt: new Date(),
-        IsWelcomeEmailSent: false,
-        FreeTrialCount: 0,
-        ImageUrls: [],
-        Subscriptions: [],
-        PaymentDatas: []
-      },
-      CreatedAt: new Date('2024-01-12'),
-      UserId: '',
-      IsPublished: false
-    },
-    {
-      ImageUrlId: '5',
-      Url: 'https://images.unsplash.com/photo-1682687221080-5cb261c645cb?w=400&q=80',
-      Description: 'Urban street photography',
-      User: {
-        Username: 'ChrisWilson', ProfileImageUrl: undefined,
-        UserId: '',
-        PhoneNumber: '',
-        Email: '',
-        PasswordHash: '',
-        Role: '',
-        CreatedAt: new Date(),
-        IsWelcomeEmailSent: false,
-        FreeTrialCount: 0,
-        ImageUrls: [],
-        Subscriptions: [],
-        PaymentDatas: []
-      },
-      CreatedAt: new Date('2024-01-11'),
-      UserId: '',
-      IsPublished: false
-    },
-    {
-      ImageUrlId: '6',
-      Url: 'https://images.unsplash.com/photo-1682687220199-d0124f48f95b?w=400&q=80',
-      Description: 'Minimalist interior design',
-      User: {
-        Username: 'LisaAnderson',
-        ProfileImageUrl: 'https://i.pravatar.cc/150?img=9',
-        UserId: '',
-        PhoneNumber: '',
-        Email: '',
-        PasswordHash: '',
-        Role: '',
-        CreatedAt: new Date(),
-        IsWelcomeEmailSent: false,
-        FreeTrialCount: 0,
-        ImageUrls: [],
-        Subscriptions: [],
-        PaymentDatas: []
-      },
-      CreatedAt: new Date('2024-01-10'),
-      UserId: '',
-      IsPublished: false
-    },
-    {
-      ImageUrlId: '7',
-      Url: 'https://images.unsplash.com/photo-1682687220566-5599dbbebf11?w=400&q=80',
-      Description: 'Food photography masterpiece',
-      User: {
-        Username: 'DavidMartinez', ProfileImageUrl: undefined,
-        UserId: '',
-        PhoneNumber: '',
-        Email: '',
-        PasswordHash: '',
-        Role: '',
-        CreatedAt: new Date(),
-        IsWelcomeEmailSent: false,
-        FreeTrialCount: 0,
-        ImageUrls: [],
-        Subscriptions: [],
-        PaymentDatas: []
-      },
-      CreatedAt: new Date('2024-01-09'),
-      UserId: '',
-      IsPublished: false
-    },
-    {
-      ImageUrlId: '8',
-      Url: 'https://images.unsplash.com/photo-1682687221248-3116ba6abb93?w=400&q=80',
-      Description: 'Wildlife in natural habitat',
-      User: {
-        Username: 'JessicaTaylor',
-        ProfileImageUrl: 'https://i.pravatar.cc/150?img=20',
-        UserId: '',
-        PhoneNumber: '',
-        Email: '',
-        PasswordHash: '',
-        Role: '',
-        CreatedAt: new Date(),
-        IsWelcomeEmailSent: false,
-        FreeTrialCount: 0,
-        ImageUrls: [],
-        Subscriptions: [],
-        PaymentDatas: []
-      },
-      CreatedAt: new Date('2024-01-08'),
-      UserId: '',
-      IsPublished: false
-    },
-    {
-      ImageUrlId: '9',
-      Url: 'https://images.unsplash.com/photo-1682687220208-22d7a2543e88?w=400&q=80',
-      Description: 'Technology and innovation',
-      User: {
-        Username: 'RobertThomas', ProfileImageUrl: undefined,
-        UserId: '',
-        PhoneNumber: '',
-        Email: '',
-        PasswordHash: '',
-        Role: '',
-        CreatedAt: new Date(),
-        IsWelcomeEmailSent: false,
-        FreeTrialCount: 0,
-        ImageUrls: [],
-        Subscriptions: [],
-        PaymentDatas: []
-      },
-      CreatedAt: new Date('2024-01-07'),
-      UserId: '',
-      IsPublished: false
-    },
-    {
-      ImageUrlId: '10',
-      Url: 'https://images.unsplash.com/photo-1682687221363-72518513620e?w=400&q=80',
-      Description: 'Fashion editorial shot',
-      User: {
-        Username: 'AmandaWhite',
-        ProfileImageUrl: 'https://i.pravatar.cc/150?img=16',
-        UserId: '',
-        PhoneNumber: '',
-        Email: '',
-        PasswordHash: '',
-        Role: '',
-        CreatedAt: new Date(),
-        IsWelcomeEmailSent: false,
-        FreeTrialCount: 0,
-        ImageUrls: [],
-        Subscriptions: [],
-        PaymentDatas: []
-      },
-      CreatedAt: new Date('2024-01-06'),
-      UserId: '',
-      IsPublished: false
-    },
-    {
-      ImageUrlId: '11',
-      Url: 'https://images.unsplash.com/photo-1682687220015-186f63b8850a?w=400&q=80',
-      Description: 'Coastal seascape view',
-      User: {
-        Username: 'KevinHarris', ProfileImageUrl: undefined,
-        UserId: '',
-        PhoneNumber: '',
-        Email: '',
-        PasswordHash: '',
-        Role: '',
-        CreatedAt: new Date(),
-        IsWelcomeEmailSent: false,
-        FreeTrialCount: 0,
-        ImageUrls: [],
-        Subscriptions: [],
-        PaymentDatas: []
-      },
-      CreatedAt: new Date('2024-01-05'),
-      UserId: '',
-      IsPublished: false
-    },
-    {
-      ImageUrlId: '12',
-      Url: 'https://images.unsplash.com/photo-1682687220067-dced3a881c55?w=400&q=80',
-      Description: 'Artistic black and white',
-      User: {
-        Username: 'NancyClark',
-        ProfileImageUrl: 'https://i.pravatar.cc/150?img=30',
-        UserId: '',
-        PhoneNumber: '',
-        Email: '',
-        PasswordHash: '',
-        Role: '',
-        CreatedAt: new Date(),
-        IsWelcomeEmailSent: false,
-        FreeTrialCount: 0,
-        ImageUrls: [],
-        Subscriptions: [],
-        PaymentDatas: []
-      },
-      CreatedAt: new Date('2024-01-04'),
-      UserId: '',
-      IsPublished: false
-    },
-  ];
-
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private imgs: Imageurl,
+    private as: Auth,
+    private sgrs: Signalr,
+  ) {}
 
   ngOnInit(): void {
-    // Preload images for the first page
-    this.preloadImages();
+    this.fetchCurrentUser();
+    this.fetchPublishedImages();
   }
 
-  preloadImages(): void {
-    // Preload only the images for the current page
-    this.displayedImages.forEach((image) => {
-      const img = new Image();
-      img.src = image.Url;
-      if (image.User?.ProfileImageUrl) {
-        const profileImg = new Image();
-        profileImg.src = image.User.ProfileImageUrl;
-      }
+  fetchCurrentUser(): void {
+    this.as.isLoggedIn().subscribe({
+      next: (res) => {
+        this.isLoggedIn = !!(res.success && res.data);
+      },
     });
   }
 
-  get displayedImages(): ImageUrl[] {
+  fetchPublishedImages(): void {
+    this.isLoadingImages = true;
+    this.imagesError = '';
+
+    this.imgs.getPublishedImages().subscribe({
+      next: (res) => {
+        this.isLoadingImages = false;
+        if (res.success && res.dataList) {
+          this.allPublishedImages = res.dataList;
+        } else {
+          this.allPublishedImages = [];
+        }
+      },
+      error: (err: any) => {
+        this.isLoadingImages = false;
+        this.imagesError =
+          err?.error?.errorMessage ?? err.message ?? 'Failed to load images.';
+      },
+    });
+  }
+
+  get displayedImages(): FetchedImageUrl[] {
     const start = this.currentPage * this.imagesPerPage;
-    const end = start + this.imagesPerPage;
-    return this.allPublishedImages.slice(start, end);
+    return this.allPublishedImages.slice(start, start + this.imagesPerPage);
   }
 
   get totalPages(): number {
@@ -327,13 +87,12 @@ export class Landing {
   }
 
   get showPagination(): boolean {
-    return this.allPublishedImages.length > this.imagesPerPage;
+    return this.totalPages > 1;
   }
 
   nextPage(): void {
     if (this.currentPage < this.totalPages - 1) {
       this.currentPage++;
-      this.preloadImages(); // Preload next page images
       this.scrollToGallery();
     }
   }
@@ -341,54 +100,89 @@ export class Landing {
   previousPage(): void {
     if (this.currentPage > 0) {
       this.currentPage--;
-      this.preloadImages(); // Preload previous page images
       this.scrollToGallery();
     }
   }
 
   scrollToGallery(): void {
-    const element = document.getElementById('gallery-section');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    document
+      .getElementById('gallery-section')
+      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   onFileSelected(event: any): void {
-    const file = event.target.files[0];
-    if (file) {
-      this.selectedFile = file;
+    const file: File = event.target.files[0];
+    if (!file) return;
+
+    this.selectedFile = file;
+    this.generatedUrl = '';
+    this.isCopied = false;
+
+    // Preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.selectedFilePreview = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+
+    // Auto-upload
+    this.uploadImage(file);
+  }
+
+  async uploadImage(file: File): Promise<void> {
+
+    if(!this.isLoggedIn) {
+      if (sessionStorage.getItem('submissionAttempt') !== null) {
+        if (Number(sessionStorage.getItem('submissionAttempt')) === 3) {
+          this.showToastMessage('Please log in to upload more images.', 'error');
+          this.navigateToLogin();
+          return;
+        }
+      }
+
+      sessionStorage.setItem('submissionAttempt', String(Number(sessionStorage.getItem('submissionAttempt') ?? '0') + 1));
+    }
+
+    this.isUploading = true;
+    this.generatedUrl = '';
+
+    const secureUrl: string = await uploadToCloudinary(file);
+    if (secureUrl) {
+      this.generatedUrl = secureUrl;
+      this.isUploading = false;
+      this.showToastMessage('Image uploaded successfully!', 'success');
+    } else {
+      this.isUploading = false;
+      this.showToastMessage('Image upload failed. Please try again.', 'error');
     }
   }
 
-  handleSubmit(event: any): void {
-    event.preventDefault();
+  copyUrl(): void {
+    if (!this.generatedUrl) return;
+    navigator.clipboard.writeText(this.generatedUrl).then(() => {
+      this.isCopied = true;
+      setTimeout(() => (this.isCopied = false), 1000);
+    });
+  }
 
-    if (!this.isLoggedIn) {
-      this.showToastMessage('Please login first to create image URLs');
-      return;
-    }
-
-    if (!this.selectedFile) {
-      this.showToastMessage('Please select an image file');
-      return;
-    }
-
-    // Your Cloudinary upload logic here
-    // const formData = new FormData();
-    // formData.append('file', this.selectedFile);
-    // formData.append('description', this.description);
-
-    this.showToastMessage('Image uploaded successfully!');
+  resetUpload(): void {
     this.selectedFile = null;
-    this.description = '';
+    this.selectedFilePreview = null;
+    this.generatedUrl = '';
+    this.isCopied = false;
+    this.isUploading = false;
   }
 
-  showToastMessage(message: string): void {
+  showToastMessage(
+    message: string,
+    type: 'success' | 'error' | 'info' = 'info',
+  ): void {
     this.toastMessage = message;
+    this.toastType = type;
     this.showToast = true;
     setTimeout(() => {
       this.showToast = false;
-    }, 3000);
+    }, 3500);
   }
 
   getUserInitials(username: string): string {
@@ -398,14 +192,13 @@ export class Landing {
   getInitialsColor(username: string): string {
     const colors = [
       'bg-primary',
-      'bg-secondary',
       'bg-accent',
+      'bg-secondary',
       'bg-purple-500',
       'bg-pink-500',
       'bg-indigo-500',
     ];
-    const index = username.charCodeAt(0) % colors.length;
-    return colors[index];
+    return colors[username.charCodeAt(0) % colors.length];
   }
 
   navigateToLogin(): void {
@@ -416,15 +209,11 @@ export class Landing {
     this.router.navigate(['/join-us']);
   }
 
-  // Handle image load event
   onImageLoad(event: any): void {
     event.target.classList.add('loaded');
   }
 
-  // Handle image error
   onImageError(event: any): void {
-    console.error('Failed to load image:', event.target.src);
-    // Optionally set a fallback image
     event.target.src = 'assets/placeholder.png';
   }
 }

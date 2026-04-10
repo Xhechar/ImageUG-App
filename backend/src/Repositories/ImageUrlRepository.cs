@@ -27,7 +27,7 @@ public class ImageUrlRepository : IImageUrlRepository
       return RepositoryResponse<ImageUrl>.Failure("CLIENT ERROR", "you have exhausted your free trial limit, please subscribe to generate more image urls.");
     }
 
-    if(userExists.FreeTrialCount < 5)
+    if(userExists.FreeTrialCount < 5 && (userExists.Subscriptions.Count == 0 || userExists.Subscriptions == null || userExists.Subscriptions.First().StartDate.AddDays(userExists.Subscriptions.First().DurationInDays) < DateTime.UtcNow))
     {
       var createImageURL = new ImageUrl
       {

@@ -20,13 +20,13 @@ public class ImageController : ControllerBase
   [ProducesResponseType(typeof(RepositoryResult<ImageUrl>), 200)]
   [ProducesResponseType(typeof(RepositoryResult<ImageUrl>), 400)]
   [ProducesResponseType(typeof(RepositoryResult<ImageUrl>), 500)]
-  public async Task<IActionResult> CreateImageUrl([FromHeader] string UserId, [FromBody] CreateImageUrlDto createImageUrlDto)
+  public async Task<IActionResult> CreateImageUrl([FromBody] CreateImageUrlDto createImageUrlDto)
   {
-    RepositoryResult<ImageUrl> result = await _imageUrlRepository.CreateImageUrl(UserId, createImageUrlDto);
+    RepositoryResult<ImageUrl> result = await _imageUrlRepository.CreateImageUrl(_currentUserService.UserId!, createImageUrlDto);
 
     if(!result.Success)
     {
-      return (result.Title) switch
+      return result.Title switch
       {
         "CLIENT ERROR" => BadRequest(result),
         _ => StatusCode(500, result),

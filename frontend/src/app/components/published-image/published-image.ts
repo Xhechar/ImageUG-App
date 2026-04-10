@@ -2,9 +2,11 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ImageUrl } from '../../interfaces/ImageUrl';
-import { User } from '../../interfaces/User';
+import { FetchedImageUrl } from '../../interfaces/ImageUrl';
+import { FetchedUser } from '../../interfaces/User';
 import { Footer } from '../footer/footer';
+import { Imageurl } from '../../services/imageurl';
+import { User } from '../../services/user';
 
 interface UserStats {
   totalImages: number;
@@ -20,9 +22,9 @@ interface UserStats {
 })
 export class PublishedImage implements OnInit {
   imageId: string | null = null;
-  currentImage: ImageUrl | null = null;
+  currentImage: FetchedImageUrl | null = null;
   ownerStats: UserStats | null = null;
-  otherImages: ImageUrl[] = [];
+  otherImages: FetchedImageUrl[] = [];
 
   isLoading: boolean = false;
   imageNotFound: boolean = false;
@@ -32,83 +34,17 @@ export class PublishedImage implements OnInit {
   toastMessage: string = '';
   toastType: 'success' | 'error' | 'info' = 'info';
 
-  // Dummy data for demonstration
-  private dummyUser: User = {
-    UserId: '1',
-    Username: 'JohnDoe',
-    Email: 'john.doe@example.com',
-    ProfileImageUrl: 'https://i.pravatar.cc/150?img=12',
-    Role: 'Premium User',
-    CreatedAt: new Date('2024-01-15'),
-    PhoneNumber: '',
-    PasswordHash: '',
-    IsWelcomeEmailSent: false,
-    FreeTrialCount: 0,
-    ImageUrls: [],
-    Subscriptions: [],
-    PaymentDatas: [],
-  };
-
-  private dummyImages: ImageUrl[] = [
-    {
-      ImageUrlId: '1',
-      Url: 'https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=800&q=80',
-      UserId: '1',
-      Description:
-        'Beautiful sunset over the mountains with vibrant orange and pink hues painting the sky. A perfect moment captured during golden hour.',
-      IsPublished: true,
-      CreatedAt: new Date('2024-12-15'),
-      User: this.dummyUser,
-    },
-    {
-      ImageUrlId: '2',
-      Url: 'https://images.unsplash.com/photo-1682687221038-404cb8830901?w=400&q=80',
-      UserId: '1',
-      Description: 'Modern architecture design',
-      IsPublished: true,
-      CreatedAt: new Date('2024-12-14'),
-      User: this.dummyUser,
-    },
-    {
-      ImageUrlId: '3',
-      Url: 'https://images.unsplash.com/photo-1682687220063-4742bd7fd538?w=400&q=80',
-      UserId: '1',
-      Description: 'Abstract art composition',
-      IsPublished: true,
-      CreatedAt: new Date('2024-12-13'),
-      User: this.dummyUser,
-    },
-    {
-      ImageUrlId: '4',
-      Url: 'https://images.unsplash.com/photo-1682687220923-c58b9a4592ae?w=400&q=80',
-      UserId: '1',
-      Description: 'Nature landscape',
-      IsPublished: true,
-      CreatedAt: new Date('2024-12-12'),
-      User: this.dummyUser,
-    },
-    {
-      ImageUrlId: '5',
-      Url: 'https://images.unsplash.com/photo-1682687221080-5cb261c645cb?w=400&q=80',
-      UserId: '1',
-      Description: 'Urban street photography',
-      IsPublished: true,
-      CreatedAt: new Date('2024-12-11'),
-      User: this.dummyUser,
-    },
-  ];
-
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private imageurl: Imageurl,
+    private userService: User,
   ) {}
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
       this.imageId = params['ImageUrlId'];
-      console.log('image id: ', this.imageId);
-      console.log('1. at on init', this.isLoading);
       if (this.imageId) {
         this.loadImageDetails();
       }
@@ -116,96 +52,83 @@ export class PublishedImage implements OnInit {
   }
 
   async loadImageDetails(): Promise<void> {
+    if (!this.imageId) return;
+
     try {
       this.isLoading = true;
-      // Simulate API call delay
-      await this.delay(1000);
 
-      // In real app, fetch from backend:
-      // const response = await this.imageService.getImageById(this.imageId);
-      // this.currentImage = response.image;
-
-      // For demo, use dummy data
-      const image = this.dummyImages.find(
-        (img) => img.ImageUrlId === this.imageId
-      );
-
-      console.log('image is: ', image);
-
-      if (!image) {
-        this.imageNotFound = true;
-        this.isLoading = false;
-        this.cdr.detectChanges();
-        return;
-      }
-
-      this.currentImage = image;
-      console.log('current image', this.currentImage);
-
-      // Load owner stats
-      this.loadOwnerStats();
-
-      // Load other images by same user
-      this.loadOtherImages();
-
-      this.isLoading = false;
-      console.log(
-        'logging status. load image details method: ',
-        this.isLoading
-      );
+      // Fetch the specific published image
+      this.imageurl.getSinglePublishedImage(this.imageId).subscribe({
+        next: (result) => {
+          if (result.success && result.data) {
+            this.currentImage = result.data;
+            this.loadOwnerStats();
+            this.loadOtherImages();
+          } else {
+            this.imageNotFound = true;
+            this.showToastMessage(
+              result.errorMessage || 'Image not found',
+              'error',
+            );
+          }
+        },
+        error: (err) => {
+          console.error('Error loading image:', err);
+          this.imageNotFound = true;
+          this.showToastMessage('Failed to load image details', 'error');
+        },
+        complete: () => {
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+      });
     } catch (error) {
       console.error('Error loading image:', error);
       this.showToastMessage('Failed to load image details', 'error');
       this.imageNotFound = true;
-    } finally {
       this.isLoading = false;
       this.cdr.detectChanges();
     }
   }
 
   loadOwnerStats(): void {
-    console.log('1: logging status. load owner stats method: ', this.isLoading);
-    if (!this.currentImage?.User) return;
+    if (!this.currentImage?.user) return;
 
-    // In real app, fetch from backend:
-    // const stats = await this.userService.getUserStats(this.currentImage.UserId);
-
-    // For demo, calculate from dummy data
-    const userImages = this.dummyImages.filter(
-      (img) => img.UserId === this.currentImage!.UserId
-    );
-
-    console.log('user images: ', userImages);
-
+    // For published images, we can't easily get the user's total image count without additional API calls
+    // For now, we'll show basic info and can enhance later if needed
     this.ownerStats = {
-      totalImages: userImages.length,
-      publishedImages: userImages.filter((img) => img.IsPublished).length,
-      memberSince: this.formatMemberSince(this.currentImage.User.CreatedAt),
+      totalImages: 0, // Would need additional API call to get this
+      publishedImages: 0, // Would need additional API call to get this
+      memberSince: this.formatMemberSince(this.currentImage.user.createdAt),
     };
-
-    console.log('logging status. load owner stats method: ', this.isLoading);
   }
 
   loadOtherImages(): void {
     if (!this.currentImage) return;
 
-    // Get other published images by the same user, excluding current image
-    this.otherImages = this.dummyImages
-      .filter(
-        (img) =>
-          img.UserId === this.currentImage!.UserId &&
-          img.ImageUrlId !== this.currentImage!.ImageUrlId &&
-          img.IsPublished
-      )
-      .slice(0, 4); // Show maximum 4 other images
-
-    console.log('logging status. load other images method: ', this.isLoading);
+    // Get all published images and filter by user
+    this.imageurl.getPublishedImages().subscribe({
+      next: (result) => {
+        if (result.success && result.dataList) {
+          this.otherImages = result.dataList
+            .filter(
+              (img) =>
+                img.userId === this.currentImage!.userId &&
+                img.imageUrlId !== this.currentImage!.imageUrlId,
+            )
+            .slice(0, 4); // Show maximum 4 other images
+        }
+      },
+      error: (err) => {
+        console.error('Error loading other images:', err);
+      },
+    });
   }
 
   // Calculate days since creation
   getDaysSinceCreation(): number {
     if (!this.currentImage) return 0;
-    const createdDate = new Date(this.currentImage.CreatedAt);
+    const createdDate = new Date(this.currentImage.createdAt);
     const today = new Date();
     const diffTime = Math.abs(today.getTime() - createdDate.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -222,12 +145,12 @@ export class PublishedImage implements OnInit {
 
   // Get user initials
   getUserInitials(): string {
-    if (!this.currentImage?.User) return 'U';
-    return this.currentImage.User.Username.substring(0, 2).toUpperCase();
+    if (!this.currentImage?.user) return 'U';
+    return this.currentImage.user.username.substring(0, 2).toUpperCase();
   }
 
   getInitialsColor(): string {
-    if (!this.currentImage?.User) return 'bg-primary';
+    if (!this.currentImage?.user) return 'bg-primary';
     const colors = [
       'bg-primary',
       'bg-secondary',
@@ -236,7 +159,7 @@ export class PublishedImage implements OnInit {
       'bg-pink-500',
       'bg-indigo-500',
     ];
-    const index = this.currentImage.User.Username.charCodeAt(0) % colors.length;
+    const index = this.currentImage.user.username.charCodeAt(0) % colors.length;
     return colors[index];
   }
 
@@ -245,7 +168,7 @@ export class PublishedImage implements OnInit {
     if (!this.currentImage) return;
 
     navigator.clipboard
-      .writeText(this.currentImage.Url)
+      .writeText(this.currentImage.url)
       .then(() => {
         this.showToastMessage('Image URL copied to clipboard!', 'success');
       })
@@ -263,7 +186,7 @@ export class PublishedImage implements OnInit {
 
       // In real app, implement actual download
       // For now, just open in new tab
-      window.open(this.currentImage.Url, '_blank');
+      window.open(this.currentImage.url, '_blank');
 
       this.showToastMessage('Image download started!', 'success');
     } catch (error) {
@@ -273,8 +196,8 @@ export class PublishedImage implements OnInit {
 
   // Navigate to owner's profile
   viewOwnerProfile(): void {
-    if (!this.currentImage?.User) return;
-    this.router.navigate(['/profile', this.currentImage.User.UserId]);
+    if (!this.currentImage?.user) return;
+    this.router.navigate(['/profile', this.currentImage.user.userId]);
   }
 
   // Navigate to another image
@@ -290,7 +213,7 @@ export class PublishedImage implements OnInit {
   // Toast
   showToastMessage(
     message: string,
-    type: 'success' | 'error' | 'info' = 'info'
+    type: 'success' | 'error' | 'info' = 'info',
   ): void {
     this.toastMessage = message;
     this.toastType = type;

@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { CreateImageUrlDto } from '../Dtos/ImageUrl/CreateImageUrlDto';
 import { UpdateImageUrlDto } from '../Dtos/ImageUrl/UpdateImageUrlDto';
 import { environment } from '../Environment/service.environment';
-import { ImageUrl } from '../interfaces/ImageUrl';
+import { FetchedImageUrl, ImageUrl } from '../interfaces/ImageUrl';
 import { ServiceResult } from '../service.result/service.result';
 
 @Injectable({
@@ -16,7 +16,6 @@ export class Imageurl {
   constructor(private http: HttpClient) {}
 
   createImageUrl(
-    userId: string,
     details: CreateImageUrlDto
   ): Observable<ServiceResult<ImageUrl>> {
     return this.http.post<ServiceResult<ImageUrl>>(
@@ -24,7 +23,6 @@ export class Imageurl {
       details,
       {
         withCredentials: true,
-        // headers: { UserId: userId },
       }
     );
   }
@@ -40,8 +38,8 @@ export class Imageurl {
     );
   }
 
-  getUserImages(): Observable<ServiceResult<ImageUrl[]>> {
-    return this.http.get<ServiceResult<ImageUrl[]>>(
+  getUserImages(): Observable<ServiceResult<FetchedImageUrl>> {
+    return this.http.get<ServiceResult<FetchedImageUrl>>(
       `${this.API_URL}get-user-images`,
       { withCredentials: true }
     );
@@ -64,14 +62,14 @@ export class Imageurl {
     );
   }
 
-  getPublishedImages(): Observable<ServiceResult<ImageUrl>> {
-    return this.http.get<ServiceResult<ImageUrl>>(
+  getPublishedImages(): Observable<ServiceResult<FetchedImageUrl>> {
+    return this.http.get<ServiceResult<FetchedImageUrl>>(
       `${this.API_URL}get-published-images`
     );
   }
 
-  getSinglePublishedImage(ImageUrlId: string): Observable<ServiceResult<ImageUrl>> {
-    return this.http.get<ServiceResult<ImageUrl>>(
+  getSinglePublishedImage(ImageUrlId: string): Observable<ServiceResult<FetchedImageUrl>> {
+    return this.http.get<ServiceResult<FetchedImageUrl>>(
       `${this.API_URL}get-single-published-image-details/${ImageUrlId}`
     );
   }

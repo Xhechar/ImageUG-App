@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { Auth } from '../../services/auth';
 import { Toast } from '../../services/toast';
 import { Notification } from '../notification/notification';
+import { Signalr } from '../../services/signalr';
 
 @Component({
   selector: 'app-login',
@@ -28,6 +29,7 @@ export class Login {
     private router: Router,
     private as: Auth,
     private ts: Toast,
+    private sgrs: Signalr
   ) {}
 
   // Toggle password visibility
@@ -85,16 +87,14 @@ export class Login {
     try {
       this.as.login(loginDto).subscribe({
         next: (res) => {
-          console.log('Login response:', res);
           if (res.success) {
-            console.log('Login successful:', res);
             this.ts.showToast(
               res.success,
               res.title,
               res.successMessage as string,
             );
+            this.sgrs.startConnection();
             setTimeout(() => {
-              console.log('Navigating to dashboard...');
               this.router.navigate(['/dashboard']);
             }, 3000);
           } else {
