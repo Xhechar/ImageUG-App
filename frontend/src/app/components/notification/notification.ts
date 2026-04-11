@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Toast } from '../../services/toast';
 import { CommonModule } from '@angular/common';
@@ -21,12 +21,16 @@ export class Notification implements OnInit, OnDestroy {
   private titleSubscription?: Subscription;
   private messageSubscription?: Subscription;
 
-  constructor(private toastService: Toast) {}
+  constructor(
+    private toastService: Toast,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit(): void {
     this.successSubscription = this.toastService.success$.subscribe(
       (success) => {
         this.success = success;
+        this.cdr.detectChanges();
       },
     );
 
@@ -36,11 +40,13 @@ export class Notification implements OnInit, OnDestroy {
       } else if (this.isVisible) {
         this.close();
       }
+      this.cdr.detectChanges();
     });
 
     this.messageSubscription = this.toastService.message$.subscribe(
       (message) => {
         this.message = message;
+        this.cdr.detectChanges();
       },
     );
   }

@@ -1,40 +1,87 @@
-<div *ngIf="isVisible" 
-  [class.closing]="isClosing"
-  class="notification-overlay">
-  
-  <div [class]="'notification-container ' + colorClasses"
-    [class.closing]="isClosing">
-    
-    <!-- Progress Bar -->
-    <div class="notification-progress">
-      <div [class]="'notification-progress-bar ' + (notificationType === 'success' ? 'bg-green-500' : notificationType === 'error' ? 'bg-red-500' : 'bg-accent')"></div>
+<div *ngIf="isVisible"
+  class="fixed inset-0 z-[9999] pointer-events-none flex justify-center"
+  style="padding-top: 72px; align-items: flex-start;"
+  [class.notification-leave]="isClosing">
+
+  <div
+    class="pointer-events-auto relative w-[92%] max-w-[440px] rounded-2xl overflow-hidden notification-enter"
+    [class.notification-leave]="isClosing"
+    [ngClass]="{
+      'shadow-[0_0_0_1px_rgba(34,197,94,0.25),0_24px_64px_rgba(34,197,94,0.18)]': notificationType === 'success',
+      'shadow-[0_0_0_1px_rgba(239,68,68,0.25),0_24px_64px_rgba(239,68,68,0.18)]': notificationType === 'error',
+      'shadow-[0_0_0_1px_rgba(168,85,247,0.25),0_24px_64px_rgba(168,85,247,0.18)]': notificationType === 'info'
+    }">
+
+    <!-- Glass background layer -->
+    <div class="absolute inset-0 bg-[#0a0a0f]/90 backdrop-blur-2xl"></div>
+
+    <!-- Subtle noise texture overlay -->
+    <div class="absolute inset-0 opacity-[0.03]"
+      style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/%3E%3C/svg%3E'); background-size: 150px;"></div>
+
+    <!-- Glow bleed behind card -->
+    <div class="absolute -inset-px rounded-2xl opacity-20 blur-xl transition-all duration-500"
+      [ngClass]="{
+        'bg-green-500': notificationType === 'success',
+        'bg-red-500': notificationType === 'error',
+        'bg-accent': notificationType === 'info'
+      }"></div>
+
+    <!-- Left accent stripe -->
+    <div class="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-2xl"
+      [ngClass]="{
+        'bg-gradient-to-b from-green-400 via-green-500 to-green-400/30': notificationType === 'success',
+        'bg-gradient-to-b from-red-400 via-red-500 to-red-400/30': notificationType === 'error',
+        'bg-gradient-to-b from-primary via-accent to-primary/30': notificationType === 'info'
+      }"></div>
+
+    <!-- Progress bar (top) -->
+    <div class="absolute top-0 left-[3px] right-0 h-[2px] bg-white/5 overflow-hidden rounded-tr-2xl">
+      <div class="h-full w-full origin-left notification-progress rounded-full"
+        [ngClass]="{
+          'bg-gradient-to-r from-green-400 to-green-500': notificationType === 'success',
+          'bg-gradient-to-r from-red-400 to-red-500': notificationType === 'error',
+          'bg-gradient-to-r from-primary to-accent': notificationType === 'info'
+        }"></div>
     </div>
 
-    <!-- Content -->
-    <div class="notification-content">
+    <!-- Main content -->
+    <div class="relative z-10 flex items-start gap-4 px-5 py-4 pl-[calc(1.25rem+3px)]">
+
       <!-- Icon -->
-      <div class="notification-icon-wrapper">
-        <div [class]="'notification-icon-circle ' + (notificationType === 'success' ? 'bg-green-500/20' : notificationType === 'error' ? 'bg-red-500/20' : 'bg-accent/20')">
-          <i [class]="'bx ' + icon + ' notification-icon ' + iconColorClass"></i>
+      <div class="flex-shrink-0 mt-0.5">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center notification-icon-pop"
+          [ngClass]="{
+            'bg-green-500/12 ring-1 ring-green-500/25': notificationType === 'success',
+            'bg-red-500/12 ring-1 ring-red-500/25': notificationType === 'error',
+            'bg-primary/12 ring-1 ring-primary/25': notificationType === 'info'
+          }">
+          <i class="bx text-[22px]"
+            [ngClass]="[
+              'bx ' + icon,
+              notificationType === 'success' ? 'text-green-400' :
+              notificationType === 'error' ? 'text-red-400' : 'text-primary'
+            ]"></i>
         </div>
       </div>
 
-      <!-- Text Content -->
-      <div class="notification-text">
-        <h3 [class]="'notification-title ' + titleColorClass">
-          {{ title }}
-        </h3>
-        <p class="notification-message">
-          {{ message }}
-        </p>
+      <!-- Text -->
+      <div class="flex-1 min-w-0 pt-0.5">
+        <p class="text-[13px] font-bold leading-snug tracking-wide mb-1"
+          [ngClass]="{
+            'text-green-300': notificationType === 'success',
+            'text-red-300': notificationType === 'error',
+            'text-primary': notificationType === 'info'
+          }">{{ title }}</p>
+        <p class="text-[12.5px] text-[#f1f5f9]/55 leading-relaxed">{{ message }}</p>
       </div>
 
-      <!-- Close Button -->
-      <button (click)="close()" 
-        class="notification-close"
-        aria-label="Close notification">
-        <i class="bx bx-x"></i>
+      <!-- Close -->
+      <button (click)="close()" aria-label="Close notification"
+        class="flex-shrink-0 mt-0.5 w-7 h-7 flex items-center justify-center rounded-lg bg-white/4 hover:bg-white/10 border border-white/6 hover:border-white/15 text-[#f1f5f9]/30 hover:text-[#f1f5f9]/80 transition-all duration-200 hover:scale-110 active:scale-95">
+        <i class="bx bx-x text-[18px]"></i>
       </button>
     </div>
+
   </div>
 </div>

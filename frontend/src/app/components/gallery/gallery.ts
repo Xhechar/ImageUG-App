@@ -220,7 +220,6 @@ export class Gallery implements OnInit {
 
       this.imageurl.createImageUrl(dto).subscribe({
         next: (result) => {
-          console.log('result: ', result);
           if (result.success) {
             this.fetchUserImages();
             this.closeCreateModal();

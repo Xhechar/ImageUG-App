@@ -214,13 +214,16 @@ export class Register implements OnInit {
           }
         },
         error: (err) => {
-          console.log(err);
-          
           this.ts.showToast(false, err.error?.Title as string ?? 'Error', err.error?.ErrorMessage as string ?? err.message ?? 'Failed to create account. Please try again.');
         }
       })
     } catch (error: any) {
-      this.ts.showToast(false, 'Error', error.message ?? 'Failed to create account. Please try again.');
+      this.ts.showToast(
+        false,
+        'Error',
+        error?.error?.errorMessage ??
+          'Failed to create account. Please try again.',
+      );
     } finally {
       this.isSubmitting = false;
     }

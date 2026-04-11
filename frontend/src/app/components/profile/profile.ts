@@ -6,6 +6,8 @@ import { FetchedUser } from '../../interfaces/User';
 import { User } from '../../services/user';
 import { FetchedSubscription } from '../../interfaces/Subscription';
 import { FetchedImageUrl } from '../../interfaces/ImageUrl';
+import { UpdateUserDto } from '../../Dtos/User/UpdateUserDto';
+import { uploadToCloudinary } from '../../utils';
 
 interface UserStats {
   totalImages: number;
@@ -172,6 +174,8 @@ export class Profile implements OnInit {
         this.previewUrl = e.target.result;
       };
       reader.readAsDataURL(file);
+
+      this.cdr.detectChanges();
     }
   }
 
@@ -202,13 +206,8 @@ export class Profile implements OnInit {
 
     this.isSaving = true;
 
-    // Simulate API call
-    await this.delay(2000);
-
-    // If new profile image selected, upload it
     if (this.selectedFile) {
-      // In real app, upload to Cloudinary here
-      this.currentUser.profileImageUrl = this.previewUrl || undefined;
+      this.currentUser.profileImageUrl = await uploadToCloudinary(this.selectedFile);
     }
 
     // Update user data
@@ -216,6 +215,31 @@ export class Profile implements OnInit {
     this.currentUser.email = this.formData.email;
     this.currentUser.phoneNumber = this.formData.phoneNumber;
     this.currentUser.updatedAt = new Date();
+
+    let updateUser: UpdateUserDto = {
+      Username: this.currentUser.username,
+      Email: this.currentUser.email,
+      PhoneNumber: this.currentUser.phoneNumber,
+      ProfileImageUrl: this.currentUser.profileImageUrl,
+    };
+
+    try {
+      this.us.updateUser(updateUser).subscribe({
+        next: (res) => {
+          if (res.success) {
+            this.fetchUser();
+            this.showToastMessage(res.successMessage as string, 'success');
+          } else {
+            this.showToastMessage(res.errorMessage as string, 'error');
+          }
+        },
+        error: (err: any) => {
+          this.showToastMessage( err?.error?.errorMessage ?? 'An error occurred while updating profile', 'error');
+        },
+      })
+    } catch (error: any) {
+      this.showToastMessage( error?.error?.errorMessage ?? 'An error occurred while updating profile', 'error');
+    }
 
     this.isSaving = false;
     this.isEditMode = false;

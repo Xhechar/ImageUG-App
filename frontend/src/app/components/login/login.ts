@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { LoginDetails } from '../../Dtos/Auth/LoginDetails';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -29,7 +29,8 @@ export class Login {
     private router: Router,
     private as: Auth,
     private ts: Toast,
-    private sgrs: Signalr
+    private sgrs: Signalr,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   // Toggle password visibility
@@ -90,7 +91,7 @@ export class Login {
           if (res.success) {
             this.ts.showToast(
               res.success,
-              res.title,
+              res.title || 'Success',
               res.successMessage as string,
             );
             this.sgrs.startConnection();
@@ -100,20 +101,31 @@ export class Login {
           } else {
             this.ts.showToast(
               res.success,
-              res.title,
+              res.title || 'Error',
               res.errorMessage as string,
             );
           }
+          this.isSubmitting = false;
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          this.ts.showToast(
+            false,
+            'Error',
+            error?.error?.errorMessage ?? 'Login failed. Please try again.',
+          );
+          this.isSubmitting = false;
+          this.cdr.detectChanges();
         },
       });
     } catch (error: any) {
       this.ts.showToast(
         false,
         'Error',
-        error.message ?? 'Login failed. Please try again.',
+        error?.error?.errorMessage ?? 'Login failed. Please try again.',
       );
-    } finally {
       this.isSubmitting = false;
+      this.cdr.detectChanges();
     }
   }
 
