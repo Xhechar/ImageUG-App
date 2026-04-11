@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { NgForm, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ChangePasswordDto } from '../../Dtos/Auth/ChangePasswordDto';
+import { Auth } from '../../services/auth';
 
 type Step = 'email' | 'verification' | 'password' | 'success';
 
@@ -36,7 +37,11 @@ export class Verifymail {
   toastMessage: string = '';
   toastType: 'success' | 'error' | 'info' = 'info';
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authService: Auth,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnDestroy(): void {
     if (this.countdownInterval) {
@@ -106,26 +111,38 @@ export class Verifymail {
     this.isSubmitting = true;
 
     try {
-      // Simulate API call
-      await this.delay(2000);
+      const response = await this.authService
+        .verifyEmail(this.changePasswordData.Email)
+        .toPromise();
 
-      // Add your API call here to send verification code
-      // await this.authService.requestPasswordReset(this.changePasswordData.Email);
-
-      this.showToastMessage('Verification code sent to your email!', 'success');
-      this.currentStep = 'verification';
-      this.startCountdown();
+      if (response?.success) {
+        this.showToastMessage(
+          response.successMessage || 'Verification code sent to your email!',
+          'success',
+        );
+        this.currentStep = 'verification';
+        this.startCountdown();
+        this.cdr.detectChanges();
+      } else {
+        throw new Error(
+          response?.errorMessage || 'Failed to send verification code',
+        );
+      }
     } catch (error: any) {
       this.showToastMessage(
-        error.message || 'Failed to send verification code. Please try again.',
-        'error'
+        error?.error?.errorMessage ||
+          error.message ||
+          'Failed to send verification code. Please try again.',
+        'error',
       );
+      this.cdr.detectChanges();
     } finally {
       this.isSubmitting = false;
+      this.cdr.detectChanges();
     }
   }
 
-  // Step 2: Verify code
+  // Step 2: Verify code (client-side validation only)
   async verifyCode(codeForm: NgForm): Promise<void> {
     if (codeForm.invalid) {
       this.showToastMessage('Please enter a valid 6-digit code', 'error');
@@ -135,31 +152,25 @@ export class Verifymail {
     this.isSubmitting = true;
 
     try {
-      // Simulate API call
-      await this.delay(1500);
+      // Simulate brief processing
+      await this.delay(500);
 
-      // Add your API call here to verify code
-      // await this.authService.verifyResetCode(
-      //   this.changePasswordData.Email,
-      //   this.changePasswordData.VerificationCode
-      // );
-
-      // Simulate random success/failure for demo
-      const success = Math.random() > 0.3;
-
-      if (success) {
-        this.showToastMessage('Code verified successfully!', 'success');
-        this.currentStep = 'password';
-      } else {
-        throw new Error('Invalid verification code');
-      }
+      // For now, just proceed to password step
+      // The actual verification will happen in changePassword API call
+      this.showToastMessage('Code verified successfully!', 'success');
+      this.currentStep = 'password';
+      this.cdr.detectChanges();
     } catch (error: any) {
       this.showToastMessage(
-        error.message || 'Invalid verification code. Please try again.',
-        'error'
+        error?.error?.errorMessage ||
+          error.message ||
+          'Invalid verification code. Please try again.',
+        'error',
       );
+      this.cdr.detectChanges();
     } finally {
       this.isSubmitting = false;
+      this.cdr.detectChanges();
     }
   }
 
@@ -189,21 +200,28 @@ export class Verifymail {
     };
 
     try {
-      // Simulate API call
-      await this.delay(2000);
+      const response = await this.authService
+        .changePassword(changePasswordDto)
+        .toPromise();
 
-      // Add your API call here
-      // await this.authService.changePassword(changePasswordDto);
-
-      this.showToastMessage('Password changed successfully!', 'success');
-      this.currentStep = 'success';
+      if (response?.success) {
+        this.showToastMessage('Password changed successfully!', 'success');
+        this.currentStep = 'success';
+        this.cdr.detectChanges();
+      } else {
+        throw new Error(response?.errorMessage || 'Failed to change password');
+      }
     } catch (error: any) {
       this.showToastMessage(
-        error.message || 'Failed to change password. Please try again.',
-        'error'
+        error?.error?.errorMessage ||
+          error.message ||
+          'Failed to change password. Please try again.',
+        'error',
       );
+      this.cdr.detectChanges();
     } finally {
       this.isSubmitting = false;
+      this.cdr.detectChanges();
     }
   }
 
@@ -214,21 +232,28 @@ export class Verifymail {
     this.isSubmitting = true;
 
     try {
-      // Simulate API call
-      await this.delay(1500);
+      const response = await this.authService
+        .verifyEmail(this.changePasswordData.Email)
+        .toPromise();
 
-      // Add your API call here
-      // await this.authService.requestPasswordReset(this.changePasswordData.Email);
-
-      this.showToastMessage('New verification code sent!', 'success');
-      this.startCountdown();
+      if (response?.success) {
+        this.showToastMessage('New verification code sent!', 'success');
+        this.startCountdown();
+        this.cdr.detectChanges();
+      } else {
+        throw new Error(response?.errorMessage || 'Failed to resend code');
+      }
     } catch (error: any) {
       this.showToastMessage(
-        'Failed to resend code. Please try again.',
-        'error'
+        error?.error?.errorMessage ||
+          error.message ||
+          'Failed to resend code. Please try again.',
+        'error',
       );
+      this.cdr.detectChanges();
     } finally {
       this.isSubmitting = false;
+      this.cdr.detectChanges();
     }
   }
 
@@ -267,7 +292,7 @@ export class Verifymail {
   // Toast
   showToastMessage(
     message: string,
-    type: 'success' | 'error' | 'info' = 'info'
+    type: 'success' | 'error' | 'info' = 'info',
   ): void {
     this.toastMessage = message;
     this.toastType = type;

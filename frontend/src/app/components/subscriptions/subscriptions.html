@@ -1,35 +1,48 @@
 <div class="min-h-screen bg-dark-bg py-8 px-4 sm:px-6 lg:px-8">
   <!-- Toast Notification -->
   <div *ngIf="showToast" class="fixed top-24 right-6 z-50 animate-slide-in">
-    <div [class]="'border rounded-xl px-6 py-4 shadow-glow flex items-center gap-3 ' + 
+    <div
+      [class]="'border rounded-xl px-6 py-4 shadow-glow flex items-center gap-3 ' + 
       (toastType === 'success' ? 'bg-green-500/10 border-green-500/30' : 
        toastType === 'error' ? 'bg-red-500/10 border-red-500/30' : 
-       'bg-dark-card border-accent/20')">
-      <i [class]="'text-2xl ' + 
+       'bg-dark-card border-accent/20')"
+    >
+      <i
+        [class]="'text-2xl ' + 
         (toastType === 'success' ? 'bx bx-check-circle text-green-500' : 
          toastType === 'error' ? 'bx bx-error-circle text-red-500' : 
-         'bx bx-info-circle text-accent')"></i>
-      <p [class]="'font-medium ' + 
+         'bx bx-info-circle text-accent')"
+      ></i>
+      <p
+        [class]="'font-medium ' + 
         (toastType === 'success' ? 'text-green-400' : 
          toastType === 'error' ? 'text-red-400' : 
-         'text-light-text')">{{ toastMessage }}</p>
+         'text-light-text')"
+      >
+        {{ toastMessage }}
+      </p>
     </div>
   </div>
 
   <div class="max-w-7xl mx-auto">
-    
     <!-- Page Header -->
-    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
+    <div
+      class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8"
+    >
       <div>
         <h1 class="text-3xl md:text-4xl font-bold text-light-text mb-2">
           <i class="bx bx-credit-card text-primary mr-2"></i>
           Subscriptions & Billing
         </h1>
-        <p class="text-light-text/60">Manage your subscriptions and payment history</p>
+        <p class="text-light-text/60">
+          Manage your subscriptions and payment history
+        </p>
       </div>
-      
-      <button (click)="openUpgradeModal()"
-        class="px-6 py-3 bg-primary hover:bg-primary/90 text-dark-bg font-semibold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-glow flex items-center gap-2">
+
+      <button
+        (click)="openUpgradeModal()"
+        class="px-6 py-3 bg-primary hover:bg-primary/90 text-dark-bg font-semibold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-glow flex items-center gap-2"
+      >
         <i class="bx bx-trending-up text-xl"></i>
         Upgrade Plan
       </button>
@@ -38,36 +51,54 @@
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
       <!-- Active Subscriptions -->
-      <div class="bg-dark-card border border-accent/20 rounded-xl p-6 hover:border-accent transition-all duration-300">
+      <div
+        class="bg-dark-card border border-accent/20 rounded-xl p-6 hover:border-accent transition-all duration-300"
+      >
         <div class="flex items-center justify-between mb-4">
-          <div class="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
+          <div
+            class="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center"
+          >
             <i class="bx bx-check-circle text-2xl text-green-500"></i>
           </div>
-          <span class="text-3xl font-bold text-green-500">{{ activeSubscriptions.length }}</span>
+          <span class="text-3xl font-bold text-green-500"
+            >{{ activeSubscriptions.length }}</span
+          >
         </div>
         <h3 class="text-light-text font-semibold">Active Plans</h3>
         <p class="text-sm text-light-text/60">Currently active</p>
       </div>
 
       <!-- Total Subscriptions -->
-      <div class="bg-dark-card border border-accent/20 rounded-xl p-6 hover:border-accent transition-all duration-300">
+      <div
+        class="bg-dark-card border border-accent/20 rounded-xl p-6 hover:border-accent transition-all duration-300"
+      >
         <div class="flex items-center justify-between mb-4">
-          <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+          <div
+            class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center"
+          >
             <i class="bx bx-list-ul text-2xl text-primary"></i>
           </div>
-          <span class="text-3xl font-bold text-primary">{{ subscriptions.length }}</span>
+          <span class="text-3xl font-bold text-primary"
+            >{{ subscriptions.length }}</span
+          >
         </div>
         <h3 class="text-light-text font-semibold">Total Plans</h3>
         <p class="text-sm text-light-text/60">All time</p>
       </div>
 
       <!-- Total Spent -->
-      <div class="bg-dark-card border border-accent/20 rounded-xl p-6 hover:border-accent transition-all duration-300">
+      <div
+        class="bg-dark-card border border-accent/20 rounded-xl p-6 hover:border-accent transition-all duration-300"
+      >
         <div class="flex items-center justify-between mb-4">
-          <div class="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center">
+          <div
+            class="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center"
+          >
             <i class="bx bx-dollar-circle text-2xl text-accent"></i>
           </div>
-          <span class="text-3xl font-bold text-accent">${{ totalSpent.toFixed(2) }}</span>
+          <span class="text-3xl font-bold text-accent"
+            >${{ totalSpent.toFixed(2) }}</span
+          >
         </div>
         <h3 class="text-light-text font-semibold">Total Spent</h3>
         <p class="text-sm text-light-text/60">Lifetime</p>
@@ -76,15 +107,18 @@
 
     <!-- Subscriptions Section -->
     <div class="bg-dark-card border border-accent/20 rounded-xl p-6 mb-8">
-      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
+      <div
+        class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6"
+      >
         <h3 class="text-xl font-bold text-light-text flex items-center gap-2">
           <i class="bx bx-crown text-accent"></i>
           My Subscriptions
         </h3>
-        
-        <select 
+
+        <select
           [(ngModel)]="subscriptionFilter"
-          class="px-4 py-2 bg-dark-bg border border-accent/20 rounded-xl text-light-text focus:outline-none focus:border-accent transition-all duration-300 cursor-pointer">
+          class="px-4 py-2 bg-dark-bg border border-accent/20 rounded-xl text-light-text focus:outline-none focus:border-accent transition-all duration-300 cursor-pointer"
+        >
           <option value="all">All Subscriptions</option>
           <option value="active">Active Only</option>
           <option value="canceled">Canceled Only</option>
@@ -92,88 +126,143 @@
       </div>
 
       <div class="space-y-4">
-        <div *ngFor="let subscription of filteredSubscriptions" 
-          class="bg-dark-bg border border-accent/20 rounded-xl p-6 hover:border-accent transition-all duration-300">
-          
-          <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-            <!-- Subscription Info -->
-            <div class="flex-1">
-              <div class="flex items-center gap-3 mb-3">
-                <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-                  <i class="bx bx-package text-2xl text-primary"></i>
+        <!-- Loading State -->
+        <div *ngIf="isLoadingSubscriptions" class="text-center py-16">
+          <i
+            class="bx bx-loader-alt animate-spin text-5xl text-primary mb-4"
+          ></i>
+          <h3 class="text-lg font-semibold text-light-text/60">
+            Loading subscriptions...
+          </h3>
+        </div>
+
+        <!-- Subscriptions List -->
+        <div *ngIf="!isLoadingSubscriptions" class="space-y-4">
+          <div
+            *ngFor="let subscription of filteredSubscriptions"
+            class="bg-dark-bg border border-accent/20 rounded-xl p-6 hover:border-accent transition-all duration-300"
+          >
+            <div
+              class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4"
+            >
+              <!-- Subscription Info -->
+              <div class="flex-1">
+                <div class="flex items-center gap-3 mb-3">
+                  <div
+                    class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center"
+                  >
+                    <i class="bx bx-package text-2xl text-primary"></i>
+                  </div>
+                  <div>
+                    <h4 class="text-lg font-bold text-light-text">
+                      {{ getPlanName(subscription.durationInDays) }} Plan
+                    </h4>
+                    <p class="text-sm text-light-text/60">
+                      Ref: {{ subscription.referenceId }}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h4 class="text-lg font-bold text-light-text">{{ getPlanName(subscription.DurationInDays) }} Plan</h4>
-                  <p class="text-sm text-light-text/60">Ref: {{ subscription.ReferenceId }}</p>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                  <div>
+                    <p class="text-xs text-light-text/50 mb-1">Price</p>
+                    <p class="text-lg font-bold text-primary">
+                      ${{ subscription.price }}
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-xs text-light-text/50 mb-1">Start Date</p>
+                    <p class="text-sm text-light-text">
+                      {{ subscription.startDate | date: 'MMM d, y' }}
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-xs text-light-text/50 mb-1">End Date</p>
+                    <p class="text-sm text-light-text">
+                      {{ getEndDate(subscription) | date: 'MMM d, y' }}
+                    </p>
+                  </div>
+                  <div *ngIf="subscription.isActive">
+                    <p class="text-xs text-light-text/50 mb-1">Days Left</p>
+                    <p class="text-sm font-semibold text-accent">
+                      {{ getDaysRemaining(subscription) }} days
+                    </p>
+                  </div>
+                  <div
+                    *ngIf="!subscription.isActive && subscription.canceledAt"
+                  >
+                    <p class="text-xs text-light-text/50 mb-1">Canceled On</p>
+                    <p class="text-sm text-red-400">
+                      {{ subscription.canceledAt | date: 'MMM d, y' }}
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Status Badge -->
+                <div
+                  class="inline-flex items-center gap-2 px-4 py-2 rounded-lg"
+                  [class]="subscription.isActive ?
+                    (isExpiringSoon(subscription) ? 'bg-yellow-500/10 border border-yellow-500/30' : 'bg-green-500/10 border border-green-500/30') :
+                    'bg-red-500/10 border border-red-500/30'"
+                >
+                  <i
+                    [class]="'text-lg ' + getStatusColor(subscription) + ' ' + getStatusIcon(subscription)"
+                  ></i>
+                  <span
+                    [class]="'text-sm font-semibold ' + getStatusColor(subscription)"
+                  >
+                    {{ getStatusText(subscription) }}
+                  </span>
                 </div>
               </div>
 
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                <div>
-                  <p class="text-xs text-light-text/50 mb-1">Price</p>
-                  <p class="text-lg font-bold text-primary">${{ subscription.Price }}</p>
-                </div>
-                <div>
-                  <p class="text-xs text-light-text/50 mb-1">Start Date</p>
-                  <p class="text-sm text-light-text">{{ subscription.StartDate | date: 'MMM d, y' }}</p>
-                </div>
-                <div>
-                  <p class="text-xs text-light-text/50 mb-1">End Date</p>
-                  <p class="text-sm text-light-text">{{ getEndDate(subscription) | date: 'MMM d, y' }}</p>
-                </div>
-                <div *ngIf="subscription.IsActive">
-                  <p class="text-xs text-light-text/50 mb-1">Days Left</p>
-                  <p class="text-sm font-semibold text-accent">{{ getDaysRemaining(subscription) }} days</p>
-                </div>
-                <div *ngIf="!subscription.IsActive && subscription.CanceledAt">
-                  <p class="text-xs text-light-text/50 mb-1">Canceled On</p>
-                  <p class="text-sm text-red-400">{{ subscription.CanceledAt | date: 'MMM d, y' }}</p>
-                </div>
+              <!-- Actions -->
+              <div class="flex flex-col gap-2 w-full lg:w-auto">
+                <button
+                  *ngIf="subscription.isActive"
+                  (click)="renewSubscription(subscription)"
+                  class="px-6 py-2 bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2"
+                >
+                  <i class="bx bx-refresh"></i>
+                  Renew Plan
+                </button>
+                <button
+                  *ngIf="subscription.isActive"
+                  (click)="openCancelModal(subscription)"
+                  class="px-6 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-500 rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2"
+                >
+                  <i class="bx bx-x"></i>
+                  Cancel
+                </button>
+                <button
+                  *ngIf="!subscription.isActive"
+                  (click)="renewSubscription(subscription)"
+                  class="px-6 py-2 bg-accent/10 hover:bg-accent/20 border border-accent/30 text-accent rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2"
+                >
+                  <i class="bx bx-refresh"></i>
+                  Reactivate
+                </button>
               </div>
-
-              <!-- Status Badge -->
-              <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg" 
-                [class]="subscription.IsActive ? 
-                  (isExpiringSoon(subscription) ? 'bg-yellow-500/10 border border-yellow-500/30' : 'bg-green-500/10 border border-green-500/30') : 
-                  'bg-red-500/10 border border-red-500/30'">
-                <i [class]="'text-lg ' + getStatusColor(subscription) + ' ' + getStatusIcon(subscription)"></i>
-                <span [class]="'text-sm font-semibold ' + getStatusColor(subscription)">
-                  {{ getStatusText(subscription) }}
-                </span>
-              </div>
-            </div>
-
-            <!-- Actions -->
-            <div class="flex flex-col gap-2 w-full lg:w-auto">
-              <button *ngIf="subscription.IsActive" 
-                (click)="renewSubscription(subscription)"
-                class="px-6 py-2 bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2">
-                <i class="bx bx-refresh"></i>
-                Renew Plan
-              </button>
-              <button *ngIf="subscription.IsActive" 
-                (click)="openCancelModal(subscription)"
-                class="px-6 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-500 rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2">
-                <i class="bx bx-x"></i>
-                Cancel
-              </button>
-              <button *ngIf="!subscription.IsActive" 
-                (click)="renewSubscription(subscription)"
-                class="px-6 py-2 bg-accent/10 hover:bg-accent/20 border border-accent/30 text-accent rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2">
-                <i class="bx bx-refresh"></i>
-                Reactivate
-              </button>
             </div>
           </div>
         </div>
 
         <!-- Empty State -->
-        <div *ngIf="filteredSubscriptions.length === 0" class="text-center py-16">
+        <div
+          *ngIf="!isLoadingSubscriptions && filteredSubscriptions.length === 0"
+          class="text-center py-16"
+        >
           <i class="bx bx-error-circle text-6xl text-light-text/30 mb-4"></i>
-          <h3 class="text-xl font-semibold text-light-text/60 mb-2">No subscriptions found</h3>
-          <p class="text-light-text/40 mb-6">Try adjusting your filters or create a new subscription</p>
-          <button (click)="openUpgradeModal()"
-            class="px-6 py-3 bg-primary hover:bg-primary/90 text-dark-bg font-semibold rounded-xl transition-all duration-300 hover:scale-105">
+          <h3 class="text-xl font-semibold text-light-text/60 mb-2">
+            No subscriptions found
+          </h3>
+          <p class="text-light-text/40 mb-6">
+            Try adjusting your filters or create a new subscription
+          </p>
+          <button
+            (click)="openUpgradeModal()"
+            class="px-6 py-3 bg-primary hover:bg-primary/90 text-dark-bg font-semibold rounded-xl transition-all duration-300 hover:scale-105"
+          >
             <i class="bx bx-plus mr-2"></i>Subscribe Now
           </button>
         </div>
@@ -182,15 +271,18 @@
 
     <!-- Payment History Section -->
     <div class="bg-dark-card border border-accent/20 rounded-xl p-6">
-      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
+      <div
+        class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6"
+      >
         <h3 class="text-xl font-bold text-light-text flex items-center gap-2">
           <i class="bx bx-receipt text-secondary"></i>
           Payment History
         </h3>
-        
-        <select 
+
+        <select
           [(ngModel)]="paymentFilter"
-          class="px-4 py-2 bg-dark-bg border border-accent/20 rounded-xl text-light-text focus:outline-none focus:border-accent transition-all duration-300 cursor-pointer">
+          class="px-4 py-2 bg-dark-bg border border-accent/20 rounded-xl text-light-text focus:outline-none focus:border-accent transition-all duration-300 cursor-pointer"
+        >
           <option value="all">All Payments</option>
           <option value="completed">Completed Only</option>
           <option value="failed">Failed Only</option>
@@ -198,53 +290,74 @@
       </div>
 
       <div class="space-y-4">
-        <div *ngFor="let payment of filteredPayments" 
-          class="bg-dark-bg border border-accent/20 rounded-xl p-5 hover:border-accent transition-all duration-300">
-          
-          <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div
+          *ngFor="let payment of filteredPayments"
+          class="bg-dark-bg border border-accent/20 rounded-xl p-5 hover:border-accent transition-all duration-300"
+        >
+          <div
+            class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+          >
             <div class="flex items-start gap-4 flex-1">
-              <div [class]="'w-12 h-12 rounded-xl flex items-center justify-center ' + 
-                (payment.Status === 'Completed' ? 'bg-green-500/10' : 'bg-red-500/10')">
-                <i [class]="'text-2xl ' + getPaymentMethodIcon(payment.PaymentMethod) + ' ' + 
-                  (payment.Status === 'Completed' ? 'text-green-500' : 'text-red-500')"></i>
+              <div
+                [class]="'w-12 h-12 rounded-xl flex items-center justify-center ' + 
+                (payment.isSuccessful === true ? 'bg-green-500/10' : 'bg-red-500/10')"
+              >
+                <i
+                  [class]="'text-2xl ' + getPaymentMethodIcon('Mpesa') + ' ' + 
+                  (payment.isSuccessful === true ? 'text-green-500' : 'text-red-500')"
+                ></i>
               </div>
 
               <div class="flex-1">
                 <div class="flex items-center gap-3 mb-2">
-                  <h4 class="font-semibold text-light-text">{{ payment.PaymentMethod }}</h4>
-                  <span [class]="'px-3 py-1 rounded-full text-xs font-bold ' + 
-                    (payment.Status === 'Completed' ? 'bg-green-500/10 text-green-500 border border-green-500/30' : 
-                     'bg-red-500/10 text-red-500 border border-red-500/30')">
-                    {{ payment.Status }}
+                  <h4 class="font-semibold text-light-text">
+                    {{ 'Mpesa' }}
+                  </h4>
+                  <span
+                    [class]="'px-3 py-1 rounded-full text-xs font-bold ' + 
+                    (payment.isSuccessful === true ? 'bg-green-500/10 text-green-500 border border-green-500/30' : 
+                     'bg-red-500/10 text-red-500 border border-red-500/30')"
+                  >
+                    {{ payment.isSuccessful === true ? 'Completed' : 'Failed' }}
                   </span>
                 </div>
-                
+
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-2">
                   <div>
                     <p class="text-xs text-light-text/50">Transaction ID</p>
-                    <p class="text-sm text-light-text/80 font-mono">{{ payment.TransactionId }}</p>
+                    <p class="text-sm text-light-text/80 font-mono">
+                      {{ payment.checkoutRequestId.substring(0, 8) }} ...
+                    </p>
                   </div>
                   <div>
                     <p class="text-xs text-light-text/50">Date</p>
-                    <p class="text-sm text-light-text/80">{{ payment.PaymentDate | date: 'MMM d, y' }}</p>
+                    <p class="text-sm text-light-text/80">
+                      {{ payment.createdAt | date: 'MMM d, y' }}
+                    </p>
                   </div>
                   <div>
                     <p class="text-xs text-light-text/50">Amount</p>
-                    <p class="text-lg font-bold text-primary">${{ payment.Amount.toFixed(2) }}</p>
+                    <p class="text-lg font-bold text-primary">
+                      ${{ payment.amount.toFixed(2) }}
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
 
             <div class="flex gap-2 w-full md:w-auto">
-              <button (click)="viewPaymentDetails(payment)"
-                class="flex-1 md:flex-none px-4 py-2 bg-dark-card hover:bg-dark-card/80 border border-accent/30 hover:border-accent text-light-text rounded-xl text-sm font-medium transition-all duration-300">
+              <button
+                (click)="viewPaymentDetails(payment)"
+                class="flex-1 md:flex-none px-4 py-2 bg-dark-card hover:bg-dark-card/80 border border-accent/30 hover:border-accent text-light-text rounded-xl text-sm font-medium transition-all duration-300"
+              >
                 <i class="bx bx-info-circle mr-1"></i>
                 Details
               </button>
-              <button *ngIf="payment.Status === 'Completed'" 
+              <button
+                *ngIf="payment.isSuccessful === true"
                 (click)="downloadInvoice(payment)"
-                class="flex-1 md:flex-none px-4 py-2 bg-accent/10 hover:bg-accent/20 border border-accent/30 text-accent rounded-xl text-sm font-medium transition-all duration-300">
+                class="flex-1 md:flex-none px-4 py-2 bg-accent/10 hover:bg-accent/20 border border-accent/30 text-accent rounded-xl text-sm font-medium transition-all duration-300"
+              >
                 <i class="bx bx-download mr-1"></i>
                 Invoice
               </button>
@@ -255,8 +368,12 @@
         <!-- Empty State -->
         <div *ngIf="filteredPayments.length === 0" class="text-center py-16">
           <i class="bx bx-receipt text-6xl text-light-text/30 mb-4"></i>
-          <h3 class="text-xl font-semibold text-light-text/60 mb-2">No payment history</h3>
-          <p class="text-light-text/40">Your payment transactions will appear here</p>
+          <h3 class="text-xl font-semibold text-light-text/60 mb-2">
+            No payment history
+          </h3>
+          <p class="text-light-text/40">
+            Your payment transactions will appear here
+          </p>
         </div>
       </div>
     </div>
@@ -264,18 +381,29 @@
 </div>
 
 <!-- Cancel Subscription Modal -->
-<div *ngIf="showCancelModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-  <div class="bg-dark-card border border-red-500/30 rounded-2xl max-w-md w-full p-8 shadow-glow animate-scale-in">
+<div
+  *ngIf="showCancelModal"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
+>
+  <div
+    class="bg-dark-card border border-red-500/30 rounded-2xl max-w-md w-full p-8 shadow-glow animate-scale-in"
+  >
     <div class="text-center mb-6">
-      <div class="inline-flex items-center justify-center w-16 h-16 bg-red-500/10 rounded-full mb-4">
+      <div
+        class="inline-flex items-center justify-center w-16 h-16 bg-red-500/10 rounded-full mb-4"
+      >
         <i class="bx bx-error-circle text-4xl text-red-500"></i>
       </div>
-      <h3 class="text-2xl font-bold text-light-text mb-2">Cancel Subscription?</h3>
+      <h3 class="text-2xl font-bold text-light-text mb-2">
+        Cancel Subscription?
+      </h3>
       <p class="text-light-text/60 mb-4">
-        Are you sure you want to cancel your 
+        Are you sure you want to cancel your
         <span class="font-semibold text-light-text">
-          {{ selectedSubscription ? getPlanName(selectedSubscription.DurationInDays) : '' }}
-        </span> plan?
+          {{ selectedSubscription ?
+          getPlanName(selectedSubscription.durationInDays) : '' }}
+        </span>
+        plan?
       </p>
       <div class="bg-dark-bg border border-accent/20 rounded-xl p-4 text-left">
         <p class="text-sm text-light-text/70 mb-2">
@@ -292,13 +420,22 @@
     </div>
 
     <div class="flex gap-3">
-      <button (click)="closeCancelModal()" [disabled]="isCanceling"
-        class="flex-1 px-6 py-3 bg-dark-bg border border-accent/30 hover:border-accent text-light-text font-semibold rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+      <button
+        (click)="closeCancelModal()"
+        [disabled]="isCanceling"
+        class="flex-1 px-6 py-3 bg-dark-bg border border-accent/30 hover:border-accent text-light-text font-semibold rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
         Keep Plan
       </button>
-      <button (click)="cancelSubscription()" [disabled]="isCanceling"
-        class="flex-1 px-6 py-3 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-        <i *ngIf="isCanceling" class="bx bx-loader-alt animate-spin text-xl"></i>
+      <button
+        (click)="cancelSubscription()"
+        [disabled]="isCanceling"
+        class="flex-1 px-6 py-3 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+      >
+        <i
+          *ngIf="isCanceling"
+          class="bx bx-loader-alt animate-spin text-xl"
+        ></i>
         <span>{{ isCanceling ? 'Canceling...' : 'Yes, Cancel' }}</span>
       </button>
     </div>
@@ -306,47 +443,168 @@
 </div>
 
 <!-- Upgrade Plan Modal -->
-<div *ngIf="showUpgradeModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-  <div class="bg-dark-card border border-accent/30 rounded-2xl max-w-md w-full p-8 shadow-glow animate-scale-in">
+<div
+  *ngIf="showUpgradeModal"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
+>
+  <div
+    class="bg-dark-card border border-accent/30 rounded-2xl max-w-md w-full p-8 shadow-glow animate-scale-in"
+  >
     <div class="flex items-center justify-between mb-6">
       <h3 class="text-2xl font-bold text-light-text">Choose Plan</h3>
-      <button (click)="closeUpgradeModal()" class="text-light-text/60 hover:text-light-text transition-colors">
+      <button
+        (click)="closeUpgradeModal()"
+        class="text-light-text/60 hover:text-light-text transition-colors"
+      >
         <i class="bx bx-x text-3xl"></i>
       </button>
     </div>
 
     <div class="space-y-4">
-      <button (click)="upgradePlan('weekly')"
-        class="w-full p-4 bg-dark-bg border-2 border-accent/20 hover:border-accent rounded-xl transition-all duration-300 text-left group">
+      <button
+        (click)="upgradePlan('weekly')"
+        class="w-full p-4 bg-dark-bg border-2 border-accent/20 hover:border-accent rounded-xl transition-all duration-300 text-left group"
+      >
         <div class="flex items-center justify-between">
           <div>
-            <h4 class="font-bold text-light-text group-hover:text-primary transition-colors">Weekly Plan</h4>
+            <h4
+              class="font-bold text-light-text group-hover:text-primary transition-colors"
+            >
+              Weekly Plan
+            </h4>
             <p class="text-sm text-light-text/60">7 days access</p>
           </div>
-          <div class="text-2xl font-bold text-primary">$4.99</div>
+          <div class="text-2xl font-bold text-primary">Ksh 100</div>
         </div>
       </button>
 
-      <button (click)="upgradePlan('monthly')"
-        class="w-full p-4 bg-dark-bg border-2 border-accent/20 hover:border-accent rounded-xl transition-all duration-300 text-left group">
+      <button
+        (click)="upgradePlan('monthly')"
+        class="w-full p-4 bg-dark-bg border-2 border-accent/20 hover:border-accent rounded-xl transition-all duration-300 text-left group"
+      >
         <div class="flex items-center justify-between">
           <div>
-            <h4 class="font-bold text-light-text group-hover:text-primary transition-colors">Monthly Plan</h4>
-            <p class="text-sm text-light-text/60">30 days access • Most Popular</p>
+            <h4
+              class="font-bold text-light-text group-hover:text-primary transition-colors"
+            >
+              Monthly Plan
+            </h4>
+            <p class="text-sm text-light-text/60">
+              30 days access • Most Popular
+            </p>
           </div>
-          <div class="text-2xl font-bold text-primary">$14.99</div>
+          <div class="text-2xl font-bold text-primary">Ksh 399</div>
         </div>
       </button>
 
-      <button (click)="upgradePlan('yearly')"
-        class="w-full p-4 bg-dark-bg border-2 border-accent/20 hover:border-accent rounded-xl transition-all duration-300 text-left group">
+      <button
+        (click)="upgradePlan('yearly')"
+        class="w-full p-4 bg-dark-bg border-2 border-accent/20 hover:border-accent rounded-xl transition-all duration-300 text-left group"
+      >
         <div class="flex items-center justify-between">
           <div>
-            <h4 class="font-bold text-light-text group-hover:text-primary transition-colors">Yearly Plan</h4>
+            <h4
+              class="font-bold text-light-text group-hover:text-primary transition-colors"
+            >
+              Yearly Plan
+            </h4>
             <p class="text-sm text-accent">365 days access • Save 44%</p>
           </div>
-          <div class="text-2xl font-bold text-primary">$99.99</div>
+          <div class="text-2xl font-bold text-primary">Ksh 1,999</div>
         </div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Payment Modal -->
+<div
+  *ngIf="showPaymentModal"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
+>
+  <div
+    class="bg-dark-card border border-accent/30 rounded-2xl max-w-md w-full p-8 shadow-glow animate-scale-in"
+  >
+    <div class="text-center mb-6">
+      <div
+        class="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4"
+      >
+        <i
+          [class]="paymentMethod === 'mpesa' ? 'bx bx-mobile' : 'bx bx-credit-card'"
+          class="text-4xl text-primary"
+        ></i>
+      </div>
+      <h3 class="text-2xl font-bold text-light-text mb-2">Complete Payment</h3>
+      <p class="text-light-text/60">{{ selectedPlanName }} Plan</p>
+    </div>
+
+    <div class="bg-dark-bg border border-accent/20 rounded-xl p-6 mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-light-text/70">Plan:</span>
+        <span class="font-semibold text-light-text"
+          >{{ selectedPlanName }}</span
+        >
+      </div>
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-light-text/70">Payment Method:</span>
+        <span class="font-semibold text-light-text"
+          >{{ paymentMethod === 'mpesa' ? 'M-Pesa' : 'Stripe' }}</span
+        >
+      </div>
+      <div
+        class="flex items-center justify-between pt-4 border-t border-accent/20"
+      >
+        <span class="text-lg font-semibold text-light-text">Total:</span>
+        <span class="text-2xl font-bold text-primary"
+          >Ksh {{ selectedPlanPrice }}</span
+        >
+      </div>
+    </div>
+
+    <!-- Payment Status -->
+    <div *ngIf="paymentStatus !== 'idle'" class="mb-6">
+      <div class="bg-dark-bg border border-accent/20 rounded-xl p-4">
+        <div class="flex items-start gap-3">
+          <div
+            *ngIf="paymentStatus === 'initiated' || paymentStatus === 'stk-sent' || paymentStatus === 'processing'"
+            class="animate-spin"
+          >
+            <i class="bx bx-loader-alt text-2xl text-primary"></i>
+          </div>
+          <div *ngIf="paymentStatus === 'success'">
+            <i class="bx bx-check-circle text-2xl text-green-500"></i>
+          </div>
+          <div *ngIf="paymentStatus === 'failed'">
+            <i class="bx bx-x-circle text-2xl text-red-500"></i>
+          </div>
+          <div class="flex-1">
+            <p
+              [class.text-green-500]="paymentStatus === 'success'"
+              [class.text-red-500]="paymentStatus === 'failed'"
+              [class.text-light-text]="paymentStatus !== 'success' && paymentStatus !== 'failed'"
+              class="font-medium"
+            >
+              {{ paymentMessage }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-3">
+      <button
+        (click)="closePaymentModal()"
+        [disabled]="paymentStatus === 'processing'"
+        class="flex-1 px-6 py-3 bg-dark-bg border border-accent/30 hover:border-accent text-light-text font-semibold rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        Cancel
+      </button>
+      <button
+        (click)="completePayment()"
+        [disabled]="paymentStatus !== 'idle' && paymentStatus !== 'failed'"
+        class="flex-1 px-6 py-3 bg-primary hover:bg-primary/90 text-dark-bg font-semibold rounded-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {{ paymentStatus === 'failed' ? 'Retry' : 'Complete Payment' }}
       </button>
     </div>
   </div>

@@ -3,10 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FetchedImageUrl } from '../../interfaces/ImageUrl';
-import { FetchedUser } from '../../interfaces/User';
 import { Footer } from '../footer/footer';
 import { Imageurl } from '../../services/imageurl';
-import { User } from '../../services/user';
 
 interface UserStats {
   totalImages: number;
@@ -39,7 +37,6 @@ export class PublishedImage implements OnInit {
     private router: Router,
     private cdr: ChangeDetectorRef,
     private imageurl: Imageurl,
-    private userService: User,
   ) {}
 
   ngOnInit(): void {
@@ -49,6 +46,9 @@ export class PublishedImage implements OnInit {
         this.loadImageDetails();
       }
     });
+
+    // Scroll to top on navigation
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   async loadImageDetails(): Promise<void> {
@@ -60,6 +60,7 @@ export class PublishedImage implements OnInit {
       // Fetch the specific published image
       this.imageurl.getSinglePublishedImage(this.imageId).subscribe({
         next: (result) => {
+          this.isLoading = false;
           if (result.success && result.data) {
             this.currentImage = result.data;
             this.loadOwnerStats();
@@ -71,20 +72,27 @@ export class PublishedImage implements OnInit {
               'error',
             );
           }
+          this.cdr.detectChanges();
         },
-        error: (err) => {
-          console.error('Error loading image:', err);
+        error: (err: any) => {
+          this.isLoading = false;
           this.imageNotFound = true;
-          this.showToastMessage('Failed to load image details', 'error');
+          this.showToastMessage(
+            err?.error?.errorMessage ?? 'Failed to load image details',
+            'error',
+          );
+          this.cdr.detectChanges();
         },
         complete: () => {
           this.isLoading = false;
           this.cdr.detectChanges();
         },
       });
-    } catch (error) {
-      console.error('Error loading image:', error);
-      this.showToastMessage('Failed to load image details', 'error');
+    } catch (error: any) {
+      this.showToastMessage(
+        error?.error?.errorMessage ?? 'Failed to load image details',
+        'error',
+      );
       this.imageNotFound = true;
       this.isLoading = false;
       this.cdr.detectChanges();
@@ -93,12 +101,11 @@ export class PublishedImage implements OnInit {
 
   loadOwnerStats(): void {
     if (!this.currentImage?.user) return;
-
-    // For published images, we can't easily get the user's total image count without additional API calls
-    // For now, we'll show basic info and can enhance later if needed
     this.ownerStats = {
-      totalImages: 0, // Would need additional API call to get this
-      publishedImages: 0, // Would need additional API call to get this
+      totalImages: this.currentImage.user.imageUrls?.length || 0,
+      publishedImages:
+        this.currentImage.user.imageUrls?.filter((img) => img.isPublished)
+          .length || 0,
       memberSince: this.formatMemberSince(this.currentImage.user.createdAt),
     };
   }
@@ -197,7 +204,7 @@ export class PublishedImage implements OnInit {
   // Navigate to owner's profile
   viewOwnerProfile(): void {
     if (!this.currentImage?.user) return;
-    this.router.navigate(['/profile', this.currentImage.user.userId]);
+    // this.router.navigate(['/profile', this.currentImage.user.userId]);
   }
 
   // Navigate to another image

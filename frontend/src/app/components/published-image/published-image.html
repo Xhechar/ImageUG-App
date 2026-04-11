@@ -131,7 +131,7 @@
             <div>
               <p class="text-xs text-light-text/50 mb-1">Image ID</p>
               <p class="text-sm font-semibold text-light-text font-mono">
-                {{ currentImage.imageUrlId }}
+                {{ currentImage.imageUrlId.substring(0, 8) }}...{{ currentImage.imageUrlId.substring(currentImage.imageUrlId.length - 4) }}
               </p>
             </div>
           </div>

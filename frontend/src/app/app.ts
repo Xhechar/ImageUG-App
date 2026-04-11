@@ -91,6 +91,7 @@ export class App implements OnInit {
             res.title,
             res.successMessage as string
           );
+          this.sgrs.stopConnection();
         }
       },
       error: (err) => {

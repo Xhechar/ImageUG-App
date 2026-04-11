@@ -124,14 +124,24 @@ public class SubscriptionRepository : ISubscriptionRepository
     var SafaricomResponseBody = System.Text.Json.JsonSerializer.Deserialize<SafaricomCallbackDto>(json);
 
     if (SafaricomResponseBody == null) {
-      System.Console.WriteLine("Invalid Safaricom callback data received.");
-    }
-
-    if (SafaricomResponseBody!.Body!.stkCallback!.ResultCode != 0) {
-      System.Console.WriteLine($"Payment failed with ResultCode: {SafaricomResponseBody.Body.stkCallback.ResultCode}, ResultDesc: {SafaricomResponseBody.Body.stkCallback.ResultDesc}");
+      Console.WriteLine("Invalid Safaricom callback data received.");
+      return;
     }
 
     var PaymentDataExists = await _context.PaymentData.FirstOrDefaultAsync(p => p.MerchantRequestId == SafaricomResponseBody.Body!.stkCallback!.MerchantRequestID  && p.CheckoutRequestId == SafaricomResponseBody.Body!.stkCallback!.CheckoutRequestID);
+
+    if (SafaricomResponseBody!.Body!.stkCallback!.ResultCode != 0) {
+      Console.WriteLine($"Payment failed with ResultCode: {SafaricomResponseBody.Body.stkCallback.ResultCode}, ResultDesc: {SafaricomResponseBody.Body.stkCallback.ResultDesc}");
+      if (PaymentDataExists != null) {
+        PaymentDataExists.IsSuccessful = false;
+        PaymentDataExists.ResponseDescription = $"Payment failed: {SafaricomResponseBody.Body.stkCallback.ResultDesc}";
+        await _context.SaveChangesAsync();
+        await _hubContext.Clients.User(PaymentDataExists.UserId).SendAsync("subscription-failed", "Your payment was not successful. Please try again.");
+      }
+      await _hubContext.Clients.User(PaymentDataExists!.UserId).SendAsync("subscription-failed", SafaricomResponseBody.Body.stkCallback.ResultDesc ?? "Your payment was not successful. Please try again.");
+      return;
+    }
+
 
     var amountItem = SafaricomResponseBody?.Body?.stkCallback?.CallbackMetadata?.Item?.FirstOrDefault(i => i.Name == "Amount");
     var receiptItem = SafaricomResponseBody?.Body?.stkCallback?.CallbackMetadata?.Item?.FirstOrDefault(i => i.Name == "MpesaReceiptNumber");
@@ -149,8 +159,9 @@ public class SubscriptionRepository : ISubscriptionRepository
 
     await _context.Subscription.AddAsync(subscriptionData);
     if (await _context.SaveChangesAsync() > 0) {
-      await _hubContext.Clients.User(PaymentDataExists.UserId).SendAsync("subscription-created", subscriptionData);
+      await _hubContext.Clients.User(PaymentDataExists.UserId).SendAsync("subscription-created");
       Console.WriteLine("Subscription created successfully from Safaricom callback.");
+      return;
     }
 
     await _hubContext.Clients.User(PaymentDataExists.UserId).SendAsync("subscription-failed", "Your payment details was  successful but not recorded. Please contact support.");

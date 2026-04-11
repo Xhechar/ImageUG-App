@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { FetchedImageUrl } from '../../interfaces/ImageUrl';
 import { CommonModule } from '@angular/common';
@@ -50,6 +50,7 @@ export class Gallery implements OnInit {
     private router: Router,
     private imageurl: Imageurl,
     private user: User,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -69,9 +70,11 @@ export class Gallery implements OnInit {
             'error',
           );
         }
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.showToastMessage('Error loading user', 'error');
+        this.cdr.detectChanges();
       },
     });
   }
@@ -83,15 +86,18 @@ export class Gallery implements OnInit {
         if (result.success) {
           this.userImages = result.dataList || [];
           this.applyFilters();
+          this.cdr.detectChanges();
         } else {
           this.showToastMessage(
             result.errorMessage || 'Failed to load images',
             'error',
           );
+          this.cdr.detectChanges();
         }
       },
       error: (err) => {
         this.showToastMessage('Error loading images', 'error');
+        this.cdr.detectChanges();
       },
     });
   }
@@ -214,7 +220,7 @@ export class Gallery implements OnInit {
 
       this.imageurl.createImageUrl(dto).subscribe({
         next: (result) => {
-          console.log("result: ", result);
+          console.log('result: ', result);
           if (result.success) {
             this.fetchUserImages();
             this.closeCreateModal();
@@ -281,7 +287,7 @@ export class Gallery implements OnInit {
               this.showToastMessage('Image updated successfully!', 'success');
               this.isUploading = false;
             } else {
-            this.isUploading = false;
+              this.isUploading = false;
               this.showToastMessage(
                 result.errorMessage || 'Failed to update image',
                 'error',

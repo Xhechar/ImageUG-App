@@ -209,9 +209,9 @@ public class ImageUrlRepository : IImageUrlRepository
     ImageUrl? image = await _context.ImageUrl.Include(u => u.User).ThenInclude(iu => iu!.ImageUrls).FirstOrDefaultAsync(i => i.ImageUrlId == ImageUrlId);
 
     if(image == null) {
-      return RepositoryResponse<ImageUrl>.Success("image properties generated successfully.", image);
+      return RepositoryResponse<ImageUrl>.Failure("CLIENT ERROR", "image details required not found");
     }
 
-    return RepositoryResponse<ImageUrl>.Failure("CLIENT ERROR", "image details required not found");
+    return RepositoryResponse<ImageUrl>.Success("image details retrieved successfully!", Data: image);
   }
 }

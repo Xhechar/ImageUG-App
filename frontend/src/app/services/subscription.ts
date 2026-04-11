@@ -3,7 +3,10 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../Environment/service.environment';
 import { ServiceResult } from '../service.result/service.result';
-import { FetchedSubscription, Subscription as UserSubscription } from '../interfaces/Subscription';
+import {
+  FetchedSubscription,
+  Subscription as UserSubscription,
+} from '../interfaces/Subscription';
 import { StkPushDto } from '../Dtos/Payments/STKPushDto';
 
 @Injectable({
@@ -15,12 +18,12 @@ export class Subscription {
   constructor(private http: HttpClient) {}
 
   initiatePaymentSubscription(
-    details: StkPushDto
-  ): Observable<ServiceResult<Subscription>> {
-    return this.http.post<ServiceResult<Subscription>>(
+    details: StkPushDto,
+  ): Observable<ServiceResult<UserSubscription>> {
+    return this.http.post<ServiceResult<UserSubscription>>(
       `${this.API_URL}initiate-payment-subscription`,
       details,
-      { withCredentials: true }
+      { withCredentials: true },
     );
   }
 
@@ -28,7 +31,32 @@ export class Subscription {
     return this.http.post<ServiceResult<FetchedSubscription>>(
       `${this.API_URL}get-user-subscriptions`,
       {},
-      { withCredentials: true }
+      { withCredentials: true },
+    );
+  }
+
+  /**
+   * Cancel a subscription by subscription ID
+   */
+  cancelSubscription(subscriptionId: string): Observable<ServiceResult<any>> {
+    return this.http.post<ServiceResult<any>>(
+      `${this.API_URL}cancel-subscription`,
+      { subscriptionId },
+      { withCredentials: true },
+    );
+  }
+
+  /**
+   * Renew or upgrade a subscription
+   */
+  renewSubscription(
+    subscriptionId: string,
+    durationInDays: number,
+  ): Observable<ServiceResult<UserSubscription>> {
+    return this.http.post<ServiceResult<UserSubscription>>(
+      `${this.API_URL}renew-subscription`,
+      { subscriptionId, durationInDays },
+      { withCredentials: true },
     );
   }
 }

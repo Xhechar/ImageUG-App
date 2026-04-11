@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -8,6 +8,8 @@ import { FetchedSubscription } from '../../interfaces/Subscription';
 import { User as UserService } from '../../services/user';
 import { Imageurl as ImageUrlService } from '../../services/imageurl';
 import { Subscription as SubscriptionService } from '../../services/subscription';
+import { Signalr } from '../../services/signalr';
+import { StkPushDto } from '../../Dtos/Payments/STKPushDto';
 
 @Component({
   selector: 'app-dashboard',
@@ -58,10 +60,30 @@ export class Dashboard implements OnInit {
     private userService: UserService,
     private imageService: ImageUrlService,
     private subscriptionService: SubscriptionService,
+    private sgrs: Signalr,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
     this.loadDashboard();
+    this.sgrs.on('subscription-created', async (data: any) => {
+      this.paymentStatus = 'success';
+      this.paymentMessage =
+        'Payment successful! Your subscription has been updated.';
+      await this.delay(2000);
+      this.closePaymentModal();
+      this.fetchCurrentUser();
+      this.loadDashboard();
+    });
+
+    this.sgrs.on('subscription-failed', async (message: string) => {
+      this.paymentStatus = 'failed';
+      this.paymentMessage = message || 'Payment failed. Please try again.';
+      await this.delay(2000);
+      this.closePaymentModal();
+      this.fetchCurrentUser();
+      this.loadDashboard();
+    });
   }
 
   loadDashboard(): void {
@@ -86,10 +108,12 @@ export class Dashboard implements OnInit {
               res.data.subscriptions,
             );
           }
+          this.cdr.detectChanges();
         }
       },
       error: () => {
         this.showToastMessage('Failed to load account details', 'error');
+        this.cdr.detectChanges();
       },
     });
   }
@@ -97,17 +121,17 @@ export class Dashboard implements OnInit {
   fetchUserImages(): void {
     this.imageService.getUserImages().subscribe({
       next: (res) => {
-        const images =
-          (res.dataList) ??
-          [];
+        const images = res.dataList ?? [];
 
         if (Array.isArray(images)) {
           this.userImages = images;
           this.applyFilters();
+          this.cdr.detectChanges();
         }
       },
       error: () => {
         this.showToastMessage('Failed to load images', 'error');
+        this.cdr.detectChanges();
       },
     });
   }
@@ -115,16 +139,16 @@ export class Dashboard implements OnInit {
   fetchUserSubscriptions(): void {
     this.subscriptionService.getUserSubscriptions().subscribe({
       next: (res) => {
-        const subscriptions =
-          (res.dataList as FetchedSubscription[]) ??
-          [];
+        const subscriptions = (res.dataList as FetchedSubscription[]) ?? [];
 
         if (Array.isArray(subscriptions)) {
           this.activeSubscription = this.findActiveSubscription(subscriptions);
+          this.cdr.detectChanges();
         }
       },
       error: () => {
         this.showToastMessage('Failed to load subscriptions', 'error');
+        this.cdr.detectChanges();
       },
     });
   }
@@ -305,7 +329,10 @@ export class Dashboard implements OnInit {
           );
           this.applyFilters();
           this.closeDeleteModal();
-          this.showToastMessage(result.successMessage || 'Image deleted successfully', 'success');
+          this.showToastMessage(
+            result.successMessage || 'Image deleted successfully',
+            'success',
+          );
         }
         if (!result.success) {
           this.showToastMessage(
@@ -313,7 +340,7 @@ export class Dashboard implements OnInit {
             'error',
           );
         }
-      }
+      },
     });
   }
 
@@ -349,7 +376,7 @@ export class Dashboard implements OnInit {
 
   get selectedPlanPrice(): number {
     if (!this.selectedPlan) return 0;
-    const prices = { weekly: 4.99, monthly: 14.99, yearly: 99.99 };
+    const prices = { weekly: 100, monthly: 399, yearly: 1999 };
     return prices[this.selectedPlan];
   }
 
@@ -373,36 +400,50 @@ export class Dashboard implements OnInit {
     this.paymentStatus = 'initiated';
     this.paymentMessage = 'Payment initiated...';
 
-    // Simulate payment flow
-    await this.delay(1500);
-
     if (this.paymentMethod === 'mpesa') {
-      this.paymentStatus = 'stk-sent';
-      this.paymentMessage =
-        'STK push sent to your phone. Please enter your M-Pesa PIN.';
-      await this.delay(3000);
-    }
+      let paymentDetails: StkPushDto = {
+        Amount: this.selectedPlanPrice,
+        DurationInDays:
+          this.selectedPlan === 'weekly'
+            ? 7
+            : this.selectedPlan === 'monthly'
+              ? 30
+              : 365,
+      };
 
-    this.paymentStatus = 'processing';
-    this.paymentMessage = 'Processing payment...';
-    await this.delay(2000);
+      this.subscriptionService
+        .initiatePaymentSubscription(paymentDetails)
+        .subscribe({
+          next: async (res) => {
+            if (res.success) {
+              this.paymentStatus = 'stk-sent';
+              this.paymentMessage =
+                'STK push sent to your phone. Please enter your M-Pesa PIN.';
 
-    // Simulate success (90% success rate)
-    const success = Math.random() > 0.1;
-
-    if (success) {
-      this.paymentStatus = 'success';
-      this.paymentMessage =
-        'Payment successful! Your subscription has been updated.';
-
-      // Update subscription
-      // Add your API call here
-
+              await this.delay(5000);
+              this.paymentStatus = 'processing';
+              this.paymentMessage = 'Processing payment...';
+            } else {
+              this.paymentStatus = 'failed';
+              this.paymentMessage =
+                res.errorMessage || 'Failed to initiate payment subscription';
+              this.closePaymentModal();
+            }
+          },
+          error: (error: any) => {
+            this.paymentStatus = 'failed';
+            this.paymentMessage =
+              error?.error?.errorMessage ||
+              'Failed to initiate payment subscription';
+            this.closePaymentModal();
+          },
+        });
+    } else if (this.paymentMethod === 'stripe') {
+      // Handle Stripe payment flow (not implemented in this example)
+      this.paymentStatus = 'failed';
+      this.paymentMessage = 'Stripe payment method is not implemented yet.';
       await this.delay(2000);
       this.closePaymentModal();
-    } else {
-      this.paymentStatus = 'failed';
-      this.paymentMessage = 'Payment failed. Please try again.';
     }
   }
 

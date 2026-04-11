@@ -1,19 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { Subscription } from '../../interfaces/Subscription';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { FetchedSubscription } from '../../interfaces/Subscription';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-interface PaymentData {
-  PaymentDataId: string;
-  UserId: string;
-  SubscriptionId: string;
-  Amount: number;
-  PaymentMethod: string;
-  TransactionId: string;
-  Status: string;
-  PaymentDate: Date;
-}
+import { Subscription as SubscriptionService } from '../../services/subscription';
+import { Signalr } from '../../services/signalr';
+import { StkPushDto } from '../../Dtos/Payments/STKPushDto';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { FetchedPaymentData as PaymentData } from '../../interfaces/Payment.Data';
 
 @Component({
   selector: 'app-subscriptions',
@@ -21,84 +16,13 @@ interface PaymentData {
   templateUrl: './subscriptions.html',
   styleUrl: './subscriptions.css',
 })
-export class Subscriptions implements OnInit {
+export class Subscriptions implements OnInit, OnDestroy {
   // User subscriptions
-  subscriptions: Subscription[] = [
-    {
-      SubscriptionId: '1',
-      UserId: '1',
-      Price: 14.99,
-      ReferenceId: 'SUB-2024-001',
-      StartDate: new Date('2024-12-01'),
-      DurationInDays: 30,
-      IsActive: true,
-      StripeSubscriptionId: 'sub_1234567890',
-    },
-    {
-      SubscriptionId: '2',
-      UserId: '1',
-      Price: 4.99,
-      ReferenceId: 'SUB-2024-002',
-      StartDate: new Date('2024-11-15'),
-      DurationInDays: 7,
-      IsActive: false,
-      CanceledAt: new Date('2024-11-20'),
-    },
-    {
-      SubscriptionId: '3',
-      UserId: '1',
-      Price: 99.99,
-      ReferenceId: 'SUB-2023-003',
-      StartDate: new Date('2023-12-01'),
-      DurationInDays: 365,
-      IsActive: false,
-      CanceledAt: new Date('2024-11-30'),
-    },
-  ];
+  subscriptions: FetchedSubscription[] = [];
+  isLoadingSubscriptions: boolean = false;
 
   // Payment history
-  paymentHistory: PaymentData[] = [
-    {
-      PaymentDataId: '1',
-      UserId: '1',
-      SubscriptionId: '1',
-      Amount: 14.99,
-      PaymentMethod: 'Stripe',
-      TransactionId: 'TXN-2024-001',
-      Status: 'Completed',
-      PaymentDate: new Date('2024-12-01'),
-    },
-    {
-      PaymentDataId: '2',
-      UserId: '1',
-      SubscriptionId: '2',
-      Amount: 4.99,
-      PaymentMethod: 'M-Pesa',
-      TransactionId: 'TXN-2024-002',
-      Status: 'Completed',
-      PaymentDate: new Date('2024-11-15'),
-    },
-    {
-      PaymentDataId: '3',
-      UserId: '1',
-      SubscriptionId: '3',
-      Amount: 99.99,
-      PaymentMethod: 'Stripe',
-      TransactionId: 'TXN-2023-003',
-      Status: 'Completed',
-      PaymentDate: new Date('2023-12-01'),
-    },
-    {
-      PaymentDataId: '4',
-      UserId: '1',
-      SubscriptionId: '1',
-      Amount: 14.99,
-      PaymentMethod: 'Stripe',
-      TransactionId: 'TXN-2024-004',
-      Status: 'Failed',
-      PaymentDate: new Date('2024-11-28'),
-    },
-  ];
+  paymentHistory: PaymentData[] = [];
 
   // Filters
   subscriptionFilter: string = 'all'; // all, active, canceled
@@ -107,35 +31,113 @@ export class Subscriptions implements OnInit {
   // Modal states
   showCancelModal: boolean = false;
   showUpgradeModal: boolean = false;
-  selectedSubscription: Subscription | null = null;
+  showPaymentModal: boolean = false;
+  selectedSubscription: FetchedSubscription | null = null;
   selectedPlan: 'weekly' | 'monthly' | 'yearly' | null = null;
+  paymentMethod: 'mpesa' | 'stripe' | null = null;
   isCanceling: boolean = false;
+
+  // Payment status
+  paymentStatus:
+    | 'idle'
+    | 'initiated'
+    | 'stk-sent'
+    | 'processing'
+    | 'success'
+    | 'failed' = 'idle';
+  paymentMessage: string = '';
 
   // Toast
   showToast: boolean = false;
   toastMessage: string = '';
   toastType: 'success' | 'error' | 'info' = 'info';
 
-  constructor(private router: Router) {}
+  // Cleanup
+  private destroy$ = new Subject<void>();
 
-  ngOnInit(): void {}
+  constructor(
+    private router: Router,
+    private subscriptionService: SubscriptionService,
+    private sgrs: Signalr,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
-  // Computed properties
-  get activeSubscriptions(): Subscription[] {
-    return this.subscriptions.filter((sub) => sub.IsActive);
+  ngOnInit(): void {
+    this.loadUserSubscriptions();
+
+    // Listen for subscription created event
+    this.sgrs.on('subscription-created', async (data: any) => {
+      this.paymentStatus = 'success';
+      this.paymentMessage =
+        'Payment successful! Your subscription has been updated.';
+      await this.delay(2000);
+      this.closePaymentModal();
+      this.loadUserSubscriptions();
+    });
+
+    // Listen for subscription failed event
+    this.sgrs.on('subscription-failed', async (message: string) => {
+      this.paymentStatus = 'failed';
+      this.paymentMessage = message || 'Payment failed. Please try again.';
+      await this.delay(2000);
+      this.closePaymentModal();
+    });
   }
 
-  get canceledSubscriptions(): Subscription[] {
-    return this.subscriptions.filter((sub) => !sub.IsActive);
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  /**
+   * Load user subscriptions from the API
+   */
+  private loadUserSubscriptions(): void {
+    this.isLoadingSubscriptions = true;
+    this.subscriptionService
+      .getUserSubscriptions()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.success && response.dataList) {
+            this.subscriptions = response.dataList;
+          } else {
+            this.showToastMessage(
+              'Failed to load subscriptions. Please try again.',
+              'error',
+            );
+          }
+          this.isLoadingSubscriptions = false;
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          console.error('Failed to load subscriptions:', error);
+          this.showToastMessage(
+            'Failed to load subscriptions. Please try again.',
+            'error',
+          );
+          this.isLoadingSubscriptions = false;
+          this.cdr.detectChanges();
+        },
+      });
+  }
+
+  // Computed properties
+  get activeSubscriptions(): FetchedSubscription[] {
+    return this.subscriptions.filter((sub) => sub.isActive);
+  }
+
+  get canceledSubscriptions(): FetchedSubscription[] {
+    return this.subscriptions.filter((sub) => !sub.isActive);
   }
 
   get totalSpent(): number {
     return this.paymentHistory
-      .filter((p) => p.Status === 'Completed')
-      .reduce((sum, p) => sum + p.Amount, 0);
+      .filter((p) => p.isSuccessful)
+      .reduce((sum, p) => sum + p.amount, 0);
   }
 
-  get filteredSubscriptions(): Subscription[] {
+  get filteredSubscriptions(): FetchedSubscription[] {
     if (this.subscriptionFilter === 'active') {
       return this.activeSubscriptions;
     } else if (this.subscriptionFilter === 'canceled') {
@@ -146,9 +148,9 @@ export class Subscriptions implements OnInit {
 
   get filteredPayments(): PaymentData[] {
     if (this.paymentFilter === 'completed') {
-      return this.paymentHistory.filter((p) => p.Status === 'Completed');
+      return this.paymentHistory.filter((p) => p.isSuccessful);
     } else if (this.paymentFilter === 'failed') {
-      return this.paymentHistory.filter((p) => p.Status === 'Failed');
+      return this.paymentHistory.filter((p) => !p.isSuccessful);
     }
     return this.paymentHistory;
   }
@@ -161,15 +163,15 @@ export class Subscriptions implements OnInit {
     return 'Custom';
   }
 
-  getEndDate(subscription: Subscription): Date {
-    const startDate = new Date(subscription.StartDate);
+  getEndDate(subscription: FetchedSubscription): Date {
+    const startDate = new Date(subscription.startDate);
     return new Date(
-      startDate.getTime() + subscription.DurationInDays * 24 * 60 * 60 * 1000
+      startDate.getTime() + subscription.durationInDays * 24 * 60 * 60 * 1000,
     );
   }
 
-  getDaysRemaining(subscription: Subscription): number {
-    if (!subscription.IsActive) return 0;
+  getDaysRemaining(subscription: FetchedSubscription): number {
+    if (!subscription.isActive) return 0;
     const endDate = this.getEndDate(subscription);
     const today = new Date();
     const diffTime = endDate.getTime() - today.getTime();
@@ -177,24 +179,24 @@ export class Subscriptions implements OnInit {
     return Math.max(0, diffDays);
   }
 
-  isExpiringSoon(subscription: Subscription): boolean {
-    return subscription.IsActive && this.getDaysRemaining(subscription) <= 7;
+  isExpiringSoon(subscription: FetchedSubscription): boolean {
+    return subscription.isActive && this.getDaysRemaining(subscription) <= 7;
   }
 
-  getStatusColor(subscription: Subscription): string {
-    if (!subscription.IsActive) return 'text-red-500';
+  getStatusColor(subscription: FetchedSubscription): string {
+    if (!subscription.isActive) return 'text-red-500';
     if (this.isExpiringSoon(subscription)) return 'text-yellow-500';
     return 'text-green-500';
   }
 
-  getStatusIcon(subscription: Subscription): string {
-    if (!subscription.IsActive) return 'bx-x-circle';
+  getStatusIcon(subscription: FetchedSubscription): string {
+    if (!subscription.isActive) return 'bx-x-circle';
     if (this.isExpiringSoon(subscription)) return 'bx-error-circle';
     return 'bx-check-circle';
   }
 
-  getStatusText(subscription: Subscription): string {
-    if (!subscription.IsActive) return 'Canceled';
+  getStatusText(subscription: FetchedSubscription): string {
+    if (!subscription.isActive) return 'Canceled';
     if (this.isExpiringSoon(subscription)) return 'Expiring Soon';
     return 'Active';
   }
@@ -207,7 +209,7 @@ export class Subscriptions implements OnInit {
   }
 
   // Cancel subscription
-  openCancelModal(subscription: Subscription): void {
+  openCancelModal(subscription: FetchedSubscription): void {
     this.selectedSubscription = subscription;
     this.showCancelModal = true;
   }
@@ -223,27 +225,45 @@ export class Subscriptions implements OnInit {
 
     this.isCanceling = true;
 
-    // Simulate API call
-    await this.delay(2000);
+    // Call the API to cancel subscription
+    this.subscriptionService
+      .cancelSubscription(this.selectedSubscription.subscriptionId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          // Update local state
+          const index = this.subscriptions.findIndex(
+            (sub) =>
+              sub.subscriptionId === this.selectedSubscription!.subscriptionId,
+          );
 
-    const index = this.subscriptions.findIndex(
-      (sub) => sub.SubscriptionId === this.selectedSubscription!.SubscriptionId
-    );
+          if (index !== -1) {
+            this.subscriptions[index].isActive = false;
+            this.subscriptions[index].canceledAt = new Date();
+            this.subscriptions[index].updatedAt = new Date();
+          }
 
-    if (index !== -1) {
-      this.subscriptions[index].IsActive = false;
-      this.subscriptions[index].CanceledAt = new Date();
-      this.subscriptions[index].UpdatedAt = new Date();
-    }
-
-    this.closeCancelModal();
-    this.showToastMessage('Subscription canceled successfully', 'success');
-    // Add your API call here
+          this.closeCancelModal();
+          this.showToastMessage(
+            'Subscription canceled successfully',
+            'success',
+          );
+          this.isCanceling = false;
+        },
+        error: (error) => {
+          console.error('Failed to cancel subscription:', error);
+          this.showToastMessage(
+            'Failed to cancel subscription. Please try again.',
+            'error',
+          );
+          this.isCanceling = false;
+        },
+      });
   }
 
   // Renew subscription
-  renewSubscription(subscription: Subscription): void {
-    const durationInDays = subscription.DurationInDays;
+  renewSubscription(subscription: FetchedSubscription): void {
+    const durationInDays = subscription.durationInDays;
     if (durationInDays === 7) {
       this.selectedPlan = 'weekly';
     } else if (durationInDays === 30) {
@@ -251,10 +271,7 @@ export class Subscriptions implements OnInit {
     } else if (durationInDays === 365) {
       this.selectedPlan = 'yearly';
     }
-
-    // Navigate to payment or open upgrade modal
-    this.router.navigate(['/dashboard']);
-    this.showToastMessage('Redirecting to payment...', 'info');
+    this.openUpgradeModal();
   }
 
   // Upgrade plan
@@ -269,15 +286,97 @@ export class Subscriptions implements OnInit {
 
   upgradePlan(plan: 'weekly' | 'monthly' | 'yearly'): void {
     this.selectedPlan = plan;
-    this.closeUpgradeModal();
-    // Navigate to payment
-    this.router.navigate(['/dashboard']);
-    this.showToastMessage('Redirecting to payment...', 'info');
+    this.showUpgradeModal = false;
+    // Directly show payment modal with M-Pesa selected
+    this.selectPaymentMethod('mpesa');
+  }
+
+  selectPaymentMethod(method: 'mpesa' | 'stripe'): void {
+    this.paymentMethod = method;
+    this.showPaymentModal = true;
+  }
+
+  get selectedPlanPrice(): number {
+    if (!this.selectedPlan) return 0;
+    const prices = { weekly: 100, monthly: 399, yearly: 1999 };
+    return prices[this.selectedPlan];
+  }
+
+  get selectedPlanName(): string {
+    if (!this.selectedPlan) return '';
+    return (
+      this.selectedPlan.charAt(0).toUpperCase() + this.selectedPlan.slice(1)
+    );
+  }
+
+  closePaymentModal(): void {
+    this.showPaymentModal = false;
+    this.paymentMethod = null;
+    this.paymentStatus = 'idle';
+    this.paymentMessage = '';
+  }
+
+  async completePayment(): Promise<void> {
+    if (!this.paymentMethod || !this.selectedPlan) return;
+
+    this.paymentStatus = 'initiated';
+    this.paymentMessage = 'Payment initiated...';
+
+    if (this.paymentMethod === 'mpesa') {
+      const paymentDetails: StkPushDto = {
+        Amount: this.selectedPlanPrice,
+        DurationInDays:
+          this.selectedPlan === 'weekly'
+            ? 7
+            : this.selectedPlan === 'monthly'
+              ? 30
+              : 365,
+      };
+
+      this.subscriptionService
+        .initiatePaymentSubscription(paymentDetails)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: async (res) => {
+            if (res.success) {
+              this.paymentStatus = 'stk-sent';
+              this.paymentMessage =
+                'STK push sent to your phone. Please enter your M-Pesa PIN.';
+
+              await this.delay(5000);
+              this.paymentStatus = 'processing';
+              this.paymentMessage = 'Processing payment...';
+            } else {
+              this.paymentStatus = 'failed';
+              this.paymentMessage =
+                res.errorMessage || 'Failed to initiate payment subscription';
+              await this.delay(2000);
+              this.closePaymentModal();
+            }
+          },
+          error: (error: any) => {
+            this.paymentStatus = 'failed';
+            this.paymentMessage =
+              error?.error?.errorMessage ||
+              'Failed to initiate payment subscription';
+            this.showToastMessage(this.paymentMessage, 'error');
+          },
+        });
+    } else if (this.paymentMethod === 'stripe') {
+      // Handle Stripe payment flow (not implemented in this example)
+      this.paymentStatus = 'failed';
+      this.paymentMessage = 'Stripe payment method is not implemented yet.';
+      await this.delay(3000);
+      this.closePaymentModal();
+    }
   }
 
   // View payment details
   viewPaymentDetails(payment: PaymentData): void {
-    this.showToastMessage(`Transaction ID: ${payment.TransactionId}`, 'info');
+    this.showToastMessage(
+      `Transaction ID: ${payment.checkoutRequestId.substring(0, 8)} ...`,
+      'info',
+    );
   }
 
   // Download invoice
@@ -289,7 +388,7 @@ export class Subscriptions implements OnInit {
   // Toast
   showToastMessage(
     message: string,
-    type: 'success' | 'error' | 'info' = 'info'
+    type: 'success' | 'error' | 'info' = 'info',
   ): void {
     this.toastMessage = message;
     this.toastType = type;
@@ -299,7 +398,6 @@ export class Subscriptions implements OnInit {
     }, 3000);
   }
 
-  // Helper
   private delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }

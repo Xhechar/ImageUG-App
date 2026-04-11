@@ -77,7 +77,14 @@ public class AuthRepository : IAuthRepository
         Body = $"Dear {user.Username},\n\nYour password recovery verification code is: {verificationCode}\n\nThis code will expire in 1 hour.\n\nIf you did not request a password reset, please ignore this email.\n\nBest regards,\nImage URL Generator Team"
       };
 
-      await _emailService.SendEmail(emailData);
+      try
+        {
+          await _emailService.SendEmail(emailData);
+        }
+      catch (Exception)
+        {
+          return RepositoryResponse<object>.Failure("SERVER ERROR", "unable to send verification code email, try again later.");
+        }
 
       return RepositoryResponse<object>.Success("verification code generated successfully!", Data: new { VerificationCode = verificationCode });
     }

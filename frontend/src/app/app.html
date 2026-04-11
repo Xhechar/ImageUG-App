@@ -1,7 +1,7 @@
 <nav
   [class.scrolled]="isScrolled"
-  class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
-  [ngClass]="isScrolled ? 'bg-dark-card/95 backdrop-blur-xl border-b border-accent/20 shadow-glow' : 'bg-transparent'"
+  class="fixed top-0 left-0 right-0 z-50 bg-dark-card/95 backdrop-blur-xl shadow-glow transition-all duration-300"
+  [ngClass]="isScrolled ? 'border-b border-accent/20' : ''"
 >
   <div class="max-w-7xl mx-auto px-6 py-4">
     <div class="flex items-center justify-between">
@@ -11,9 +11,9 @@
         (click)="navigateTo('/')"
       >
         <div
-          class="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center shadow-glow"
+          class="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center shadow-glow"
         >
-          <i class="bx bx-image text-dark-bg text-2xl"></i>
+          <i class="bx bx-camera-monochrome text-white text-2xl text-center"></i>
         </div>
         <span class="text-2xl font-bold text-gradient hidden sm:block"
           >Imagen</span
@@ -66,7 +66,7 @@
           (click)="navigateTo('/gallery')"
           class="nav-link text-light-text hover:text-primary transition-colors duration-300 cursor-pointer font-medium"
         >
-          <i class="bx bx-image mr-1"></i> Gallery
+          <i class="bx bx-image-sparkle mr-1"></i> Gallery
         </a>
         <a
           routerLink="/subscriptions"
@@ -139,7 +139,7 @@
               <span class="text-light-text">My Profile</span>
             </a>
             <a
-              (click)="navigateTo('/settings')"
+              (click)="navigateTo('/profile')"
               class="flex items-center gap-3 px-4 py-3 hover:bg-dark-bg transition-colors duration-200 cursor-pointer"
             >
               <i class="bx bx-cog text-accent text-xl"></i>
@@ -172,10 +172,10 @@
     <!-- Mobile Menu -->
     <div
       *ngIf="isMobileMenuOpen"
-      class="lg:hidden mt-4 pb-4 border-t border-accent/20 pt-4 animate-fade-in"
+      class="lg:hidden mt-4 pb-4 border-t border-accent/20 pt-4 animate-fade-in bg-dark-card rounded-xl shadow-glow"
     >
       <!-- Not Logged In Mobile Menu -->
-      <div *ngIf="!isLoggedIn" class="space-y-2">
+      <div *ngIf="!isLoggedIn" class="space-y-2 w-full">
         <a
           (click)="navigateTo('/')"
           class="block px-4 py-3 text-light-text hover:bg-dark-bg hover:text-primary rounded-xl transition-all duration-200 cursor-pointer font-medium"
@@ -183,13 +183,13 @@
           Home
         </a>
         <a
-          (click)="navigateTo('/features')"
+          href="#features"
           class="block px-4 py-3 text-light-text hover:bg-dark-bg hover:text-primary rounded-xl transition-all duration-200 cursor-pointer font-medium"
         >
           Features
         </a>
         <a
-          (click)="navigateTo('/pricing')"
+          href="#pricing"
           class="block px-4 py-3 text-light-text hover:bg-dark-bg hover:text-primary rounded-xl transition-all duration-200 cursor-pointer font-medium"
         >
           Pricing
@@ -209,7 +209,7 @@
             Login
           </button>
           <button
-            (click)="navigateTo('/signup')"
+            (click)="navigateTo('/join-us')"
             class="w-full px-4 py-3 bg-primary hover:bg-primary/90 text-dark-bg font-semibold rounded-xl transition-all duration-300"
           >
             Sign Up
@@ -263,7 +263,7 @@
           (click)="navigateTo('/gallery')"
           class="flex items-center gap-3 px-4 py-3 text-light-text hover:bg-dark-bg hover:text-primary rounded-xl transition-all duration-200 cursor-pointer"
         >
-          <i class="bx bx-image text-xl"></i>
+          <i class="bx bx-image-sparkle text-xl"></i>
           <span class="font-medium">Gallery</span>
         </a>
         <a
@@ -281,7 +281,7 @@
           <span class="font-medium">Profile</span>
         </a>
         <a
-          (click)="navigateTo('/settings')"
+          (click)="navigateTo('/profile')"
           class="flex items-center gap-3 px-4 py-3 text-light-text hover:bg-dark-bg hover:text-primary rounded-xl transition-all duration-200 cursor-pointer"
         >
           <i class="bx bx-cog text-xl"></i>

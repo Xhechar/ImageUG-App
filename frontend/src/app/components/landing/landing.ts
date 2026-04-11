@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { FetchedImageUrl } from '../../interfaces/ImageUrl';
 import { FormsModule } from '@angular/forms';
@@ -41,6 +41,7 @@ export class Landing implements OnInit {
     private imgs: Imageurl,
     private as: Auth,
     private sgrs: Signalr,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -52,8 +53,17 @@ export class Landing implements OnInit {
     this.as.isLoggedIn().subscribe({
       next: (res) => {
         this.isLoggedIn = !!(res.success && res.data);
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.isLoggedIn = false;
+        this.cdr.detectChanges();
       },
     });
+  }
+
+  navigateToSingleImage(imageId: string): void {
+    this.router.navigate(['/published-images', imageId]);
   }
 
   fetchPublishedImages(): void {
@@ -68,11 +78,13 @@ export class Landing implements OnInit {
         } else {
           this.allPublishedImages = [];
         }
+        this.cdr.detectChanges();
       },
       error: (err: any) => {
         this.isLoadingImages = false;
         this.imagesError =
           err?.error?.errorMessage ?? err.message ?? 'Failed to load images.';
+        this.cdr.detectChanges();
       },
     });
   }
@@ -130,17 +142,22 @@ export class Landing implements OnInit {
   }
 
   async uploadImage(file: File): Promise<void> {
-
-    if(!this.isLoggedIn) {
+    if (!this.isLoggedIn) {
       if (sessionStorage.getItem('submissionAttempt') !== null) {
         if (Number(sessionStorage.getItem('submissionAttempt')) === 3) {
-          this.showToastMessage('Please log in to upload more images.', 'error');
+          this.showToastMessage(
+            'Please log in to upload more images.',
+            'error',
+          );
           this.navigateToLogin();
           return;
         }
       }
 
-      sessionStorage.setItem('submissionAttempt', String(Number(sessionStorage.getItem('submissionAttempt') ?? '0') + 1));
+      sessionStorage.setItem(
+        'submissionAttempt',
+        String(Number(sessionStorage.getItem('submissionAttempt') ?? '0') + 1),
+      );
     }
 
     this.isUploading = true;
