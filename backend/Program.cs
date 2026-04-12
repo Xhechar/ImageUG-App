@@ -116,4 +116,5 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapHub<BackendHub>("/hub");
 
+app.Urls.Add("http://0.0.0.0:8080");
 app.Run();
