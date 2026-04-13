@@ -1,4 +1,4 @@
-const rootUrl = 'https://api-imagen.onrender.com/'
+export const rootUrl = 'https://api-imagen.onrender.com/'
 
 export const environment = {
   authApi: `${rootUrl}Auth/`,

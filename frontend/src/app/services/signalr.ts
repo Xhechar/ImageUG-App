@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
+import { rootUrl } from '../Environment/service.environment';
 
 @Injectable({
   providedIn: 'root',
@@ -9,8 +10,8 @@ export class Signalr {
 
   startConnection() {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('http://localhost:5231/hub', {
-        withCredentials: true, // 🔥 important for cookies
+      .withUrl(`${rootUrl}hub`, {
+        withCredentials: true,
       })
       .withAutomaticReconnect()
       .build();
