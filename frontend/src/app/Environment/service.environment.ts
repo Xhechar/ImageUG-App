@@ -1,4 +1,4 @@
-const rootUrl = 'http://localhost:5231/'
+const rootUrl = 'https://api-imagen.onrender.com/'
 
 export const environment = {
   authApi: `${rootUrl}Auth/`,
