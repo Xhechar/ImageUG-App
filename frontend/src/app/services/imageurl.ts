@@ -64,13 +64,19 @@ export class Imageurl {
 
   getPublishedImages(): Observable<ServiceResult<FetchedImageUrl>> {
     return this.http.get<ServiceResult<FetchedImageUrl>>(
-      `${this.API_URL}get-published-images`
+      `${this.API_URL}get-published-images`,
+      {
+        withCredentials: true
+      }
     );
   }
 
   getSinglePublishedImage(ImageUrlId: string): Observable<ServiceResult<FetchedImageUrl>> {
     return this.http.get<ServiceResult<FetchedImageUrl>>(
-      `${this.API_URL}get-single-published-image-details/${ImageUrlId}`
+      `${this.API_URL}get-single-published-image-details/${ImageUrlId}`,
+      {
+        withCredentials: true
+      }
     );
   }
 }

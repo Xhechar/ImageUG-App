@@ -19,7 +19,10 @@ export class User {
   createUser(details: CreateUserDto): Observable<ServiceResult<User>> {
     return this.http.post<ServiceResult<User>>(
       `${this.API_URL}create-user`,
-      details
+      details,
+      {
+        withCredentials: true
+      }
     );
   }
 
