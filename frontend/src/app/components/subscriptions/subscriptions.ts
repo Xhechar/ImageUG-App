@@ -352,6 +352,7 @@ export class Subscriptions implements OnInit, OnDestroy {
                 res.errorMessage || 'Failed to initiate payment subscription';
               await this.delay(2000);
               this.closePaymentModal();
+              this.cdr.detectChanges();
             }
           },
           error: (error: any) => {
@@ -360,6 +361,7 @@ export class Subscriptions implements OnInit, OnDestroy {
               error?.error?.errorMessage ||
               'Failed to initiate payment subscription';
             this.showToastMessage(this.paymentMessage, 'error');
+            this.cdr.detectChanges();
           },
         });
     } else if (this.paymentMethod === 'stripe') {

@@ -428,6 +428,7 @@ export class Dashboard implements OnInit {
               this.paymentMessage =
                 res.errorMessage || 'Failed to initiate payment subscription';
               this.closePaymentModal();
+              this.cdr.detectChanges();
             }
           },
           error: (error: any) => {
@@ -436,6 +437,7 @@ export class Dashboard implements OnInit {
               error?.error?.errorMessage ||
               'Failed to initiate payment subscription';
             this.closePaymentModal();
+            this.cdr.detectChanges();
           },
         });
     } else if (this.paymentMethod === 'stripe') {

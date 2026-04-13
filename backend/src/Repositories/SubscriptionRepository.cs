@@ -130,15 +130,17 @@ public class SubscriptionRepository : ISubscriptionRepository
 
     var PaymentDataExists = await _context.PaymentData.FirstOrDefaultAsync(p => p.MerchantRequestId == SafaricomResponseBody.Body!.stkCallback!.MerchantRequestID  && p.CheckoutRequestId == SafaricomResponseBody.Body!.stkCallback!.CheckoutRequestID);
 
+    if (PaymentDataExists == null) {
+      Console.WriteLine("Payment data not found for the callback.");
+      return;
+    }
+
     if (SafaricomResponseBody!.Body!.stkCallback!.ResultCode != 0) {
       Console.WriteLine($"Payment failed with ResultCode: {SafaricomResponseBody.Body.stkCallback.ResultCode}, ResultDesc: {SafaricomResponseBody.Body.stkCallback.ResultDesc}");
-      if (PaymentDataExists != null) {
-        PaymentDataExists.IsSuccessful = false;
-        PaymentDataExists.ResponseDescription = $"Payment failed: {SafaricomResponseBody.Body.stkCallback.ResultDesc}";
-        await _context.SaveChangesAsync();
-        await _hubContext.Clients.User(PaymentDataExists.UserId).SendAsync("subscription-failed", "Your payment was not successful. Please try again.");
-      }
-      await _hubContext.Clients.User(PaymentDataExists!.UserId).SendAsync("subscription-failed", SafaricomResponseBody.Body.stkCallback.ResultDesc ?? "Your payment was not successful. Please try again.");
+      PaymentDataExists.IsSuccessful = false;
+      PaymentDataExists.ResponseDescription = $"Payment failed: {SafaricomResponseBody.Body.stkCallback.ResultDesc}";
+      await _context.SaveChangesAsync();
+      await _hubContext.Clients.User(PaymentDataExists.UserId).SendAsync("subscription-failed", SafaricomResponseBody.Body.stkCallback.ResultDesc ?? "Your payment was not successful. Please try again.");
       return;
     }
 
