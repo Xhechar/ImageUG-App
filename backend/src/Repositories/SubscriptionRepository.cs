@@ -1,4 +1,6 @@
 
+using System.Text;
+using System.Text.Json;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,10 +11,10 @@ public class SubscriptionRepository : ISubscriptionRepository
   private readonly IPaymentService _paymentService;
   private readonly IConfiguration _configuration;
   private readonly IHubContext<BackendHub> _hubContext;
-  public SubscriptionRepository(DataContext context, HttpClient http, IPaymentService paymentService, IConfiguration configuration, IHubContext<BackendHub> hubContext)
+  public SubscriptionRepository(DataContext context, IHttpClientFactory httpClientFactory, IPaymentService paymentService, IConfiguration configuration, IHubContext<BackendHub> hubContext)
   {
     _context = context;
-    _http = http;
+    _http = httpClientFactory.CreateClient("MpesaApi");
     _paymentService = paymentService;
     _configuration = configuration;
     _hubContext = hubContext;
@@ -44,28 +46,32 @@ public class SubscriptionRepository : ISubscriptionRepository
       Password = Password,
       Timestamp = Timestamp,
       TransactionType = "CustomerPayBillOnline",
-      Amount = pushDto.Amount,
-      PartyA = user.PhoneNumber,
+      Amount = pushDto.Amount.ToString(),
+      PartyA = user.PhoneNumber.StartsWith('+') ? user.PhoneNumber[1..] : user.PhoneNumber,
       PartyB = BusinessShortCode!,
-      PhoneNumber = user.PhoneNumber,
+      PhoneNumber = user.PhoneNumber.StartsWith('+') ? user.PhoneNumber[1..] : user.PhoneNumber,
       CallBackURL = CallBackUrl!,
       AccountReference = "Imagen_Subscription",
       TransactionDesc = "Subscription Payment"
     };
 
-    _http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+    var json = JsonSerializer.Serialize(stkPushRequest);
 
-    var response = await _http.PostAsJsonAsync(
-      PaymentSettings["Env"] == "Production" ? "https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest" : "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest",
-      stkPushRequest
-    );
+    var request = new HttpRequestMessage(HttpMethod.Post, "mpesa/stkpush/v1/processrequest");
+
+    request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+
+    request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+
+    var response = await _http.SendAsync(request);
 
     if (!response.IsSuccessStatusCode) {
       return RepositoryResponse<Subscription>.Failure("SERVER ERROR", "unable to initiate payment request, try again later.");
     }
 
-    var json = await response.Content.ReadAsStringAsync();
-    var stkResponse = System.Text.Json.JsonSerializer.Deserialize<STKPushResponseDto>(json);
+    var result = await response.Content.ReadAsStringAsync();
+
+    var stkResponse = JsonSerializer.Deserialize<STKPushResponseDto>(json);
 
     if (stkResponse == null) {
       return RepositoryResponse<Subscription>.Failure("SERVER ERROR", "invalid response from payment gateway, try again later.");
@@ -120,8 +126,9 @@ public class SubscriptionRepository : ISubscriptionRepository
   public async Task SafaricomCallback(object callbackDto)
   {
     
-    var json = System.Text.Json.JsonSerializer.Serialize(callbackDto);
-    var SafaricomResponseBody = System.Text.Json.JsonSerializer.Deserialize<SafaricomCallbackDto>(json);
+    var json = JsonSerializer.Serialize(callbackDto);
+    
+    var SafaricomResponseBody = JsonSerializer.Deserialize<SafaricomCallbackDto>(json);
 
     if (SafaricomResponseBody == null) {
       Console.WriteLine("Invalid Safaricom callback data received.");

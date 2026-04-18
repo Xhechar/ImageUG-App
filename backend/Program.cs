@@ -5,12 +5,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Npgsql.EntityFrameworkCore.PostgreSQL;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services
-builder.Services.AddHttpClient<PaymentService>();
+builder.Services.AddHttpClient("MpesaApi", client => {
+    client.BaseAddress = new Uri(builder.Configuration["PaymentSettings:Env"] == "Production" ? "https://api.safaricom.co.ke/" : "https://sandbox.safaricom.co.ke/");
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();

@@ -8,28 +8,29 @@ public class PaymentService : IPaymentService
   private readonly HttpClient http;
   private readonly IConfiguration configuration;
 
-  public PaymentService(HttpClient http, IConfiguration configuration)
+  public PaymentService(IHttpClientFactory httpClientFactory, IConfiguration configuration)
   {
-    this.http = http;
+    this.http = httpClientFactory.CreateClient("MpesaApi");
     this.configuration = configuration;
   }
 
   public async Task<string> GetAccessToken()
   {
     var PaymentSettings = this.configuration.GetSection("PaymentSettings");
-    string Url = PaymentSettings["Env"] == "Production" ? "https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials" : "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials";
 
     var Key = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{PaymentSettings["ConsumerKey"]}:{PaymentSettings["ConsumerSecret"]}"));
 
-    this.http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("basic", $"{Key}");
+    var request = new HttpRequestMessage(HttpMethod.Get, "oauth/v1/generate?grant_type=client_credentials");
 
-    var Response = await this.http.GetAsync(Url);
+    request.Headers.Authorization = new AuthenticationHeaderValue("Basic", $"{Key}");
 
-    if(Response.IsSuccessStatusCode) {
-      var json = await Response.Content.ReadAsStringAsync();
-      return JsonSerializer.Deserialize<TokenResponseDto>(json)!.access_token!;
-    }
+    var Response = await this.http.SendAsync(request);
 
-    return "";
+    Response.EnsureSuccessStatusCode();
+
+    var json = await Response.Content.ReadAsStringAsync();
+
+    return JsonSerializer.Deserialize<TokenResponseDto>(json)!.access_token!;
+
   }
 }
