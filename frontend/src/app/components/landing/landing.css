@@ -1,3 +1,6 @@
+/* ═══════════════════════════════════════════════════════
+   TEXT GRADIENT
+═══════════════════════════════════════════════════════ */
 .text-gradient {
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 50%, var(--color-secondary) 100%);
   -webkit-background-clip: text;
@@ -5,108 +8,411 @@
   background-clip: text;
 }
 
-.shadow-glow {
-  box-shadow: 0 0 30px rgba(99, 102, 241, 0.2);
+/* ═══════════════════════════════════════════════════════
+   HERO GRID BACKGROUND
+═══════════════════════════════════════════════════════ */
+.hero-grid-bg {
+  background-image:
+    linear-gradient(rgba(99, 102, 241, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.12) 1px, transparent 1px);
+  background-size: 64px 64px;
 }
 
-.shadow-glow-lg {
-  box-shadow: 0 0 50px rgba(99, 102, 241, 0.3);
+/* ═══════════════════════════════════════════════════════
+   BADGES — colored borders, not white
+═══════════════════════════════════════════════════════ */
+.badge-primary {
+  border: 1px solid rgba(99, 102, 241, 0.35);
+}
+.badge-primary-sm {
+  border: 1px solid rgba(99, 102, 241, 0.25);
+}
+.badge-accent-sm {
+  border: 1px solid rgba(168, 85, 247, 0.25);
+}
+.badge-secondary-sm {
+  border: 1px solid rgba(6, 182, 212, 0.25);
+}
+.badge-secondary-xs {
+  border: 1px solid rgba(6, 182, 212, 0.30);
 }
 
+/* ═══════════════════════════════════════════════════════
+   STAT CARDS — each colored with matching brand color
+═══════════════════════════════════════════════════════ */
+.stat-primary {
+  background: rgba(99, 102, 241, 0.05);
+  border: 1px solid rgba(99, 102, 241, 0.20);
+  box-shadow: inset 0 1px 0 rgba(99, 102, 241, 0.08);
+}
+.stat-primary:hover {
+  background: rgba(99, 102, 241, 0.09);
+  border-color: rgba(99, 102, 241, 0.35);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.12), inset 0 1px 0 rgba(99, 102, 241, 0.12);
+}
+
+.stat-accent {
+  background: rgba(168, 85, 247, 0.05);
+  border: 1px solid rgba(168, 85, 247, 0.20);
+  box-shadow: inset 0 1px 0 rgba(168, 85, 247, 0.08);
+}
+.stat-accent:hover {
+  background: rgba(168, 85, 247, 0.09);
+  border-color: rgba(168, 85, 247, 0.35);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.12), inset 0 1px 0 rgba(168, 85, 247, 0.12);
+}
+
+.stat-secondary {
+  background: rgba(6, 182, 212, 0.05);
+  border: 1px solid rgba(6, 182, 212, 0.20);
+  box-shadow: inset 0 1px 0 rgba(6, 182, 212, 0.08);
+}
+.stat-secondary:hover {
+  background: rgba(6, 182, 212, 0.09);
+  border-color: rgba(6, 182, 212, 0.35);
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.12), inset 0 1px 0 rgba(6, 182, 212, 0.12);
+}
+
+/* ═══════════════════════════════════════════════════════
+   UPLOAD CARD — primary-colored glow, no white border
+═══════════════════════════════════════════════════════ */
+.upload-card {
+  border: 1px solid rgba(99, 102, 241, 0.18);
+  box-shadow:
+    0 0 0 1px rgba(99, 102, 241, 0.06),
+    0 32px 80px rgba(0, 0, 0, 0.55),
+    0 0 60px rgba(99, 102, 241, 0.06),
+    inset 0 1px 0 rgba(99, 102, 241, 0.08);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.upload-card:hover {
+  border-color: rgba(99, 102, 241, 0.32);
+  box-shadow:
+    0 0 0 1px rgba(99, 102, 241, 0.10),
+    0 40px 100px rgba(0, 0, 0, 0.60),
+    0 0 80px rgba(99, 102, 241, 0.10),
+    inset 0 1px 0 rgba(99, 102, 241, 0.12);
+}
+
+.upload-card-divider {
+  border-bottom: 1px solid rgba(99, 102, 241, 0.12);
+}
+
+/* ═══════════════════════════════════════════════════════
+   DROPZONE — primary dashed border
+═══════════════════════════════════════════════════════ */
+.dropzone-default {
+  border: 2px dashed rgba(99, 102, 241, 0.30);
+  background: rgba(99, 102, 241, 0.03);
+}
+.dropzone-hover {
+  border-color: rgba(99, 102, 241, 0.55) !important;
+  background: rgba(99, 102, 241, 0.06) !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   URL BAR — primary colored border
+═══════════════════════════════════════════════════════ */
+.url-bar {
+  border: 1px solid rgba(99, 102, 241, 0.20);
+}
+.url-bar:hover {
+  border-color: rgba(99, 102, 241, 0.38);
+  box-shadow: 0 0 16px rgba(99, 102, 241, 0.08);
+}
+
+/* ═══════════════════════════════════════════════════════
+   NOTICE — accent colored
+═══════════════════════════════════════════════════════ */
+.notice-accent {
+  border: 1px solid rgba(168, 85, 247, 0.22);
+}
+
+/* ═══════════════════════════════════════════════════════
+   GHOST BUTTONS — colored, not white-bordered
+═══════════════════════════════════════════════════════ */
+.btn-ghost-accent {
+  background: rgba(168, 85, 247, 0.07);
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  color: rgba(241, 245, 249, 0.75);
+}
+.btn-ghost-accent:hover {
+  background: rgba(168, 85, 247, 0.13);
+  border-color: rgba(168, 85, 247, 0.45);
+  color: #f1f5f9;
+  box-shadow: 0 0 24px rgba(168, 85, 247, 0.15);
+}
+
+.btn-ghost-accent-lg {
+  background: rgba(168, 85, 247, 0.07);
+  border: 1px solid rgba(168, 85, 247, 0.28);
+  color: rgba(168, 85, 247, 0.85);
+}
+.btn-ghost-accent-lg:hover {
+  background: rgba(168, 85, 247, 0.14);
+  border-color: rgba(168, 85, 247, 0.50);
+  color: #a855f7;
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.18);
+}
+
+.btn-outline-accent {
+  background: rgba(168, 85, 247, 0.05);
+  border: 1px solid rgba(168, 85, 247, 0.30);
+  color: rgba(241, 245, 249, 0.65);
+}
+.btn-outline-accent:hover {
+  background: rgba(168, 85, 247, 0.10);
+  border-color: rgba(168, 85, 247, 0.50);
+  color: #f1f5f9;
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.14);
+}
+
+.btn-outline-secondary {
+  background: rgba(6, 182, 212, 0.05);
+  border: 1px solid rgba(6, 182, 212, 0.28);
+  color: rgba(241, 245, 249, 0.65);
+}
+.btn-outline-secondary:hover {
+  background: rgba(6, 182, 212, 0.10);
+  border-color: rgba(6, 182, 212, 0.48);
+  color: #f1f5f9;
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.14);
+}
+
+.btn-refresh {
+  border: 1px solid rgba(99, 102, 241, 0.22);
+}
+.btn-refresh:hover {
+  border-color: rgba(99, 102, 241, 0.40);
+  box-shadow: 0 0 14px rgba(99, 102, 241, 0.10);
+}
+
+.btn-pagination {
+  background: rgba(99, 102, 241, 0.05);
+  border: 1px solid rgba(99, 102, 241, 0.20);
+  color: rgba(241, 245, 249, 0.50);
+}
+.btn-pagination:hover:not(:disabled) {
+  background: rgba(99, 102, 241, 0.10);
+  border-color: rgba(99, 102, 241, 0.40);
+  color: #f1f5f9;
+  box-shadow: 0 0 18px rgba(99, 102, 241, 0.12);
+}
+
+/* ═══════════════════════════════════════════════════════
+   FEATURE CARDS — each has its own colored border + bg
+═══════════════════════════════════════════════════════ */
+.feature-card-primary {
+  background: rgba(99, 102, 241, 0.04);
+  border: 1px solid rgba(99, 102, 241, 0.18);
+}
+.feature-card-primary:hover {
+  background: rgba(99, 102, 241, 0.08);
+  border-color: rgba(99, 102, 241, 0.35);
+  box-shadow: 0 8px 40px rgba(99, 102, 241, 0.12), 0 0 0 1px rgba(99, 102, 241, 0.10);
+}
+
+.feature-card-accent {
+  background: rgba(168, 85, 247, 0.04);
+  border: 1px solid rgba(168, 85, 247, 0.18);
+}
+.feature-card-accent:hover {
+  background: rgba(168, 85, 247, 0.08);
+  border-color: rgba(168, 85, 247, 0.35);
+  box-shadow: 0 8px 40px rgba(168, 85, 247, 0.12), 0 0 0 1px rgba(168, 85, 247, 0.10);
+}
+
+.feature-card-secondary {
+  background: rgba(6, 182, 212, 0.04);
+  border: 1px solid rgba(6, 182, 212, 0.18);
+}
+.feature-card-secondary:hover {
+  background: rgba(6, 182, 212, 0.08);
+  border-color: rgba(6, 182, 212, 0.35);
+  box-shadow: 0 8px 40px rgba(6, 182, 212, 0.12), 0 0 0 1px rgba(6, 182, 212, 0.10);
+}
+
+.feature-card-purple {
+  background: rgba(168, 85, 247, 0.04);
+  border: 1px solid rgba(147, 51, 234, 0.18);
+}
+.feature-card-purple:hover {
+  background: rgba(147, 51, 234, 0.08);
+  border-color: rgba(147, 51, 234, 0.35);
+  box-shadow: 0 8px 40px rgba(147, 51, 234, 0.12), 0 0 0 1px rgba(147, 51, 234, 0.10);
+}
+
+.feature-card-pink {
+  background: rgba(236, 72, 153, 0.04);
+  border: 1px solid rgba(236, 72, 153, 0.18);
+}
+.feature-card-pink:hover {
+  background: rgba(236, 72, 153, 0.08);
+  border-color: rgba(236, 72, 153, 0.35);
+  box-shadow: 0 8px 40px rgba(236, 72, 153, 0.12), 0 0 0 1px rgba(236, 72, 153, 0.10);
+}
+
+.feature-card-indigo {
+  background: rgba(99, 102, 241, 0.04);
+  border: 1px solid rgba(79, 70, 229, 0.18);
+}
+.feature-card-indigo:hover {
+  background: rgba(79, 70, 229, 0.08);
+  border-color: rgba(79, 70, 229, 0.35);
+  box-shadow: 0 8px 40px rgba(79, 70, 229, 0.12), 0 0 0 1px rgba(79, 70, 229, 0.10);
+}
+
+/* ═══════════════════════════════════════════════════════
+   PRICING CARDS — colored borders
+═══════════════════════════════════════════════════════ */
+.pricing-card-accent {
+  background: rgba(168, 85, 247, 0.04);
+  border: 1px solid rgba(168, 85, 247, 0.20);
+}
+.pricing-card-accent:hover {
+  background: rgba(168, 85, 247, 0.07);
+  border-color: rgba(168, 85, 247, 0.38);
+  box-shadow: 0 12px 48px rgba(168, 85, 247, 0.12);
+}
+
+.pricing-card-popular {
+  background: linear-gradient(160deg, rgba(99, 102, 241, 0.12) 0%, rgba(26, 26, 36, 0.85) 100%);
+  border: 2px solid rgba(99, 102, 241, 0.55);
+  box-shadow:
+    0 0 60px rgba(99, 102, 241, 0.22),
+    0 0 0 1px rgba(99, 102, 241, 0.10),
+    inset 0 1px 0 rgba(99, 102, 241, 0.15);
+}
+.pricing-card-popular:hover {
+  box-shadow:
+    0 0 80px rgba(99, 102, 241, 0.30),
+    0 0 0 1px rgba(99, 102, 241, 0.15),
+    inset 0 1px 0 rgba(99, 102, 241, 0.20);
+}
+
+.pricing-card-secondary {
+  background: rgba(6, 182, 212, 0.04);
+  border: 1px solid rgba(6, 182, 212, 0.20);
+}
+.pricing-card-secondary:hover {
+  background: rgba(6, 182, 212, 0.07);
+  border-color: rgba(6, 182, 212, 0.38);
+  box-shadow: 0 12px 48px rgba(6, 182, 212, 0.12);
+}
+
+/* ═══════════════════════════════════════════════════════
+   GALLERY CARDS — primary glow on hover
+═══════════════════════════════════════════════════════ */
+.gallery-card {
+  border: 1px solid rgba(99, 102, 241, 0.14);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+}
+.gallery-card:hover {
+  border-color: rgba(99, 102, 241, 0.32);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.45),
+    0 0 30px rgba(99, 102, 241, 0.10);
+}
+
+.gallery-card-divider {
+  border-top: 1px solid rgba(99, 102, 241, 0.12);
+}
+
+/* ═══════════════════════════════════════════════════════
+   SKELETON CARDS
+═══════════════════════════════════════════════════════ */
+.skeleton-card {
+  background: rgba(26, 26, 36, 0.7);
+  border: 1px solid rgba(99, 102, 241, 0.10);
+}
+
+/* ═══════════════════════════════════════════════════════
+   STATE ICONS (error / empty)
+═══════════════════════════════════════════════════════ */
+.error-icon-border {
+  border: 1px solid rgba(239, 68, 68, 0.22);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.08);
+}
+.empty-icon-border {
+  border: 1px solid rgba(99, 102, 241, 0.22);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.08);
+}
+
+.btn-error {
+  border: 1px solid rgba(239, 68, 68, 0.22);
+}
+.btn-error:hover {
+  border-color: rgba(239, 68, 68, 0.40);
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.10);
+}
+
+/* ═══════════════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════════════ */
+.toast-border {
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.55),
+    0 0 30px rgba(168, 85, 247, 0.10);
+}
+
+/* ═══════════════════════════════════════════════════════
+   PAGINATION COUNTER
+═══════════════════════════════════════════════════════ */
+.pagination-counter {
+  background: rgba(99, 102, 241, 0.06);
+  border: 1px solid rgba(99, 102, 241, 0.18);
+}
+
+/* ═══════════════════════════════════════════════════════
+   KEYFRAMES
+═══════════════════════════════════════════════════════ */
 @keyframes float {
-  0%, 100% {
-    transform: translateY(0px) scale(1);
-  }
-  50% {
-    transform: translateY(-20px) scale(1.05);
-  }
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50%       { transform: translateY(-24px) scale(1.04); }
 }
-
 @keyframes float-delayed {
-  0%, 100% {
-    transform: translateY(0px) scale(1);
-  }
-  50% {
-    transform: translateY(-30px) scale(1.08);
-  }
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50%       { transform: translateY(-32px) scale(1.06); }
 }
-
 @keyframes pulse-slow {
-  0%, 100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 0.8;
-  }
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 0.75; }
 }
-
 @keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes fade-in-delayed {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes slide-in {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+  from { transform: translateX(110%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
 }
 
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-.animate-float-delayed {
-  animation: float-delayed 8s ease-in-out infinite;
-  animation-delay: 1s;
-}
-
-.animate-pulse-slow {
-  animation: pulse-slow 4s ease-in-out infinite;
-}
-
-.animate-fade-in {
-  animation: fade-in 0.8s ease-out forwards;
-}
-
+/* ═══════════════════════════════════════════════════════
+   ANIMATION CLASSES
+═══════════════════════════════════════════════════════ */
+.animate-float         { animation: float          6s ease-in-out infinite; }
+.animate-float-delayed { animation: float-delayed  8s ease-in-out infinite; animation-delay: 1.2s; }
+.animate-pulse-slow    { animation: pulse-slow      4s ease-in-out infinite; }
+.animate-fade-in       { animation: fade-in         0.7s ease-out forwards; }
 .animate-fade-in-delayed {
-  animation: fade-in-delayed 1s ease-out forwards;
-  animation-delay: 0.3s;
+  animation: fade-in-delayed 0.9s ease-out forwards;
+  animation-delay: 0.25s;
   opacity: 0;
 }
+.animate-slide-in      { animation: slide-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
 
-.animate-slide-in {
-  animation: slide-in 0.4s ease-out forwards;
-}
-
+/* ═══════════════════════════════════════════════════════
+   LINE CLAMP + SCROLL
+═══════════════════════════════════════════════════════ */
 .line-clamp-2 {
   display: -webkit-box;
-  line-clamp: 2;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
