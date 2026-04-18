@@ -150,6 +150,7 @@ export class Landing implements OnInit {
             'error',
           );
           this.navigateToLogin();
+          this.cdr.detectChanges();
           return;
         }
       }
@@ -162,15 +163,18 @@ export class Landing implements OnInit {
 
     this.isUploading = true;
     this.generatedUrl = '';
+    this.cdr.detectChanges();
 
     const secureUrl: string = await uploadToCloudinary(file);
     if (secureUrl) {
       this.generatedUrl = secureUrl;
       this.isUploading = false;
       this.showToastMessage('Image uploaded successfully!', 'success');
+      this.cdr.detectChanges();
     } else {
       this.isUploading = false;
       this.showToastMessage('Image upload failed. Please try again.', 'error');
+      this.cdr.detectChanges();
     }
   }
 
@@ -178,7 +182,8 @@ export class Landing implements OnInit {
     if (!this.generatedUrl) return;
     navigator.clipboard.writeText(this.generatedUrl).then(() => {
       this.isCopied = true;
-      setTimeout(() => (this.isCopied = false), 1000);
+      this.cdr.detectChanges();
+      setTimeout(() => {this.isCopied = false; this.cdr.detectChanges();}, 1000);
     });
   }
 
