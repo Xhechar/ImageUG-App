@@ -110,9 +110,9 @@
             <label class="block cursor-pointer group/dz">
               <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden" [disabled]="isUploading" />
 
-              <!-- Preview state -->
-              <div *ngIf="selectedFilePreview; else dropZone" class="relative rounded-2xl overflow-hidden aspect-video border border-primary/25">
-                <img [src]="selectedFilePreview" alt="Preview" class="w-full h-full object-cover" />
+              <!-- Preview state — fixed height so the card never grows -->
+              <div *ngIf="selectedFilePreview; else dropZone" class="relative rounded-2xl overflow-hidden border border-primary/25 preview-image-container">
+                <img [src]="selectedFilePreview" alt="Preview" class="w-full h-full object-cover object-center" />
                 <div *ngIf="isUploading" class="absolute inset-0 bg-dark-bg/85 backdrop-blur-sm flex flex-col items-center justify-center gap-3">
                   <div class="relative w-10 h-10">
                     <div class="absolute inset-0 rounded-full border-2 border-primary/20"></div>
@@ -145,15 +145,15 @@
               </ng-template>
             </label>
 
-            <!-- Generated URL -->
+            <!-- Generated URL + actions row — compact, never wraps badly -->
             <div *ngIf="generatedUrl" class="space-y-2 animate-fade-in">
               <label class="text-[10px] font-bold text-light-text/35 tracking-[0.15em] uppercase">Your image URL</label>
-              <div class="flex items-center gap-2 bg-dark-bg/90 rounded-xl p-1.5 pl-4 transition-all duration-200 url-bar">
+              <div class="flex items-center gap-2 bg-dark-bg/90 rounded-xl p-1.5 pl-4 transition-all duration-200 url-bar min-w-0">
                 <i class="bx bx-link-alt text-primary/70 flex-shrink-0 text-sm"></i>
-                <span class="flex-1 text-xs text-light-text/60 truncate font-mono leading-none">{{ generatedUrl }}</span>
+                <span class="flex-1 text-xs text-light-text/60 truncate font-mono leading-none min-w-0">{{ generatedUrl }}</span>
                 <button
                   (click)="copyUrl()"
-                  class="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all duration-200 active:scale-95"
+                  class="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all duration-200 active:scale-95 whitespace-nowrap"
                   [ngClass]="isCopied
                     ? 'bg-green-500/15 text-green-400 border border-green-500/30'
                     : 'bg-primary/15 hover:bg-primary/25 text-primary border border-primary/30 hover:border-primary/50'"
