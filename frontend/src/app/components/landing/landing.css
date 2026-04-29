@@ -110,33 +110,24 @@
 /* ═══════════════════════════════════════════════════════
    PREVIEW IMAGE — fixed height so card never grows
 ═══════════════════════════════════════════════════════ */
-.preview-image-container {
+
+.upload-preview-box {
   position: relative;
-  height: 180px;
   width: 100%;
-  max-width: 100%;
+  height: 200px;
+  flex-shrink: 0;
   overflow: hidden;
   display: block;
-  flex-shrink: 0;
-  border-radius: 16px;
-  background: rgba(0, 0, 0, 0.3);
 }
-
-.preview-image-container img {
+ 
+.upload-preview-img {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;               /* top:0 right:0 bottom:0 left:0 */
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
   display: block;
-  transition: transform 0.4s ease;
-}
-
-/* Optional: slight zoom on hover when image is uploaded */
-.preview-image-container:hover img {
-  transform: scale(1.03);
 }
 
 /* ═══════════════════════════════════════════════════════

@@ -1,25 +1,14 @@
-<!-- Toast Notification -->
-<div
-  *ngIf="showToast"
-  class="fixed top-6 right-6 z-50 animate-slide-in max-w-sm w-full"
->
-  <div
-    class="relative overflow-hidden bg-dark-card/95 backdrop-blur-xl rounded-2xl px-5 py-4 shadow-2xl flex items-center gap-3 toast-border"
-  >
-    <div
-      class="absolute inset-0 bg-gradient-to-r from-primary/8 to-accent/8 pointer-events-none"
-    ></div>
-    <div
-      class="w-8 h-8 rounded-xl bg-accent/20 flex items-center justify-center flex-shrink-0"
-    >
+<!-- ═══════════════════════════════════════════════════════════
+     TOAST NOTIFICATION
+═══════════════════════════════════════════════════════════ -->
+<div *ngIf="showToast" class="fixed top-6 right-6 z-50 animate-slide-in max-w-sm w-full">
+  <div class="relative overflow-hidden bg-dark-card/95 backdrop-blur-xl rounded-2xl px-5 py-4 shadow-2xl flex items-center gap-3 toast-border">
+    <div class="absolute inset-0 bg-gradient-to-r from-primary/8 to-accent/8 pointer-events-none"></div>
+    <div class="w-8 h-8 rounded-xl bg-accent/20 flex items-center justify-center flex-shrink-0">
       <i class="bx bx-info-circle text-accent text-lg"></i>
     </div>
-    <p class="text-light-text/90 text-sm font-medium relative z-10">
-      {{ toastMessage }}
-    </p>
-    <div
-      class="absolute bottom-0 left-0 h-0.5 w-full bg-gradient-to-r from-primary via-accent to-secondary"
-    ></div>
+    <p class="text-light-text/90 text-sm font-medium relative z-10">{{ toastMessage }}</p>
+    <div class="absolute bottom-0 left-0 h-0.5 w-full bg-gradient-to-r from-primary via-accent to-secondary"></div>
   </div>
 </div>
 
@@ -28,76 +17,44 @@
 <!-- ═══════════════════════════════════════════════════════════
      HERO SECTION
 ═══════════════════════════════════════════════════════════ -->
-<section
-  class="relative min-h-screen flex items-center justify-center overflow-hidden bg-dark-bg px-4 sm:px-6 py-24"
->
+<section class="relative min-h-screen flex items-center justify-center overflow-hidden bg-dark-bg px-4 sm:px-6 py-24">
+
   <!-- Background mesh -->
   <div class="absolute inset-0 pointer-events-none overflow-hidden">
-    <div
-      class="absolute top-[-10%] left-[-5%] w-[650px] h-[650px] rounded-full bg-primary/10 blur-[130px] animate-float"
-    ></div>
-    <div
-      class="absolute bottom-[-10%] right-[-5%] w-[750px] h-[750px] rounded-full bg-accent/10 blur-[150px] animate-float-delayed"
-    ></div>
-    <div
-      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-secondary/6 blur-[110px] animate-pulse-slow"
-    ></div>
+    <div class="absolute top-[-10%] left-[-5%] w-[650px] h-[650px] rounded-full bg-primary/10 blur-[130px] animate-float"></div>
+    <div class="absolute bottom-[-10%] right-[-5%] w-[750px] h-[750px] rounded-full bg-accent/10 blur-[150px] animate-float-delayed"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-secondary/6 blur-[110px] animate-pulse-slow"></div>
     <div class="absolute inset-0 hero-grid-bg opacity-[0.025]"></div>
   </div>
 
   <div class="relative z-10 max-w-7xl mx-auto w-full">
     <div class="grid lg:grid-cols-2 gap-16 xl:gap-24 items-center">
+
       <!-- ── Left: Copy ─────────────────────────────────────── -->
       <div class="space-y-8 text-center lg:text-left animate-fade-in">
-        <!-- Badge — primary colored border -->
-        <div
-          class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-xs font-semibold tracking-widest uppercase badge-primary"
-        >
-          <span
-            class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"
-          ></span>
+
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-xs font-semibold tracking-widest uppercase badge-primary">
+          <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
           Image URL Generation
         </div>
 
-        <!-- Headline -->
         <div class="space-y-1">
-          <h1
-            class="text-4xl sm:text-5xl lg:text-[3.6rem] xl:text-[4.2rem] font-black leading-[1.06] tracking-tight text-light-text"
-          >
-            Turn Images Into
-          </h1>
-          <h1
-            class="text-4xl sm:text-5xl lg:text-[3.6rem] xl:text-[4.2rem] font-black leading-[1.06] tracking-tight text-gradient"
-          >
-            Shareable URLs
-          </h1>
-          <h1
-            class="text-4xl sm:text-5xl lg:text-[3.6rem] xl:text-[4.2rem] font-black leading-[1.06] tracking-tight text-light-text"
-          >
-            Instantly.
-          </h1>
+          <h1 class="text-4xl sm:text-5xl lg:text-[3.6rem] xl:text-[4.2rem] font-black leading-[1.06] tracking-tight text-light-text">Turn Images Into</h1>
+          <h1 class="text-4xl sm:text-5xl lg:text-[3.6rem] xl:text-[4.2rem] font-black leading-[1.06] tracking-tight text-gradient">Shareable URLs</h1>
+          <h1 class="text-4xl sm:text-5xl lg:text-[3.6rem] xl:text-[4.2rem] font-black leading-[1.06] tracking-tight text-light-text">Instantly.</h1>
         </div>
 
-        <p
-          class="text-base sm:text-lg text-light-text/55 leading-relaxed max-w-lg mx-auto lg:mx-0"
-        >
-          Upload any image and get a clean, permanent URL in seconds. Built for
-          developers, designers, and creators who need reliable image hosting
-          without the friction.
+        <p class="text-base sm:text-lg text-light-text/55 leading-relaxed max-w-lg mx-auto lg:mx-0">
+          Upload any image and get a clean, permanent URL in seconds. Built for developers, designers, and creators who need reliable image hosting without the friction.
         </p>
 
-        <!-- CTAs -->
-        <div
-          class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3"
-        >
+        <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3">
           <button
             *ngIf="!isLoggedIn"
             (click)="navigateToSignup()"
             class="group relative w-full sm:w-auto px-8 py-4 bg-primary text-white font-semibold rounded-2xl overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_48px_rgba(99,102,241,0.55)] active:scale-[0.98]"
           >
-            <span
-              class="absolute inset-0 bg-gradient-to-r from-primary to-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            ></span>
+            <span class="absolute inset-0 bg-gradient-to-r from-primary to-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
             <span class="relative flex items-center justify-center gap-2">
               <i class="bx bx-user-plus text-lg"></i>Get Started Free
             </span>
@@ -112,181 +69,92 @@
           </button>
         </div>
 
-        <!-- Stats — each uses its own brand color border -->
         <div class="grid grid-cols-3 gap-3 pt-6">
-          <div
-            class="stat-primary text-center lg:text-left p-4 rounded-2xl transition-all duration-300 hover:-translate-y-0.5"
-          >
-            <div class="text-2xl sm:text-3xl font-black text-primary mb-0.5">
-              1K+
-            </div>
-            <div class="text-xs text-light-text/40 font-medium tracking-wide">
-              Users
-            </div>
+          <div class="stat-primary text-center lg:text-left p-4 rounded-2xl transition-all duration-300 hover:-translate-y-0.5">
+            <div class="text-2xl sm:text-3xl font-black text-primary mb-0.5">1K+</div>
+            <div class="text-xs text-light-text/40 font-medium tracking-wide">Users</div>
           </div>
-          <div
-            class="stat-accent text-center lg:text-left p-4 rounded-2xl transition-all duration-300 hover:-translate-y-0.5"
-          >
-            <div class="text-2xl sm:text-3xl font-black text-accent mb-0.5">
-              50K+
-            </div>
-            <div class="text-xs text-light-text/40 font-medium tracking-wide">
-              Images
-            </div>
+          <div class="stat-accent text-center lg:text-left p-4 rounded-2xl transition-all duration-300 hover:-translate-y-0.5">
+            <div class="text-2xl sm:text-3xl font-black text-accent mb-0.5">50K+</div>
+            <div class="text-xs text-light-text/40 font-medium tracking-wide">Images</div>
           </div>
-          <div
-            class="stat-secondary text-center lg:text-left p-4 rounded-2xl transition-all duration-300 hover:-translate-y-0.5"
-          >
-            <div class="text-2xl sm:text-3xl font-black text-secondary mb-0.5">
-              99.9%
-            </div>
-            <div class="text-xs text-light-text/40 font-medium tracking-wide">
-              Uptime
-            </div>
+          <div class="stat-secondary text-center lg:text-left p-4 rounded-2xl transition-all duration-300 hover:-translate-y-0.5">
+            <div class="text-2xl sm:text-3xl font-black text-secondary mb-0.5">99.9%</div>
+            <div class="text-xs text-light-text/40 font-medium tracking-wide">Uptime</div>
           </div>
         </div>
       </div>
 
       <!-- ── Right: Upload Card ──────────────────────────────── -->
       <div class="animate-fade-in-delayed">
-        <div
-          class="upload-card relative rounded-3xl overflow-hidden bg-dark-card/75 backdrop-blur-2xl"
-        >
+        <div class="upload-card relative rounded-3xl overflow-hidden bg-dark-card/75 backdrop-blur-2xl">
+
           <!-- Top bar -->
-          <div
-            class="px-6 pt-6 pb-5 flex items-center justify-between upload-card-divider"
-          >
+          <div class="px-6 pt-6 pb-5 flex items-center justify-between upload-card-divider">
             <div>
-              <h3 class="text-sm font-semibold text-light-text tracking-tight">
-                Upload an image
-              </h3>
-              <p class="text-xs text-light-text/30 mt-0.5">
-                PNG · JPG · GIF · WebP &mdash; up to 10 MB
-              </p>
+              <h3 class="text-sm font-semibold text-light-text tracking-tight">Upload an image</h3>
+              <p class="text-xs text-light-text/30 mt-0.5">PNG · JPG · GIF · WebP &mdash; up to 10 MB</p>
             </div>
             <div class="flex items-center gap-1.5">
-              <span
-                class="w-3 h-3 rounded-full bg-red-500/70 hover:bg-red-500 transition-colors cursor-pointer"
-              ></span>
-              <span
-                class="w-3 h-3 rounded-full bg-yellow-400/70 hover:bg-yellow-400 transition-colors cursor-pointer"
-              ></span>
-              <span
-                class="w-3 h-3 rounded-full bg-green-400/70 hover:bg-green-400 transition-colors cursor-pointer"
-              ></span>
+              <span class="w-3 h-3 rounded-full bg-red-500/70 hover:bg-red-500 transition-colors cursor-pointer"></span>
+              <span class="w-3 h-3 rounded-full bg-yellow-400/70 hover:bg-yellow-400 transition-colors cursor-pointer"></span>
+              <span class="w-3 h-3 rounded-full bg-green-400/70 hover:bg-green-400 transition-colors cursor-pointer"></span>
             </div>
           </div>
 
           <div class="p-6 space-y-4">
-            <!-- Drop zone / preview -->
-            <label class="block cursor-pointer group/dz w-full overflow-hidden">
-              <input
-                type="file"
-                (change)="onFileSelected($event)"
-                accept="image/*"
-                class="hidden"
-                [disabled]="isUploading"
-              />
 
-              <!-- Preview state — fixed height so the card never grows -->
-              <div
-                *ngIf="selectedFilePreview; else dropZone"
-                class="relative rounded-2xl overflow-hidden border border-primary/25 preview-image-container"
-              >
-                <img
-                  [src]="generatedUrl || selectedFilePreview"
-                  [style.height.px]="180"
-                  [style.width.%]="100"
-                  alt="Preview"
-                  class="object-cover object-center"
-                  (load)="onImageLoad($event)"
-                  (error)="onImageError($event)"
-                />
-
-                <!-- Uploading overlay -->
-                <div
-                  *ngIf="isUploading"
-                  class="absolute inset-0 bg-dark-bg/85 backdrop-blur-sm flex flex-col items-center justify-center gap-3"
-                >
-                  <div class="relative w-10 h-10">
-                    <div
-                      class="absolute inset-0 rounded-full border-2 border-primary/20"
-                    ></div>
-                    <div
-                      class="absolute inset-0 rounded-full border-2 border-primary border-t-transparent animate-spin"
-                    ></div>
-                  </div>
-                  <span
-                    class="text-xs text-light-text/50 font-medium tracking-wide"
-                    >Uploading to Cloudinary…</span
-                  >
-                </div>
-
-                <!-- Replace hint overlay -->
-                <div
-                  *ngIf="!isUploading && generatedUrl"
-                  class="absolute inset-0 bg-dark-bg/70 backdrop-blur-sm flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-200"
-                >
-                  <span
-                    class="text-xs text-light-text font-semibold bg-dark-card/90 px-4 py-2 rounded-xl border border-primary/30 flex items-center gap-1.5"
-                  >
-                    <i class="bx bx-refresh text-primary"></i> Replace image
-                  </span>
-                </div>
+            <!-- ── UPLOADING STATE ── spinner, no image shown yet -->
+            <div *ngIf="isUploading" class="upload-preview-box rounded-2xl border border-primary/25 flex flex-col items-center justify-center gap-3">
+              <div class="relative w-10 h-10">
+                <div class="absolute inset-0 rounded-full border-2 border-primary/20"></div>
+                <div class="absolute inset-0 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
               </div>
+              <span class="text-xs text-light-text/50 font-medium tracking-wide">Uploading…</span>
+            </div>
 
-              <!-- Empty drop zone -->
-              <ng-template #dropZone>
-                <div
-                  class="dropzone-default group-hover/dz:dropzone-hover relative rounded-2xl p-10 flex flex-col items-center justify-center gap-4 transition-all duration-300"
-                >
-                  <div
-                    class="w-14 h-14 rounded-2xl bg-primary/12 group-hover/dz:bg-primary/22 flex items-center justify-center transition-all duration-300 group-hover/dz:scale-110"
-                  >
-                    <i class="bx bx-cloud-upload text-3xl text-primary"></i>
-                  </div>
-                  <div class="text-center space-y-1">
-                    <p
-                      class="text-sm font-semibold text-light-text/60 group-hover/dz:text-light-text/85 transition-colors"
-                    >
-                      Click to select an image
-                    </p>
-                    <p class="text-xs text-light-text/25">
-                      or drag and drop here
-                    </p>
-                  </div>
-                  <span
-                    class="absolute top-3 left-3 w-5 h-5 border-t-2 border-l-2 border-primary/45 rounded-tl-md"
-                  ></span>
-                  <span
-                    class="absolute top-3 right-3 w-5 h-5 border-t-2 border-r-2 border-primary/45 rounded-tr-md"
-                  ></span>
-                  <span
-                    class="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2 border-primary/45 rounded-bl-md"
-                  ></span>
-                  <span
-                    class="absolute bottom-3 right-3 w-5 h-5 border-b-2 border-r-2 border-primary/45 rounded-br-md"
-                  ></span>
+            <!-- ── SUCCESS STATE ── Cloudinary image + replace overlay -->
+            <div *ngIf="!isUploading && generatedUrl" class="upload-preview-box rounded-2xl border border-primary/25 overflow-hidden relative group/img">
+              <img
+                [src]="generatedUrl"
+                alt="Uploaded image"
+                (load)="onImageLoad($event)"
+                (error)="onImageError($event)"
+                class="upload-preview-img"
+              />
+              <!-- Replace overlay — triggers new file pick -->
+              <label class="absolute inset-0 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity duration-200 cursor-pointer bg-dark-bg/70 backdrop-blur-sm">
+                <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden" />
+                <span class="text-xs text-light-text font-semibold bg-dark-card/90 px-4 py-2 rounded-xl border border-primary/30 flex items-center gap-1.5">
+                  <i class="bx bx-refresh text-primary"></i> Replace image
+                </span>
+              </label>
+            </div>
+
+            <!-- ── IDLE / DROP ZONE STATE ── nothing selected yet -->
+            <label *ngIf="!isUploading && !generatedUrl" class="block cursor-pointer group/dz">
+              <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden" />
+              <div class="dropzone-default group-hover/dz:dropzone-hover relative rounded-2xl p-10 flex flex-col items-center justify-center gap-4 transition-all duration-300">
+                <div class="w-14 h-14 rounded-2xl bg-primary/12 group-hover/dz:bg-primary/22 flex items-center justify-center transition-all duration-300 group-hover/dz:scale-110">
+                  <i class="bx bx-cloud-upload text-3xl text-primary"></i>
                 </div>
-              </ng-template>
+                <div class="text-center space-y-1">
+                  <p class="text-sm font-semibold text-light-text/60 group-hover/dz:text-light-text/85 transition-colors">Click to select an image</p>
+                  <p class="text-xs text-light-text/25">or drag and drop here</p>
+                </div>
+                <span class="absolute top-3 left-3 w-5 h-5 border-t-2 border-l-2 border-primary/45 rounded-tl-md"></span>
+                <span class="absolute top-3 right-3 w-5 h-5 border-t-2 border-r-2 border-primary/45 rounded-tr-md"></span>
+                <span class="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2 border-primary/45 rounded-bl-md"></span>
+                <span class="absolute bottom-3 right-3 w-5 h-5 border-b-2 border-r-2 border-primary/45 rounded-br-md"></span>
+              </div>
             </label>
 
-            <!-- Generated URL + actions row — compact, never wraps badly -->
+            <!-- ── URL BAR ── only shown after successful upload -->
             <div *ngIf="generatedUrl" class="space-y-2 animate-fade-in">
-              <label
-                class="text-[10px] font-bold text-light-text/35 tracking-[0.15em] uppercase"
-                >Your image URL</label
-              >
-              <div
-                class="flex items-center gap-2 bg-dark-bg/90 rounded-xl p-1.5 pl-4 transition-all duration-200 url-bar min-w-0"
-              >
-                <i
-                  class="bx bx-link-alt text-primary/70 flex-shrink-0 text-sm"
-                ></i>
-                <span
-                  class="flex-1 text-xs text-light-text/60 truncate font-mono leading-none min-w-0"
-                  >{{ generatedUrl }}</span
-                >
+              <label class="text-[10px] font-bold text-light-text/35 tracking-[0.15em] uppercase">Your image URL</label>
+              <div class="flex items-center gap-2 bg-dark-bg/90 rounded-xl p-1.5 pl-4 transition-all duration-200 url-bar min-w-0">
+                <i class="bx bx-link-alt text-primary/70 flex-shrink-0 text-sm"></i>
+                <span class="flex-1 text-xs text-light-text/60 truncate font-mono leading-none min-w-0">{{ generatedUrl }}</span>
                 <button
                   (click)="copyUrl()"
                   class="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all duration-200 active:scale-95 whitespace-nowrap"
@@ -294,59 +162,35 @@
                     ? 'bg-green-500/15 text-green-400 border border-green-500/30'
                     : 'bg-primary/15 hover:bg-primary/25 text-primary border border-primary/30 hover:border-primary/50'"
                 >
-                  <i
-                    class="bx text-sm"
-                    [ngClass]="isCopied ? 'bx-check' : 'bx-copy'"
-                  ></i>
+                  <i class="bx text-sm" [ngClass]="isCopied ? 'bx-check' : 'bx-copy'"></i>
                   {{ isCopied ? 'Copied!' : 'Copy' }}
                 </button>
               </div>
             </div>
 
-            <!-- Not logged in notice -->
-            <div
-              *ngIf="!isLoggedIn"
-              class="flex items-start gap-3 bg-accent/8 rounded-xl px-4 py-3.5 notice-accent"
-            >
-              <i
-                class="bx bx-lock-alt text-accent text-base flex-shrink-0 mt-0.5"
-              ></i>
+            <!-- ── NOT LOGGED IN NOTICE ── -->
+            <div *ngIf="!isLoggedIn" class="flex items-start gap-3 bg-accent/8 rounded-xl px-4 py-3.5 notice-accent">
+              <i class="bx bx-lock-alt text-accent text-base flex-shrink-0 mt-0.5"></i>
               <p class="text-xs text-light-text/55 leading-relaxed">
-                <button
-                  (click)="navigateToLogin()"
-                  class="text-accent hover:text-accent/70 font-bold underline underline-offset-2 transition-colors"
-                >
-                  Log in
-                </button>
+                <button (click)="navigateToLogin()" class="text-accent hover:text-accent/70 font-bold underline underline-offset-2 transition-colors">Log in</button>
                 or
-                <button
-                  (click)="navigateToSignup()"
-                  class="text-primary hover:text-primary/70 font-bold underline underline-offset-2 transition-colors"
-                >
-                  sign up
-                </button>
+                <button (click)="navigateToSignup()" class="text-primary hover:text-primary/70 font-bold underline underline-offset-2 transition-colors">sign up</button>
                 to start uploading images.
               </p>
             </div>
 
-            <!-- Clear -->
-            <div *ngIf="selectedFile && !isUploading" class="flex justify-end">
-              <button
-                (click)="resetUpload()"
-                class="text-xs text-light-text/25 hover:text-light-text/55 transition-colors flex items-center gap-1 group/clear"
-              >
-                <i
-                  class="bx bx-x group-hover/clear:rotate-90 transition-transform duration-200"
-                ></i>
-                Clear
+            <!-- ── CLEAR BUTTON ── -->
+            <div *ngIf="generatedUrl && !isUploading" class="flex justify-end">
+              <button (click)="resetUpload()" class="text-xs text-light-text/25 hover:text-light-text/55 transition-colors flex items-center gap-1 group/clear">
+                <i class="bx bx-x group-hover/clear:rotate-90 transition-transform duration-200"></i> Clear
               </button>
             </div>
+
           </div>
-          <div
-            class="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"
-          ></div>
+          <div class="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
         </div>
       </div>
+
     </div>
   </div>
 </section>
