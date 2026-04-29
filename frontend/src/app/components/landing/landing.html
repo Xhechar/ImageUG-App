@@ -107,7 +107,7 @@
           <div class="p-6 space-y-4">
 
             <!-- Drop zone / preview -->
-            <label class="block cursor-pointer group/dz">
+            <label class="block cursor-pointer group/dz w-full overflow-hidden">
               <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden" [disabled]="isUploading" />
 
               <!-- Preview state — fixed height so the card never grows -->
