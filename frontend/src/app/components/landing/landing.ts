@@ -169,6 +169,7 @@ export class Landing implements OnInit {
     const secureUrl: string = await uploadToCloudinary(file);
     if (secureUrl) {
       this.generatedUrl = secureUrl;
+      this.cdr.detectChanges();
       this.isUploading = false;
       this.showToastMessage('Image uploaded successfully!', 'success');
       this.cdr.detectChanges();
