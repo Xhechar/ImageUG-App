@@ -59,12 +59,15 @@ body {
 
 /* ─── UTILITY ─────────────────────────────────────────────── */
 .ig-grad {
-  display: inline;
-  background: linear-gradient(115deg, var(--ig-violet) 0%, #a78bfa 40%, var(--ig-emerald) 100%);
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  background-clip: text !important;
-  color: transparent !important;
+  display: inline-block;
+  background: linear-gradient(115deg, #8b7cf8 0%, #a78bfa 45%, #34d399 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  /* Reset any inherited color that blocks webkit gradient text */
+  color: transparent;
+  /* Prevent parent color from cascading in */
+  -webkit-text-stroke: 0px transparent;
 }
 
 /* ─── TOAST ────────────────────────────────────────────────── */
@@ -586,6 +589,21 @@ body {
   letter-spacing: -0.02em;
   line-height: 1.15;
 }
+/* Gradient spans inside titles: must override parent color explicitly */
+.ig-section__title .ig-grad,
+.ig-cta__title .ig-grad {
+  display: inline-block;
+  background: linear-gradient(115deg, #8b7cf8 0%, #a78bfa 45%, #34d399 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  font-size: inherit;
+  font-weight: inherit;
+  font-family: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+}
 .ig-section__title--left { text-align: left; }
 .ig-section__sub         { font-size: 1rem; color: var(--ig-text-muted); max-width: 480px; }
 .ig-section__sub--left   { text-align: left; }
@@ -896,8 +914,10 @@ body {
 .ig-cta__title {
   font-family: var(--ig-font-display);
   font-size: clamp(2rem, 4vw, 3.25rem);
-  font-weight: 800; color: #f1f5fd;
-  letter-spacing: -0.02em; line-height: 1.1;
+  font-weight: 800;
+  color: #f1f5fd;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
   margin-bottom: 1.25rem;
 }
 .ig-cta__br { display: none; }
