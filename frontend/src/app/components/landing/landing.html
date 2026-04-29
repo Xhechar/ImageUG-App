@@ -112,7 +112,7 @@
 
               <!-- Preview state — fixed height so the card never grows -->
               <div *ngIf="selectedFilePreview; else dropZone" class="relative rounded-2xl overflow-hidden border border-primary/25 preview-image-container">
-                <img [src]="selectedFilePreview" alt="Preview" class="w-full h-full object-cover object-center" />
+                <img [src]="generatedUrl || selectedFilePreview" alt="Preview" class="w-full h-full object-cover object-center" />
                 <div *ngIf="isUploading" class="absolute inset-0 bg-dark-bg/85 backdrop-blur-sm flex flex-col items-center justify-center gap-3">
                   <div class="relative w-10 h-10">
                     <div class="absolute inset-0 rounded-full border-2 border-primary/20"></div>

@@ -159,6 +159,7 @@ export class Landing implements OnInit {
         'submissionAttempt',
         String(Number(sessionStorage.getItem('submissionAttempt') ?? '0') + 1),
       );
+      this.cdr.detectChanges();
     }
 
     this.isUploading = true;
@@ -202,8 +203,10 @@ export class Landing implements OnInit {
     this.toastMessage = message;
     this.toastType = type;
     this.showToast = true;
+    this.cdr.detectChanges();
     setTimeout(() => {
       this.showToast = false;
+      this.cdr.detectChanges();
     }, 3500);
   }
 
