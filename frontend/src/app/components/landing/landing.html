@@ -1,768 +1,391 @@
-<!-- ═══════════════════════════════════════════════════════════
-     TOAST NOTIFICATION
-═══════════════════════════════════════════════════════════ -->
-<div *ngIf="showToast" class="fixed top-6 right-6 z-50 animate-slide-in max-w-sm w-full">
-  <div class="relative overflow-hidden bg-dark-card/95 backdrop-blur-xl rounded-2xl px-5 py-4 shadow-2xl flex items-center gap-3 toast-border">
-    <div class="absolute inset-0 bg-gradient-to-r from-primary/8 to-accent/8 pointer-events-none"></div>
-    <div class="w-8 h-8 rounded-xl bg-accent/20 flex items-center justify-center flex-shrink-0">
-      <i class="bx bx-info-circle text-accent text-lg"></i>
-    </div>
-    <p class="text-light-text/90 text-sm font-medium relative z-10">{{ toastMessage }}</p>
-    <div class="absolute bottom-0 left-0 h-0.5 w-full bg-gradient-to-r from-primary via-accent to-secondary"></div>
-  </div>
+<!-- ═══════════════════════════════════════════
+     TOAST
+═══════════════════════════════════════════ -->
+<div *ngIf="showToast" class="ig-toast" [ngClass]="'ig-toast--' + toastType">
+  <i class="bx"
+    [ngClass]="{
+      'bx-check-circle': toastType === 'success',
+      'bx-error-circle': toastType === 'error',
+      'bx-info-circle':  toastType === 'info'
+    }">
+  </i>
+  <span>{{ toastMessage }}</span>
 </div>
 
 <app-navbar></app-navbar>
 
-<!-- ═══════════════════════════════════════════════════════════
-     HERO SECTION
-═══════════════════════════════════════════════════════════ -->
-<section class="relative min-h-screen flex items-center justify-center overflow-hidden bg-dark-bg px-4 sm:px-6 py-24">
+<!-- ═══════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════ -->
+<section class="ig-hero">
+  <div class="ig-hero__orb ig-hero__orb--a"></div>
+  <div class="ig-hero__orb ig-hero__orb--b"></div>
+  <div class="ig-hero__orb ig-hero__orb--c"></div>
+  <div class="ig-hero__grid"></div>
 
-  <!-- Background mesh -->
-  <div class="absolute inset-0 pointer-events-none overflow-hidden">
-    <div class="absolute top-[-10%] left-[-5%] w-[650px] h-[650px] rounded-full bg-primary/10 blur-[130px] animate-float"></div>
-    <div class="absolute bottom-[-10%] right-[-5%] w-[750px] h-[750px] rounded-full bg-accent/10 blur-[150px] animate-float-delayed"></div>
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-secondary/6 blur-[110px] animate-pulse-slow"></div>
-    <div class="absolute inset-0 hero-grid-bg opacity-[0.025]"></div>
-  </div>
+  <div class="ig-hero__inner">
 
-  <div class="relative z-10 max-w-7xl mx-auto w-full">
-    <div class="grid lg:grid-cols-2 gap-16 xl:gap-24 items-center">
-
-      <!-- ── Left: Copy ─────────────────────────────────────── -->
-      <div class="space-y-8 text-center lg:text-left animate-fade-in">
-
-        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-xs font-semibold tracking-widest uppercase badge-primary">
-          <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
-          Image URL Generation
-        </div>
-
-        <div class="space-y-1">
-          <h1 class="text-4xl sm:text-5xl lg:text-[3.6rem] xl:text-[4.2rem] font-black leading-[1.06] tracking-tight text-light-text">Turn Images Into</h1>
-          <h1 class="text-4xl sm:text-5xl lg:text-[3.6rem] xl:text-[4.2rem] font-black leading-[1.06] tracking-tight text-gradient">Shareable URLs</h1>
-          <h1 class="text-4xl sm:text-5xl lg:text-[3.6rem] xl:text-[4.2rem] font-black leading-[1.06] tracking-tight text-light-text">Instantly.</h1>
-        </div>
-
-        <p class="text-base sm:text-lg text-light-text/55 leading-relaxed max-w-lg mx-auto lg:mx-0">
-          Upload any image and get a clean, permanent URL in seconds. Built for developers, designers, and creators who need reliable image hosting without the friction.
-        </p>
-
-        <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3">
-          <button
-            *ngIf="!isLoggedIn"
-            (click)="navigateToSignup()"
-            class="group relative w-full sm:w-auto px-8 py-4 bg-primary text-white font-semibold rounded-2xl overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_48px_rgba(99,102,241,0.55)] active:scale-[0.98]"
-          >
-            <span class="absolute inset-0 bg-gradient-to-r from-primary to-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-            <span class="relative flex items-center justify-center gap-2">
-              <i class="bx bx-user-plus text-lg"></i>Get Started Free
-            </span>
-          </button>
-          <button
-            (click)="scrollToGallery()"
-            class="group w-full sm:w-auto px-8 py-4 rounded-2xl font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] btn-ghost-accent"
-          >
-            <span class="flex items-center justify-center gap-2">
-              <i class="bx bx-images text-lg"></i>View Gallery
-            </span>
-          </button>
-        </div>
-
-        <div class="grid grid-cols-3 gap-3 pt-6">
-          <div class="stat-primary text-center lg:text-left p-4 rounded-2xl transition-all duration-300 hover:-translate-y-0.5">
-            <div class="text-2xl sm:text-3xl font-black text-primary mb-0.5">1K+</div>
-            <div class="text-xs text-light-text/40 font-medium tracking-wide">Users</div>
-          </div>
-          <div class="stat-accent text-center lg:text-left p-4 rounded-2xl transition-all duration-300 hover:-translate-y-0.5">
-            <div class="text-2xl sm:text-3xl font-black text-accent mb-0.5">50K+</div>
-            <div class="text-xs text-light-text/40 font-medium tracking-wide">Images</div>
-          </div>
-          <div class="stat-secondary text-center lg:text-left p-4 rounded-2xl transition-all duration-300 hover:-translate-y-0.5">
-            <div class="text-2xl sm:text-3xl font-black text-secondary mb-0.5">99.9%</div>
-            <div class="text-xs text-light-text/40 font-medium tracking-wide">Uptime</div>
-          </div>
-        </div>
+    <!-- Copy -->
+    <div class="ig-hero__copy">
+      <div class="ig-pill">
+        <span class="ig-pill__dot"></span>
+        Image URL Generation
       </div>
 
-      <!-- ── Right: Upload Card ──────────────────────────────── -->
-      <div class="animate-fade-in-delayed">
-        <div class="upload-card relative rounded-3xl overflow-hidden bg-dark-card/75 backdrop-blur-2xl">
+      <h1 class="ig-hero__headline">
+        <span class="ig-hero__headline-plain">Turn Images Into</span>
+        <span class="ig-hero__headline-grad">Shareable URLs</span>
+        <span class="ig-hero__headline-plain">Instantly.</span>
+      </h1>
 
-          <!-- Top bar -->
-          <div class="px-6 pt-6 pb-5 flex items-center justify-between upload-card-divider">
-            <div>
-              <h3 class="text-sm font-semibold text-light-text tracking-tight">Upload an image</h3>
-              <p class="text-xs text-light-text/30 mt-0.5">PNG · JPG · GIF · WebP &mdash; up to 10 MB</p>
-            </div>
-            <div class="flex items-center gap-1.5">
-              <span class="w-3 h-3 rounded-full bg-red-500/70 hover:bg-red-500 transition-colors cursor-pointer"></span>
-              <span class="w-3 h-3 rounded-full bg-yellow-400/70 hover:bg-yellow-400 transition-colors cursor-pointer"></span>
-              <span class="w-3 h-3 rounded-full bg-green-400/70 hover:bg-green-400 transition-colors cursor-pointer"></span>
-            </div>
-          </div>
-
-          <div class="p-6 space-y-4">
-
-            <!-- ── UPLOADING STATE ── spinner, no image shown yet -->
-            <div *ngIf="isUploading" class="upload-preview-box rounded-2xl border border-primary/25 flex flex-col items-center justify-center gap-3">
-              <div class="relative w-10 h-10">
-                <div class="absolute inset-0 rounded-full border-2 border-primary/20"></div>
-                <div class="absolute inset-0 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
-              </div>
-              <span class="text-xs text-light-text/50 font-medium tracking-wide">Uploading…</span>
-            </div>
-
-            <!-- ── SUCCESS STATE ── Cloudinary image + replace overlay -->
-            <div *ngIf="!isUploading && generatedUrl" class="upload-preview-box rounded-2xl border border-primary/25 overflow-hidden relative group/img">
-              <img
-                [src]="generatedUrl"
-                alt="Uploaded image"
-                (load)="onImageLoad($event)"
-                (error)="onImageError($event)"
-                class="upload-preview-img"
-              />
-              <!-- Replace overlay — triggers new file pick -->
-              <label class="absolute inset-0 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity duration-200 cursor-pointer bg-dark-bg/70 backdrop-blur-sm">
-                <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden" />
-                <span class="text-xs text-light-text font-semibold bg-dark-card/90 px-4 py-2 rounded-xl border border-primary/30 flex items-center gap-1.5">
-                  <i class="bx bx-refresh text-primary"></i> Replace image
-                </span>
-              </label>
-            </div>
-
-            <!-- ── IDLE / DROP ZONE STATE ── nothing selected yet -->
-            <label *ngIf="!isUploading && !generatedUrl" class="block cursor-pointer group/dz">
-              <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden" />
-              <div class="dropzone-default group-hover/dz:dropzone-hover relative rounded-2xl p-10 flex flex-col items-center justify-center gap-4 transition-all duration-300">
-                <div class="w-14 h-14 rounded-2xl bg-primary/12 group-hover/dz:bg-primary/22 flex items-center justify-center transition-all duration-300 group-hover/dz:scale-110">
-                  <i class="bx bx-cloud-upload text-3xl text-primary"></i>
-                </div>
-                <div class="text-center space-y-1">
-                  <p class="text-sm font-semibold text-light-text/60 group-hover/dz:text-light-text/85 transition-colors">Click to select an image</p>
-                  <p class="text-xs text-light-text/25">or drag and drop here</p>
-                </div>
-                <span class="absolute top-3 left-3 w-5 h-5 border-t-2 border-l-2 border-primary/45 rounded-tl-md"></span>
-                <span class="absolute top-3 right-3 w-5 h-5 border-t-2 border-r-2 border-primary/45 rounded-tr-md"></span>
-                <span class="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2 border-primary/45 rounded-bl-md"></span>
-                <span class="absolute bottom-3 right-3 w-5 h-5 border-b-2 border-r-2 border-primary/45 rounded-br-md"></span>
-              </div>
-            </label>
-
-            <!-- ── URL BAR ── only shown after successful upload -->
-            <div *ngIf="generatedUrl" class="space-y-2 animate-fade-in">
-              <label class="text-[10px] font-bold text-light-text/35 tracking-[0.15em] uppercase">Your image URL</label>
-              <div class="flex items-center gap-2 bg-dark-bg/90 rounded-xl p-1.5 pl-4 transition-all duration-200 url-bar min-w-0">
-                <i class="bx bx-link-alt text-primary/70 flex-shrink-0 text-sm"></i>
-                <span class="flex-1 text-xs text-light-text/60 truncate font-mono leading-none min-w-0">{{ generatedUrl }}</span>
-                <button
-                  (click)="copyUrl()"
-                  class="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all duration-200 active:scale-95 whitespace-nowrap"
-                  [ngClass]="isCopied
-                    ? 'bg-green-500/15 text-green-400 border border-green-500/30'
-                    : 'bg-primary/15 hover:bg-primary/25 text-primary border border-primary/30 hover:border-primary/50'"
-                >
-                  <i class="bx text-sm" [ngClass]="isCopied ? 'bx-check' : 'bx-copy'"></i>
-                  {{ isCopied ? 'Copied!' : 'Copy' }}
-                </button>
-              </div>
-            </div>
-
-            <!-- ── NOT LOGGED IN NOTICE ── -->
-            <div *ngIf="!isLoggedIn" class="flex items-start gap-3 bg-accent/8 rounded-xl px-4 py-3.5 notice-accent">
-              <i class="bx bx-lock-alt text-accent text-base flex-shrink-0 mt-0.5"></i>
-              <p class="text-xs text-light-text/55 leading-relaxed">
-                <button (click)="navigateToLogin()" class="text-accent hover:text-accent/70 font-bold underline underline-offset-2 transition-colors">Log in</button>
-                or
-                <button (click)="navigateToSignup()" class="text-primary hover:text-primary/70 font-bold underline underline-offset-2 transition-colors">sign up</button>
-                to start uploading images.
-              </p>
-            </div>
-
-            <!-- ── CLEAR BUTTON ── -->
-            <div *ngIf="generatedUrl && !isUploading" class="flex justify-end">
-              <button (click)="resetUpload()" class="text-xs text-light-text/25 hover:text-light-text/55 transition-colors flex items-center gap-1 group/clear">
-                <i class="bx bx-x group-hover/clear:rotate-90 transition-transform duration-200"></i> Clear
-              </button>
-            </div>
-
-          </div>
-          <div class="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════════════════════
-     FEATURES SECTION
-═══════════════════════════════════════════════════════════ -->
-<section class="relative py-24 px-4 sm:px-6 bg-dark-bg overflow-hidden">
-  <div
-    class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent"
-  ></div>
-
-  <div class="max-w-7xl mx-auto">
-    <div class="text-center mb-16 space-y-4">
-      <div
-        class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary/70 text-xs font-semibold tracking-widest uppercase badge-primary-sm"
-      >
-        <i class="bx bx-diamond text-primary text-sm"></i>
-        Features
-      </div>
-      <h2
-        class="text-3xl sm:text-4xl md:text-5xl font-black text-light-text tracking-tight"
-      >
-        Why Choose <span class="text-gradient">Imagen</span>?
-      </h2>
-      <p class="text-base sm:text-lg text-light-text/45 max-w-xl mx-auto">
-        Powerful image hosting built for the modern web
+      <p class="ig-hero__sub">
+        Upload any image and get a clean, permanent URL in seconds.
+        Built for developers, designers, and creators who need reliable
+        image hosting without the friction.
       </p>
+
+      <div class="ig-hero__ctas">
+        <button *ngIf="!isLoggedIn" (click)="navigateToSignup()" class="ig-btn ig-btn--primary">
+          <i class="bx bx-user-plus"></i> Get Started Free
+        </button>
+        <button (click)="scrollToGallery()" class="ig-btn ig-btn--ghost">
+          <i class="bx bx-images"></i> View Gallery
+        </button>
+      </div>
+
+      <div class="ig-stats">
+        <div class="ig-stat ig-stat--violet">
+          <span class="ig-stat__num">1K+</span>
+          <span class="ig-stat__label">Users</span>
+        </div>
+        <div class="ig-stat ig-stat--emerald">
+          <span class="ig-stat__num">50K+</span>
+          <span class="ig-stat__label">Images</span>
+        </div>
+        <div class="ig-stat ig-stat--amber">
+          <span class="ig-stat__num">99.9%</span>
+          <span class="ig-stat__label">Uptime</span>
+        </div>
+      </div>
     </div>
 
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-      <div
-        class="feature-card-primary group relative p-7 rounded-3xl transition-all duration-300 hover:-translate-y-1.5 overflow-hidden"
-      >
-        <div
-          class="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-70 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-3xl"
-        ></div>
-        <div
-          class="w-12 h-12 rounded-2xl bg-primary/15 group-hover:bg-primary/25 flex items-center justify-center mb-5 transition-all duration-300 group-hover:scale-110 relative"
-        >
-          <i class="bx bx-rocket text-2xl text-primary"></i>
+    <!-- Upload Card -->
+    <div class="ig-card">
+      <div class="ig-card__header">
+        <div>
+          <p class="ig-card__title">Upload an image</p>
+          <p class="ig-card__subtitle">PNG · JPG · GIF · WebP — up to 10 MB</p>
         </div>
-        <h3 class="text-base font-bold text-light-text mb-2 relative">
-          Lightning Fast
-        </h3>
-        <p class="text-sm text-light-text/45 leading-relaxed relative">
-          Upload and generate URLs in milliseconds. Optimized for speed across
-          all network conditions.
-        </p>
-      </div>
-
-      <div
-        class="feature-card-accent group relative p-7 rounded-3xl transition-all duration-300 hover:-translate-y-1.5 overflow-hidden"
-      >
-        <div
-          class="absolute inset-0 bg-gradient-to-br from-accent/10 to-transparent opacity-70 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-3xl"
-        ></div>
-        <div
-          class="w-12 h-12 rounded-2xl bg-accent/15 group-hover:bg-accent/25 flex items-center justify-center mb-5 transition-all duration-300 group-hover:scale-110 relative"
-        >
-          <i class="bx bx-lock-alt text-2xl text-accent"></i>
+        <div class="ig-card__dots">
+          <span class="ig-dot ig-dot--red"></span>
+          <span class="ig-dot ig-dot--yellow"></span>
+          <span class="ig-dot ig-dot--green"></span>
         </div>
-        <h3 class="text-base font-bold text-light-text mb-2 relative">
-          Secure Storage
-        </h3>
-        <p class="text-sm text-light-text/45 leading-relaxed relative">
-          Enterprise-grade encryption and automated backups keep your images
-          safe and always accessible.
-        </p>
       </div>
 
-      <div
-        class="feature-card-secondary group relative p-7 rounded-3xl transition-all duration-300 hover:-translate-y-1.5 overflow-hidden"
-      >
-        <div
-          class="absolute inset-0 bg-gradient-to-br from-secondary/10 to-transparent opacity-70 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-3xl"
-        ></div>
-        <div
-          class="w-12 h-12 rounded-2xl bg-secondary/15 group-hover:bg-secondary/25 flex items-center justify-center mb-5 transition-all duration-300 group-hover:scale-110 relative"
-        >
-          <i class="bx bx-code-alt text-2xl text-secondary"></i>
-        </div>
-        <h3 class="text-base font-bold text-light-text mb-2 relative">
-          Developer Friendly
-        </h3>
-        <p class="text-sm text-light-text/45 leading-relaxed relative">
-          Clean, permanent URLs ready for embedding in apps, docs, and APIs. No
-          redirects, no expiry.
-        </p>
-      </div>
+      <div class="ig-card__body">
 
-      <div
-        class="feature-card-purple group relative p-7 rounded-3xl transition-all duration-300 hover:-translate-y-1.5 overflow-hidden"
-      >
-        <div
-          class="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-transparent opacity-70 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-3xl"
-        ></div>
-        <div
-          class="w-12 h-12 rounded-2xl bg-purple-500/15 group-hover:bg-purple-500/25 flex items-center justify-center mb-5 transition-all duration-300 group-hover:scale-110 relative"
-        >
-          <i class="bx bx-mobile text-2xl text-purple-400"></i>
-        </div>
-        <h3 class="text-base font-bold text-light-text mb-2 relative">
-          Fully Responsive
-        </h3>
-        <p class="text-sm text-light-text/45 leading-relaxed relative">
-          Works seamlessly across every device — desktop, tablet, and mobile —
-          without compromise.
-        </p>
-      </div>
-
-      <div
-        class="feature-card-pink group relative p-7 rounded-3xl transition-all duration-300 hover:-translate-y-1.5 overflow-hidden"
-      >
-        <div
-          class="absolute inset-0 bg-gradient-to-br from-pink-500/10 to-transparent opacity-70 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-3xl"
-        ></div>
-        <div
-          class="w-12 h-12 rounded-2xl bg-pink-500/15 group-hover:bg-pink-500/25 flex items-center justify-center mb-5 transition-all duration-300 group-hover:scale-110 relative"
-        >
-          <i class="bx bx-share-alt text-2xl text-pink-400"></i>
-        </div>
-        <h3 class="text-base font-bold text-light-text mb-2 relative">
-          Easy Sharing
-        </h3>
-        <p class="text-sm text-light-text/45 leading-relaxed relative">
-          Publish to the community gallery or keep images private. One click to
-          share anywhere.
-        </p>
-      </div>
-
-      <div
-        class="feature-card-indigo group relative p-7 rounded-3xl transition-all duration-300 hover:-translate-y-1.5 overflow-hidden"
-      >
-        <div
-          class="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent opacity-70 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-3xl"
-        ></div>
-        <div
-          class="w-12 h-12 rounded-2xl bg-indigo-500/15 group-hover:bg-indigo-500/25 flex items-center justify-center mb-5 transition-all duration-300 group-hover:scale-110 relative"
-        >
-          <i class="bx bx-line-chart text-2xl text-indigo-400"></i>
-        </div>
-        <h3 class="text-base font-bold text-light-text mb-2 relative">
-          Analytics
-        </h3>
-        <p class="text-sm text-light-text/45 leading-relaxed relative">
-          Track views, downloads, and engagement metrics. Understand how your
-          images perform.
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════════════════════
-     PRICING SECTION
-═══════════════════════════════════════════════════════════ -->
-<section class="relative py-24 px-4 sm:px-6 bg-dark-card overflow-hidden">
-  <div
-    class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-accent/25 to-transparent"
-  ></div>
-  <div
-    class="absolute -top-40 -right-40 w-96 h-96 bg-primary/12 rounded-full blur-3xl pointer-events-none"
-  ></div>
-  <div
-    class="absolute -bottom-40 -left-40 w-96 h-96 bg-accent/12 rounded-full blur-3xl pointer-events-none"
-  ></div>
-
-  <div class="max-w-7xl mx-auto relative z-10">
-    <div class="text-center mb-16 space-y-4">
-      <div
-        class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/10 text-accent/70 text-xs font-semibold tracking-widest uppercase badge-accent-sm"
-      >
-        <i class="bx bx-receipt text-accent text-sm"></i>
-        Pricing
-      </div>
-      <h2
-        class="text-3xl sm:text-4xl md:text-5xl font-black text-light-text tracking-tight"
-      >
-        Simple, <span class="text-gradient">Transparent</span> Pricing
-      </h2>
-      <p class="text-base sm:text-lg text-light-text/45">
-        Choose the plan that fits your needs
-      </p>
-    </div>
-
-    <div class="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto items-center">
-      <!-- Weekly -->
-      <div
-        class="pricing-card-accent group relative p-7 rounded-3xl transition-all duration-300 hover:-translate-y-1.5"
-      >
-        <div class="mb-7">
-          <div
-            class="w-10 h-10 rounded-xl bg-accent/15 flex items-center justify-center mb-4"
-          >
-            <i class="bx bx-calendar-week text-xl text-accent"></i>
+        <!-- STATE 1: idle dropzone -->
+        <label *ngIf="!isUploading && !uploadedUrl" class="ig-dropzone">
+          <input type="file" (change)="onFileSelected($event)" accept="image/*" class="ig-dropzone__input" />
+          <div class="ig-dropzone__icon">
+            <i class="bx bx-cloud-upload"></i>
           </div>
-          <h3 class="text-lg font-bold text-light-text mb-1">Weekly</h3>
-          <p class="text-xs text-light-text/35">
-            Perfect for short-term projects
+          <p class="ig-dropzone__primary">Click to select an image</p>
+          <p class="ig-dropzone__secondary">or drag and drop here</p>
+          <span class="ig-dropzone__corner ig-dropzone__corner--tl"></span>
+          <span class="ig-dropzone__corner ig-dropzone__corner--tr"></span>
+          <span class="ig-dropzone__corner ig-dropzone__corner--bl"></span>
+          <span class="ig-dropzone__corner ig-dropzone__corner--br"></span>
+        </label>
+
+        <!-- STATE 2: uploading spinner — NO image shown -->
+        <div *ngIf="isUploading" class="ig-uploading">
+          <div class="ig-spinner"></div>
+          <p class="ig-uploading__label">Uploading to Cloudinary…</p>
+        </div>
+
+        <!-- STATE 3: upload done — show Cloudinary image -->
+        <div *ngIf="!isUploading && uploadedUrl" class="ig-preview">
+          <!-- image lives in a zero-flow absolute wrapper -->
+          <div class="ig-preview__frame">
+            <img
+              class="ig-preview__img"
+              [src]="uploadedUrl"
+              alt="Uploaded image"
+              (load)="onImageLoad($event)"
+              (error)="onImageError($event)"
+            />
+          </div>
+          <!-- replace trigger sits OUTSIDE the frame so it never resizes it -->
+          <label class="ig-preview__replace">
+            <input type="file" (change)="onFileSelected($event)" accept="image/*" class="ig-dropzone__input" />
+            <i class="bx bx-refresh"></i> Replace
+          </label>
+        </div>
+
+        <!-- URL bar -->
+        <div *ngIf="uploadedUrl" class="ig-urlbar">
+          <i class="bx bx-link ig-urlbar__icon"></i>
+          <span class="ig-urlbar__text">{{ uploadedUrl }}</span>
+          <button
+            class="ig-urlbar__copy"
+            [ngClass]="isCopied ? 'ig-urlbar__copy--done' : ''"
+            (click)="copyUrl()"
+          >
+            <i class="bx" [ngClass]="isCopied ? 'bx-check' : 'bx-copy'"></i>
+            {{ isCopied ? 'Copied!' : 'Copy' }}
+          </button>
+        </div>
+
+        <!-- not-logged-in notice -->
+        <div *ngIf="!isLoggedIn" class="ig-notice">
+          <i class="bx bx-lock-alt ig-notice__icon"></i>
+          <p class="ig-notice__text">
+            <button (click)="navigateToLogin()" class="ig-notice__link ig-notice__link--accent">Log in</button>
+            or
+            <button (click)="navigateToSignup()" class="ig-notice__link ig-notice__link--primary">sign up</button>
+            to start uploading images.
           </p>
         </div>
-        <div class="flex items-baseline gap-1 mb-7">
-          <span class="text-4xl font-black text-light-text">Ksh 100</span>
-          <span class="text-sm text-light-text/35 font-medium">/week</span>
+
+        <!-- clear -->
+        <div *ngIf="uploadedUrl && !isUploading" class="ig-clear">
+          <button (click)="resetUpload()" class="ig-clear__btn">
+            <i class="bx bx-x"></i> Clear
+          </button>
         </div>
-        <ul class="space-y-3 mb-8">
-          <li class="flex items-center gap-3 text-sm text-light-text/60">
-            <div
-              class="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0"
-            >
-              <i class="bx bx-check text-accent text-xs"></i>
-            </div>
-            50 image uploads per week
-          </li>
-          <li class="flex items-center gap-3 text-sm text-light-text/60">
-            <div
-              class="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0"
-            >
-              <i class="bx bx-check text-accent text-xs"></i>
-            </div>
-            5GB storage
-          </li>
-          <li class="flex items-center gap-3 text-sm text-light-text/60">
-            <div
-              class="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0"
-            >
-              <i class="bx bx-check text-accent text-xs"></i>
-            </div>
-            Basic analytics
-          </li>
-          <li class="flex items-center gap-3 text-sm text-light-text/60">
-            <div
-              class="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0"
-            >
-              <i class="bx bx-check text-accent text-xs"></i>
-            </div>
-            Email support
-          </li>
+
+      </div><!-- /ig-card__body -->
+
+      <div class="ig-card__shine"></div>
+    </div><!-- /ig-card -->
+
+  </div><!-- /ig-hero__inner -->
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     FEATURES
+═══════════════════════════════════════════ -->
+<section class="ig-section ig-section--alt">
+  <div class="ig-section__divider"></div>
+  <div class="ig-container">
+
+    <div class="ig-section__head">
+      <div class="ig-pill ig-pill--sm">
+        <i class="bx bx-diamond"></i> Features
+      </div>
+      <h2 class="ig-section__title">Why Choose <span class="ig-grad">Imagen</span>?</h2>
+      <p class="ig-section__sub">Powerful image hosting built for the modern web</p>
+    </div>
+
+    <div class="ig-features">
+      <div class="ig-feature ig-feature--violet">
+        <div class="ig-feature__icon"><i class="bx bx-rocket"></i></div>
+        <h3 class="ig-feature__title">Lightning Fast</h3>
+        <p class="ig-feature__desc">Upload and generate URLs in milliseconds. Optimised for speed across all network conditions.</p>
+      </div>
+      <div class="ig-feature ig-feature--emerald">
+        <div class="ig-feature__icon"><i class="bx bx-lock-alt"></i></div>
+        <h3 class="ig-feature__title">Secure Storage</h3>
+        <p class="ig-feature__desc">Enterprise-grade encryption and automated backups keep your images safe and always accessible.</p>
+      </div>
+      <div class="ig-feature ig-feature--sky">
+        <div class="ig-feature__icon"><i class="bx bx-code-alt"></i></div>
+        <h3 class="ig-feature__title">Developer Friendly</h3>
+        <p class="ig-feature__desc">Clean, permanent URLs ready for embedding in apps, docs, and APIs. No redirects, no expiry.</p>
+      </div>
+      <div class="ig-feature ig-feature--amber">
+        <div class="ig-feature__icon"><i class="bx bx-mobile"></i></div>
+        <h3 class="ig-feature__title">Fully Responsive</h3>
+        <p class="ig-feature__desc">Works seamlessly across every device — desktop, tablet, and mobile — without compromise.</p>
+      </div>
+      <div class="ig-feature ig-feature--rose">
+        <div class="ig-feature__icon"><i class="bx bx-share-alt"></i></div>
+        <h3 class="ig-feature__title">Easy Sharing</h3>
+        <p class="ig-feature__desc">Publish to the community gallery or keep images private. One click to share anywhere.</p>
+      </div>
+      <div class="ig-feature ig-feature--fuchsia">
+        <div class="ig-feature__icon"><i class="bx bx-line-chart"></i></div>
+        <h3 class="ig-feature__title">Analytics</h3>
+        <p class="ig-feature__desc">Track views, downloads, and engagement metrics. Understand how your images perform.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     PRICING
+═══════════════════════════════════════════ -->
+<section class="ig-section">
+  <div class="ig-section__divider ig-section__divider--accent"></div>
+  <div class="ig-section__orb ig-section__orb--tl"></div>
+  <div class="ig-section__orb ig-section__orb--br"></div>
+  <div class="ig-container">
+
+    <div class="ig-section__head">
+      <div class="ig-pill ig-pill--sm ig-pill--accent">
+        <i class="bx bx-receipt"></i> Pricing
+      </div>
+      <h2 class="ig-section__title">Simple, <span class="ig-grad">Transparent</span> Pricing</h2>
+      <p class="ig-section__sub">Choose the plan that fits your needs</p>
+    </div>
+
+    <div class="ig-pricing">
+
+      <div class="ig-plan ig-plan--weekly">
+        <div class="ig-plan__icon"><i class="bx bx-calendar-week"></i></div>
+        <h3 class="ig-plan__name">Weekly</h3>
+        <p class="ig-plan__tagline">Perfect for short-term projects</p>
+        <div class="ig-plan__price">
+          <span class="ig-plan__amount">Ksh 100</span>
+          <span class="ig-plan__period">/week</span>
+        </div>
+        <ul class="ig-plan__perks">
+          <li><i class="bx bx-check"></i>50 image uploads per week</li>
+          <li><i class="bx bx-check"></i>5GB storage</li>
+          <li><i class="bx bx-check"></i>Basic analytics</li>
+          <li><i class="bx bx-check"></i>Email support</li>
         </ul>
-        <button
-          class="w-full py-3.5 rounded-2xl font-semibold text-sm transition-all duration-300 btn-outline-accent"
-        >
-          Choose Weekly
-        </button>
+        <button class="ig-plan__cta ig-plan__cta--outline">Choose Weekly</button>
       </div>
 
-      <!-- Monthly — featured -->
-      <div
-        class="pricing-card-popular relative p-7 rounded-3xl transition-all duration-300 scale-[1.04] hover:scale-[1.07] hover:-translate-y-1"
-      >
-        <div
-          class="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 bg-primary text-white text-[10px] font-black tracking-widest uppercase rounded-full shadow-[0_0_20px_rgba(99,102,241,0.5)]"
-        >
-          Most Popular
+      <div class="ig-plan ig-plan--monthly ig-plan--popular">
+        <div class="ig-plan__badge">Most Popular</div>
+        <div class="ig-plan__icon"><i class="bx bx-calendar"></i></div>
+        <h3 class="ig-plan__name">Monthly</h3>
+        <p class="ig-plan__tagline">Best value for regular users</p>
+        <div class="ig-plan__price">
+          <span class="ig-plan__amount ig-plan__amount--featured">Ksh 399</span>
+          <span class="ig-plan__period">/month</span>
         </div>
-        <div class="mb-7">
-          <div
-            class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center mb-4"
-          >
-            <i class="bx bx-calendar text-xl text-primary"></i>
-          </div>
-          <h3 class="text-lg font-bold text-light-text mb-1">Monthly</h3>
-          <p class="text-xs text-light-text/40">Best value for regular users</p>
-        </div>
-        <div class="flex items-baseline gap-1 mb-7">
-          <span class="text-4xl font-black text-primary">Ksh 399</span>
-          <span class="text-sm text-light-text/35 font-medium">/month</span>
-        </div>
-        <ul class="space-y-3 mb-8">
-          <li class="flex items-center gap-3 text-sm text-light-text/75">
-            <div
-              class="w-4 h-4 rounded-full bg-primary/25 flex items-center justify-center flex-shrink-0"
-            >
-              <i class="bx bx-check text-primary text-xs"></i>
-            </div>
-            Unlimited uploads
-          </li>
-          <li class="flex items-center gap-3 text-sm text-light-text/75">
-            <div
-              class="w-4 h-4 rounded-full bg-primary/25 flex items-center justify-center flex-shrink-0"
-            >
-              <i class="bx bx-check text-primary text-xs"></i>
-            </div>
-            50GB storage
-          </li>
-          <li class="flex items-center gap-3 text-sm text-light-text/75">
-            <div
-              class="w-4 h-4 rounded-full bg-primary/25 flex items-center justify-center flex-shrink-0"
-            >
-              <i class="bx bx-check text-primary text-xs"></i>
-            </div>
-            Advanced analytics
-          </li>
-          <li class="flex items-center gap-3 text-sm text-light-text/75">
-            <div
-              class="w-4 h-4 rounded-full bg-primary/25 flex items-center justify-center flex-shrink-0"
-            >
-              <i class="bx bx-check text-primary text-xs"></i>
-            </div>
-            Priority support
-          </li>
-          <li class="flex items-center gap-3 text-sm text-light-text/75">
-            <div
-              class="w-4 h-4 rounded-full bg-primary/25 flex items-center justify-center flex-shrink-0"
-            >
-              <i class="bx bx-check text-primary text-xs"></i>
-            </div>
-            Custom branding
-          </li>
+        <ul class="ig-plan__perks ig-plan__perks--bright">
+          <li><i class="bx bx-check"></i>Unlimited uploads</li>
+          <li><i class="bx bx-check"></i>50GB storage</li>
+          <li><i class="bx bx-check"></i>Advanced analytics</li>
+          <li><i class="bx bx-check"></i>Priority support</li>
+          <li><i class="bx bx-check"></i>Custom branding</li>
         </ul>
-        <button
-          class="w-full py-3.5 rounded-2xl bg-primary hover:bg-primary/85 text-white text-sm font-bold transition-all duration-300 hover:shadow-[0_0_35px_rgba(99,102,241,0.6)] active:scale-[0.98]"
-        >
-          Choose Monthly
-        </button>
+        <button class="ig-plan__cta ig-plan__cta--filled">Choose Monthly</button>
       </div>
 
-      <!-- Yearly -->
-      <div
-        class="pricing-card-secondary group relative p-7 rounded-3xl transition-all duration-300 hover:-translate-y-1.5"
-      >
-        <div
-          class="absolute top-5 right-5 px-2.5 py-1 bg-secondary/15 rounded-full text-secondary text-[10px] font-bold badge-secondary-xs"
-        >
-          Save 44%
+      <div class="ig-plan ig-plan--yearly">
+        <div class="ig-plan__save">Save 44%</div>
+        <div class="ig-plan__icon"><i class="bx bx-calendar-star"></i></div>
+        <h3 class="ig-plan__name">Yearly</h3>
+        <p class="ig-plan__tagline">For power users and teams</p>
+        <div class="ig-plan__price">
+          <span class="ig-plan__amount">Ksh 1,999</span>
+          <span class="ig-plan__period">/year</span>
         </div>
-        <div class="mb-7">
-          <div
-            class="w-10 h-10 rounded-xl bg-secondary/15 flex items-center justify-center mb-4"
-          >
-            <i class="bx bx-calendar-star text-xl text-secondary"></i>
-          </div>
-          <h3 class="text-lg font-bold text-light-text mb-1">Yearly</h3>
-          <p class="text-xs text-light-text/35">For power users and teams</p>
-        </div>
-        <div class="flex items-baseline gap-1 mb-7">
-          <span class="text-4xl font-black text-light-text">Ksh 1,999</span>
-          <span class="text-sm text-light-text/35 font-medium">/year</span>
-        </div>
-        <ul class="space-y-3 mb-8">
-          <li class="flex items-center gap-3 text-sm text-light-text/60">
-            <div
-              class="w-4 h-4 rounded-full bg-secondary/20 flex items-center justify-center flex-shrink-0"
-            >
-              <i class="bx bx-check text-secondary text-xs"></i>
-            </div>
-            Unlimited uploads
-          </li>
-          <li class="flex items-center gap-3 text-sm text-light-text/60">
-            <div
-              class="w-4 h-4 rounded-full bg-secondary/20 flex items-center justify-center flex-shrink-0"
-            >
-              <i class="bx bx-check text-secondary text-xs"></i>
-            </div>
-            Unlimited storage
-          </li>
-          <li class="flex items-center gap-3 text-sm text-light-text/60">
-            <div
-              class="w-4 h-4 rounded-full bg-secondary/20 flex items-center justify-center flex-shrink-0"
-            >
-              <i class="bx bx-check text-secondary text-xs"></i>
-            </div>
-            Premium analytics
-          </li>
-          <li class="flex items-center gap-3 text-sm text-light-text/60">
-            <div
-              class="w-4 h-4 rounded-full bg-secondary/20 flex items-center justify-center flex-shrink-0"
-            >
-              <i class="bx bx-check text-secondary text-xs"></i>
-            </div>
-            24/7 priority support
-          </li>
-          <li class="flex items-center gap-3 text-sm text-light-text/60">
-            <div
-              class="w-4 h-4 rounded-full bg-secondary/20 flex items-center justify-center flex-shrink-0"
-            >
-              <i class="bx bx-check text-secondary text-xs"></i>
-            </div>
-            API access
-          </li>
-          <li class="flex items-center gap-3 text-sm text-light-text/60">
-            <div
-              class="w-4 h-4 rounded-full bg-secondary/20 flex items-center justify-center flex-shrink-0"
-            >
-              <i class="bx bx-check text-secondary text-xs"></i>
-            </div>
-            White-label option
-          </li>
+        <ul class="ig-plan__perks">
+          <li><i class="bx bx-check"></i>Unlimited uploads</li>
+          <li><i class="bx bx-check"></i>Unlimited storage</li>
+          <li><i class="bx bx-check"></i>Premium analytics</li>
+          <li><i class="bx bx-check"></i>24/7 priority support</li>
+          <li><i class="bx bx-check"></i>API access</li>
+          <li><i class="bx bx-check"></i>White-label option</li>
         </ul>
-        <button
-          class="w-full py-3.5 rounded-2xl font-semibold text-sm transition-all duration-300 btn-outline-secondary"
-        >
-          Choose Yearly
-        </button>
+        <button class="ig-plan__cta ig-plan__cta--outline ig-plan__cta--teal">Choose Yearly</button>
       </div>
+
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════════
-     GALLERY SECTION
-═══════════════════════════════════════════════════════════ -->
-<section
-  id="gallery-section"
-  class="relative py-24 px-4 sm:px-6 bg-dark-bg overflow-hidden"
->
-  <div
-    class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-secondary/20 to-transparent"
-  ></div>
 
-  <div class="max-w-7xl mx-auto">
-    <div
-      class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12"
-    >
-      <div class="space-y-3">
-        <div
-          class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-secondary/8 text-secondary/70 text-xs font-semibold tracking-widest uppercase badge-secondary-sm"
-        >
-          <i class="bx bx-images text-secondary text-sm"></i>
-          Community
+<!-- ═══════════════════════════════════════════
+     GALLERY
+═══════════════════════════════════════════ -->
+<section id="gallery-section" class="ig-section ig-section--alt">
+  <div class="ig-section__divider ig-section__divider--secondary"></div>
+  <div class="ig-container">
+
+    <div class="ig-gallery__head">
+      <div>
+        <div class="ig-pill ig-pill--sm ig-pill--teal">
+          <i class="bx bx-images"></i> Community
         </div>
-        <h2
-          class="text-3xl sm:text-4xl md:text-5xl font-black text-light-text tracking-tight"
-        >
-          Community <span class="text-gradient">Gallery</span>
-        </h2>
-        <p class="text-base text-light-text/40">
-          Images published by our community
-        </p>
+        <h2 class="ig-section__title ig-section__title--left">Community <span class="ig-grad">Gallery</span></h2>
+        <p class="ig-section__sub ig-section__sub--left">Images published by our community</p>
       </div>
-      <button
-        (click)="fetchPublishedImages()"
-        class="self-start sm:self-auto flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary/8 text-xs text-primary/70 hover:text-primary font-medium transition-all duration-200 hover:bg-primary/14 btn-refresh"
-      >
-        <i
-          class="bx bx-refresh text-sm"
-          [ngClass]="{'animate-spin': isLoadingImages}"
-        ></i>
+      <button (click)="fetchPublishedImages()" class="ig-refresh">
+        <i class="bx bx-refresh" [ngClass]="{'ig-spin': isLoadingImages}"></i>
         Refresh
       </button>
     </div>
 
     <!-- Loading skeleton -->
-    <div
-      *ngIf="isLoadingImages"
-      class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
-    >
-      <div
-        *ngFor="let _ of [1,2,3,4,5,6,7,8]"
-        class="rounded-2xl overflow-hidden skeleton-card animate-pulse"
-      >
-        <div class="aspect-square bg-primary/5"></div>
-        <div class="p-4 space-y-2.5">
-          <div class="h-2.5 bg-primary/6 rounded-full w-4/5"></div>
-          <div class="h-2 bg-primary/4 rounded-full w-3/5"></div>
-          <div class="flex items-center gap-2 pt-2">
-            <div class="w-7 h-7 rounded-full bg-primary/6"></div>
-            <div class="space-y-1.5 flex-1">
-              <div class="h-2 bg-primary/6 rounded-full w-2/5"></div>
-              <div class="h-1.5 bg-primary/4 rounded-full w-1/4"></div>
+    <div *ngIf="isLoadingImages" class="ig-grid">
+      <div *ngFor="let _ of [1,2,3,4,5,6,7,8]" class="ig-skeleton">
+        <div class="ig-skeleton__img"></div>
+        <div class="ig-skeleton__body">
+          <div class="ig-skeleton__line ig-skeleton__line--wide"></div>
+          <div class="ig-skeleton__line"></div>
+          <div class="ig-skeleton__avatar-row">
+            <div class="ig-skeleton__avatar"></div>
+            <div class="ig-skeleton__lines">
+              <div class="ig-skeleton__line ig-skeleton__line--sm"></div>
+              <div class="ig-skeleton__line ig-skeleton__line--xs"></div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Error state -->
-    <div
-      *ngIf="!isLoadingImages && imagesError"
-      class="flex flex-col items-center justify-center py-24 gap-5"
-    >
-      <div
-        class="w-16 h-16 bg-red-500/8 rounded-3xl flex items-center justify-center error-icon-border"
-      >
-        <i class="bx bx-error-alt text-3xl text-red-400/80"></i>
-      </div>
-      <div class="text-center space-y-1.5">
-        <p class="text-sm font-semibold text-light-text/60">
-          Failed to load images
-        </p>
-        <p class="text-xs text-light-text/30">{{ imagesError }}</p>
-      </div>
-      <button
-        (click)="fetchPublishedImages()"
-        class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs text-red-400/70 hover:text-red-400 bg-red-500/6 hover:bg-red-500/12 transition-all duration-200 btn-error"
-      >
+    <!-- Error -->
+    <div *ngIf="!isLoadingImages && imagesError" class="ig-empty">
+      <div class="ig-empty__icon ig-empty__icon--error"><i class="bx bx-error-alt"></i></div>
+      <p class="ig-empty__title">Failed to load images</p>
+      <p class="ig-empty__sub">{{ imagesError }}</p>
+      <button (click)="fetchPublishedImages()" class="ig-empty__retry">
         <i class="bx bx-refresh"></i> Try again
       </button>
     </div>
 
-    <!-- Empty state -->
-    <div
-      *ngIf="!isLoadingImages && !imagesError && allPublishedImages.length === 0"
-      class="flex flex-col items-center justify-center py-24 gap-5"
-    >
-      <div
-        class="w-16 h-16 bg-primary/8 rounded-3xl flex items-center justify-center empty-icon-border"
-      >
-        <i class="bx bx-image text-3xl text-primary/60"></i>
-      </div>
-      <div class="text-center space-y-1.5">
-        <p class="text-sm font-semibold text-light-text/60">No images yet</p>
-        <p class="text-xs text-light-text/30">
-          Be the first to publish an image to the gallery.
-        </p>
-      </div>
+    <!-- Empty -->
+    <div *ngIf="!isLoadingImages && !imagesError && allPublishedImages.length === 0" class="ig-empty">
+      <div class="ig-empty__icon"><i class="bx bx-image"></i></div>
+      <p class="ig-empty__title">No images yet</p>
+      <p class="ig-empty__sub">Be the first to publish an image to the gallery.</p>
     </div>
 
-    <!-- Image grid -->
-    <div
-      *ngIf="!isLoadingImages && !imagesError && displayedImages.length > 0"
-      class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
-    >
+    <!-- Grid -->
+    <div *ngIf="!isLoadingImages && !imagesError && displayedImages.length > 0" class="ig-grid">
       <div
         *ngFor="let image of displayedImages"
-        class="gallery-card group relative rounded-2xl overflow-hidden bg-dark-card/70 transition-all duration-300 hover:-translate-y-1.5 cursor-pointer"
+        class="ig-tile"
         (click)="navigateToSingleImage(image.imageUrlId)"
       >
-        <div class="aspect-square overflow-hidden relative bg-dark-bg/50">
+        <div class="ig-tile__img-wrap">
           <img
             [src]="image.url"
             [alt]="image.description || 'Published image'"
             (load)="onImageLoad($event)"
             (error)="onImageError($event)"
-            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-0 [&.loaded]:opacity-100"
+            class="ig-tile__img"
           />
-          <div
-            class="absolute inset-0 bg-gradient-to-t from-dark-bg/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-          ></div>
-          <div
-            class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-          >
-            <div
-              class="w-10 h-10 rounded-xl bg-primary/20 backdrop-blur-sm border border-primary/40 flex items-center justify-center"
-            >
-              <i class="bx bx-expand-alt text-primary text-lg"></i>
-            </div>
+          <div class="ig-tile__overlay">
+            <div class="ig-tile__expand"><i class="bx bx-expand-alt"></i></div>
           </div>
         </div>
-        <div class="p-4">
-          <p
-            class="text-xs text-light-text/45 mb-3 line-clamp-2 leading-relaxed"
-          >
-            {{ image.description || 'No description provided' }}
-          </p>
-          <div class="flex items-center gap-2.5 pt-3 gallery-card-divider">
-            <div
-              *ngIf="image.user?.profileImageUrl; else initials"
-              class="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-primary/25"
-            >
-              <img
-                [src]="image.user?.profileImageUrl"
-                [alt]="image.user?.username"
-                class="w-full h-full object-cover"
-              />
+        <div class="ig-tile__body">
+          <p class="ig-tile__desc">{{ image.description || 'No description provided' }}</p>
+          <div class="ig-tile__meta">
+            <div *ngIf="image.user?.profileImageUrl; else tileInitials" class="ig-tile__avatar">
+              <img [src]="image.user?.profileImageUrl" [alt]="image.user?.username" />
             </div>
-            <ng-template #initials>
-              <div
-                class="w-7 h-7 rounded-full flex items-center justify-center text-[9px] font-black text-white/90 flex-shrink-0"
-                [ngClass]="getInitialsColor(image.user?.username || 'User')"
-              >
+            <ng-template #tileInitials>
+              <div class="ig-tile__avatar ig-tile__avatar--initials" [ngClass]="getInitialsColor(image.user?.username || 'US')">
                 {{ getUserInitials(image.user?.username || 'US') }}
               </div>
             </ng-template>
-            <div class="flex-1 min-w-0">
-              <p class="text-xs font-semibold text-light-text/70 truncate">
-                {{ image.user?.username }}
-              </p>
-              <p class="text-[10px] text-light-text/30 mt-0.5">
-                {{ image.createdAt | date: 'MMM d, y' }}
-              </p>
+            <div class="ig-tile__info">
+              <p class="ig-tile__username">{{ image.user?.username }}</p>
+              <p class="ig-tile__date">{{ image.createdAt | date: 'MMM d, y' }}</p>
             </div>
           </div>
         </div>
@@ -770,101 +393,49 @@
     </div>
 
     <!-- Pagination -->
-    <div
-      *ngIf="showPagination"
-      class="flex items-center justify-center gap-4 mt-14"
-    >
-      <button
-        (click)="previousPage()"
-        [disabled]="currentPage === 0"
-        class="flex items-center gap-2 px-6 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed btn-pagination"
-      >
+    <div *ngIf="showPagination" class="ig-pagination">
+      <button (click)="previousPage()" [disabled]="currentPage === 0" class="ig-page-btn">
         <i class="bx bx-chevron-left"></i> Previous
       </button>
-      <span
-        class="px-4 py-2 rounded-xl text-xs text-light-text/40 font-medium pagination-counter"
-      >
-        {{ currentPage + 1 }} / {{ totalPages }}
-      </span>
-      <button
-        (click)="nextPage()"
-        [disabled]="currentPage === totalPages - 1"
-        class="flex items-center gap-2 px-6 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed btn-pagination"
-      >
+      <span class="ig-page-counter">{{ currentPage + 1 }} / {{ totalPages }}</span>
+      <button (click)="nextPage()" [disabled]="currentPage === totalPages - 1" class="ig-page-btn">
         Next <i class="bx bx-chevron-right"></i>
       </button>
     </div>
+
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════════
-     CTA SECTION
-═══════════════════════════════════════════════════════════ -->
-<section class="relative py-24 px-4 sm:px-6 bg-dark-card overflow-hidden">
-  <div
-    class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/25 to-transparent"
-  ></div>
-  <div
-    class="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[130px] pointer-events-none animate-float"
-  ></div>
-  <div
-    class="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-accent/10 rounded-full blur-[130px] pointer-events-none animate-float-delayed"
-  ></div>
 
-  <div class="max-w-4xl mx-auto text-center relative z-10 space-y-8">
-    <div class="space-y-5">
-      <h2
-        class="text-4xl sm:text-5xl md:text-6xl font-black text-light-text tracking-tight leading-[1.05]"
-      >
-        Ready to Start Generating<br class="hidden sm:block" />
-        <span class="text-gradient"> Image URLs</span>?
-      </h2>
-      <p
-        class="text-base sm:text-lg text-light-text/45 max-w-xl mx-auto leading-relaxed"
-      >
-        Join thousands of developers and creators who trust Imagen for reliable,
-        fast image hosting.
-      </p>
-    </div>
-
-    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-      <button
-        *ngIf="!isLoggedIn"
-        (click)="navigateToSignup()"
-        class="group relative w-full sm:w-auto px-10 py-5 bg-primary text-white font-bold rounded-2xl overflow-hidden transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_55px_rgba(99,102,241,0.55)] active:scale-[0.98]"
-      >
-        <span
-          class="absolute inset-0 bg-gradient-to-r from-primary to-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-        ></span>
-        <span class="relative flex items-center justify-center gap-2 text-base">
-          <i class="bx bx-rocket text-lg"></i>Start Free Trial
-        </span>
+<!-- ═══════════════════════════════════════════
+     CTA
+═══════════════════════════════════════════ -->
+<section class="ig-cta">
+  <div class="ig-cta__orb ig-cta__orb--l"></div>
+  <div class="ig-cta__orb ig-cta__orb--r"></div>
+  <div class="ig-container ig-container--narrow">
+    <h2 class="ig-cta__title">
+      Ready to Start Generating<br class="ig-cta__br" />
+      <span class="ig-grad">Image URLs</span>?
+    </h2>
+    <p class="ig-cta__sub">
+      Join thousands of developers and creators who trust Imagen for
+      reliable, fast image hosting.
+    </p>
+    <div class="ig-cta__actions">
+      <button *ngIf="!isLoggedIn" (click)="navigateToSignup()" class="ig-btn ig-btn--primary ig-btn--lg">
+        <i class="bx bx-rocket"></i> Start Free Trial
       </button>
-      <button
-        class="group w-full sm:w-auto px-10 py-5 font-bold rounded-2xl transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] btn-ghost-accent-lg"
-      >
-        <span class="flex items-center justify-center gap-2 text-base">
-          <i class="bx bx-play-circle text-xl"></i>Watch Demo
-        </span>
+      <button class="ig-btn ig-btn--ghost ig-btn--lg">
+        <i class="bx bx-play-circle"></i> Watch Demo
       </button>
     </div>
-
-    <div
-      class="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 pt-2"
-    >
-      <div class="flex items-center gap-1.5 text-xs text-light-text/30">
-        <i class="bx bx-check-shield text-secondary text-base"></i>No credit
-        card required
-      </div>
-      <div class="w-px h-4 bg-primary/20 hidden sm:block"></div>
-      <div class="flex items-center gap-1.5 text-xs text-light-text/30">
-        <i class="bx bx-time text-accent text-base"></i>Set up in 30 seconds
-      </div>
-      <div class="w-px h-4 bg-primary/20 hidden sm:block"></div>
-      <div class="flex items-center gap-1.5 text-xs text-light-text/30">
-        <i class="bx bx-lock-open-alt text-primary text-base"></i>Free forever
-        plan
-      </div>
+    <div class="ig-cta__trust">
+      <span><i class="bx bx-check-shield"></i> No credit card required</span>
+      <span class="ig-cta__divider"></span>
+      <span><i class="bx bx-time"></i> Set up in 30 seconds</span>
+      <span class="ig-cta__divider"></span>
+      <span><i class="bx bx-lock-open-alt"></i> Free forever plan</span>
     </div>
   </div>
 </section>

@@ -17,24 +17,27 @@ import { uploadToCloudinary } from '../../utils';
   styleUrl: './landing.css',
 })
 export class Landing implements OnInit {
-  selectedFile: File | null = null;
-  selectedFilePreview: string | null = null;
+  // Upload state
+  uploadedUrl: string = '';
   isUploading: boolean = false;
-  generatedUrl: string = '';
   isCopied: boolean = false;
+
+  // Toast
   showToast: boolean = false;
   toastMessage: string = '';
   toastType: 'success' | 'error' | 'info' = 'info';
+
+  // Auth
   isLoggedIn: boolean = false;
 
-  // Gallery state
+  // Gallery
   isLoadingImages: boolean = false;
   imagesError: string = '';
+  allPublishedImages: FetchedImageUrl[] = [];
 
   // Pagination
   currentPage: number = 0;
   imagesPerPage: number = 12;
-  allPublishedImages: FetchedImageUrl[] = [];
 
   constructor(
     private router: Router,
@@ -69,15 +72,11 @@ export class Landing implements OnInit {
   fetchPublishedImages(): void {
     this.isLoadingImages = true;
     this.imagesError = '';
-
     this.imgs.getPublishedImages().subscribe({
       next: (res) => {
         this.isLoadingImages = false;
-        if (res.success && res.dataList) {
-          this.allPublishedImages = res.dataList;
-        } else {
-          this.allPublishedImages = [];
-        }
+        this.allPublishedImages =
+          res.success && res.dataList ? res.dataList : [];
         this.cdr.detectChanges();
       },
       error: (err: any) => {
@@ -125,74 +124,61 @@ export class Landing implements OnInit {
   onFileSelected(event: any): void {
     const file: File = event.target.files[0];
     if (!file) return;
-
-    this.selectedFile = file;
-    this.generatedUrl = '';
+    // Reset any previous result
+    this.uploadedUrl = '';
     this.isCopied = false;
-
-    // Preview
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      this.selectedFilePreview = e.target?.result as string;
-    };
-    reader.readAsDataURL(file);
-
-    // Auto-upload
     this.uploadImage(file);
+    // Clear the input so the same file can be re-selected
+    event.target.value = '';
   }
 
   async uploadImage(file: File): Promise<void> {
     if (!this.isLoggedIn) {
-      if (sessionStorage.getItem('submissionAttempt') !== null) {
-        if (Number(sessionStorage.getItem('submissionAttempt')) === 3) {
-          this.showToastMessage(
-            'Please log in to upload more images.',
-            'error',
-          );
-          this.navigateToLogin();
-          this.cdr.detectChanges();
-          return;
-        }
-      }
-
-      sessionStorage.setItem(
-        'submissionAttempt',
-        String(Number(sessionStorage.getItem('submissionAttempt') ?? '0') + 1),
+      const attempts = Number(
+        sessionStorage.getItem('submissionAttempt') ?? '0',
       );
-      this.cdr.detectChanges();
+      if (attempts >= 3) {
+        this.showToastMessage('Please log in to upload more images.', 'error');
+        this.navigateToLogin();
+        this.cdr.detectChanges();
+        return;
+      }
+      sessionStorage.setItem('submissionAttempt', String(attempts + 1));
     }
 
     this.isUploading = true;
-    this.generatedUrl = '';
     this.cdr.detectChanges();
 
-    const secureUrl: string = await uploadToCloudinary(file);
-    if (secureUrl) {
-      this.generatedUrl = secureUrl;
-      this.cdr.detectChanges();
+    try {
+      const secureUrl = await uploadToCloudinary(file);
+      if (secureUrl) {
+        this.uploadedUrl = secureUrl;
+        this.showToastMessage('Image uploaded successfully!', 'success');
+      } else {
+        this.showToastMessage('Upload failed. Please try again.', 'error');
+      }
+    } catch {
+      this.showToastMessage('Upload failed. Please try again.', 'error');
+    } finally {
       this.isUploading = false;
-      this.showToastMessage('Image uploaded successfully!', 'success');
-      this.cdr.detectChanges();
-    } else {
-      this.isUploading = false;
-      this.showToastMessage('Image upload failed. Please try again.', 'error');
       this.cdr.detectChanges();
     }
   }
 
   copyUrl(): void {
-    if (!this.generatedUrl) return;
-    navigator.clipboard.writeText(this.generatedUrl).then(() => {
+    if (!this.uploadedUrl) return;
+    navigator.clipboard.writeText(this.uploadedUrl).then(() => {
       this.isCopied = true;
       this.cdr.detectChanges();
-      setTimeout(() => {this.isCopied = false; this.cdr.detectChanges();}, 1000);
+      setTimeout(() => {
+        this.isCopied = false;
+        this.cdr.detectChanges();
+      }, 1500);
     });
   }
 
   resetUpload(): void {
-    this.selectedFile = null;
-    this.selectedFilePreview = null;
-    this.generatedUrl = '';
+    this.uploadedUrl = '';
     this.isCopied = false;
     this.isUploading = false;
   }
@@ -204,10 +190,8 @@ export class Landing implements OnInit {
     this.toastMessage = message;
     this.toastType = type;
     this.showToast = true;
-    this.cdr.detectChanges();
     setTimeout(() => {
       this.showToast = false;
-      this.cdr.detectChanges();
     }, 3500);
   }
 
@@ -217,12 +201,12 @@ export class Landing implements OnInit {
 
   getInitialsColor(username: string): string {
     const colors = [
-      'bg-primary',
-      'bg-accent',
-      'bg-secondary',
-      'bg-purple-500',
-      'bg-pink-500',
-      'bg-indigo-500',
+      'bg-violet-500',
+      'bg-emerald-500',
+      'bg-amber-500',
+      'bg-rose-500',
+      'bg-sky-500',
+      'bg-fuchsia-500',
     ];
     return colors[username.charCodeAt(0) % colors.length];
   }
